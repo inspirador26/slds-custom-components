@@ -1,0 +1,87 @@
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --slds-c-card-color-background: var(--slds-g-color-neutral-base-100);
+    --dxp-g-neutral-3: var(--slds-g-color-neutral-base-30, #444444);
+    
+    --vg-color-middle-col-border: solid 1px var(--slds-g-color-palette-blue-70);
+    --vg-tile-bg: var(--slds-g-color-netural-base-100, #fff); /* var(--slds-g-color-palette-orange-95) in materialListView.js */
+    --vg-tile-border-style: none;  /* solid 1px var(--slds-g-color-palette-blue-70) in materialListView.js */
+    --vg-tile-border-radius: 0px; /* var(--slds-g-radius-border-2) in materialListView.js */
+    --vg-tile-link-color: var(--vg-brand-blue-modern, #0070d2);
+
+    --vg-card-border: solid 1px var(--slds-g-color-border-base-1, #c9c9c9);
+    --vg-card-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.10);
+    --vg-card-bg: var(--slds-g-color-neutral-base-100, #fff);
+    --vg-card-header-bg: var(--slds-g-color-neutral-base-100, #fff); /* var(--slds-g-color-neutral-base-95 in materialListView.js */
+    --vg-card-header-border-style: none; /* solid 1px var(--slds-g-color-border-base-1) */
+}
+
+
+
+[class*="slds-nubbin"]::before,
+[class*="slds-nubbin"]::after {
+    transform: rotate(45deg) scale(0.75);
+}
+.pair {
+  display: contents; /* keeps SLDS flow intact */
+}
+[data-el="tooltip"] { pointer-events: none; }
+.slds-popover__body {
+    font-size: 14px;
+}
+.tooltip-field-label {
+    font-weight: bold;
+}
+
+
+
+.slds-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: var(--vg-card-border);      
+    box-shadow: var(--vg-card-shadow);         
+}
+
+/* The body scrolls; the footer sticks to the bottom */
+.slds-card__body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Footer pinned at bottom */
+.slds-card__footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--slds-g-color-neutral-base-100, #fff);
+    z-index: 1;
+    border-top: 1px solid var(--slds-g-color-border-base-1, #d8dde6);
+}
+
+.slds-card__header header div span,
+.slds-card__header header div span svg {
+    transform: scale(1.05);
+}
+
+.slds-card__header {
+    background-color: var(--vg-card-header-bg);
+    border-bottom: var(--vg-card-header-border-style);
+    border-top-left-radius: var(--slds-g-radius-border-2);
+    border-top-right-radius: var(--slds-g-radius-border-2);
+}
+
+
+.slds-tile__title {
+    font-size: 1.125rem;
+    padding-bottom: 0.25rem;
+}
+.slds-tile__title-no-link {
+    font-weight: 500;
+}
+
+.slds-tile {
+    border-radius: var(--vg-tile-border-radius);
+    border: var(--vg-tile-border-style);
+    background-color: var(--vg-tile-bg);
+}

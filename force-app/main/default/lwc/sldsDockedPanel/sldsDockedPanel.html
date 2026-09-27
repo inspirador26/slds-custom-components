@@ -1,0 +1,156 @@
+<template>
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+    <!--Component is Visible-->
+    <template lwc:if={_expose}>
+
+        <!--change to class="slds-modal slds-fade-in-open slds-docked-composer-modal"-->
+        <section data-id="slds-docked_container" 
+            class={_expandController.sldsDockedContainer} 
+            role="dialog" 
+            tabindex="-1" 
+            aria-modal="true" 
+            aria-labelledby="dialog-heading-id-1" 
+            aria-describedby="dialog-content-id-1" 
+            style="z-index: 10000"
+        >   
+            <!--change to class="slds-modal__container"-->
+            <div data-id="slds-modal__container"
+                class={_expandController.sldsModalContainer}> 
+
+                <!--change to class="slds-modal__content"-->   
+                <div data-id="slds-modal__content"
+                    class={_expandController.sldsModalContent}
+                >  
+                    <section 
+                        data-id="slds-docked-composer" 
+                        class={_panelCl}
+                        role="dialog"
+                        aria-labelledby="dialog-heading-id-1"
+                        aria-describedby="dialog-content-id-1"
+                        onfocusin={focusPanel}
+                        onfocusout={handleFocusOut}
+                    >
+                        <!--Header-->
+                        <header
+                            data-id="composer-header"
+                            class="slds-docked-composer__header slds-grid slds-shrink-none slds-grid_vertical-align-start"
+                            aria-live="assertive"
+                            style="cursor: pointer;"
+                            tabindex="0"
+                        >
+                            <!--Main Details-->
+                            <div class="slds-media slds-media_center slds-no-space">
+                                <!--Header Icon-->
+                                <div class="slds-media__figure slds-m-right_x-small">
+                                    <span class="slds-icon_container slds-m-right_xx-small">
+                                        <lightning-icon icon-name={icon} size="x-small"></lightning-icon>
+                                    </span>
+                                </div>
+                                <!--End Header Icon-->
+           
+                                <!--Header Title-->
+                                <div class="slds-media__body">
+                                    <h2 class="slds-truncate"
+                                        id="dialog-heading-id-1" 
+                                        title={panelTitle}
+                                    >{panelTitle}</h2>
+                                </div>
+                                <!--End Header Title-->
+                            </div>
+                            <!--Main Details-->
+           
+                            <!--Component State Controls-->
+                            <div class="slds-col_bump-left slds-shrink-none">
+                                <!--Toggle pop-up-->
+                                <button 
+                                    data-id="minimize-button" 
+                                    class="slds-button slds-button_icon slds-button_icon slds-m-right_xx-small no-shadow" 
+                                    onclick={toggleComposer} 
+                                    title={_windowIcon.iconTitle}
+                                    data-element="header-button"
+                                    tabindex="0"
+                                >
+                                    <span class="slds-button__icon">
+                                        <svg class="slds-button__icon header-icon-btn" aria-hidden="true">
+                                            <use xlink:href={_windowIcon.icon}></use>
+                                        </svg>
+                                    </span>
+                                    <span class="slds-assistive-text">{_windowIcon.iconTitle}</span>
+                                </button>
+                                <!--End Toggle pop-up-->
+           
+                                <!--Expand pop-up-->
+                                <button 
+                                    class="slds-button slds-button_icon slds-button_icon slds-m-right_xx-small no-shadow" 
+                                    onclick={toggleExpand} 
+                                    title="Expand Composer"
+                                    data-element="header-button"
+                                    tabindex="0"
+                                >
+                                    <span class="slds-button__icon" aria-hidden="true">
+                                        <svg class="slds-button__icon header-icon-btn" aria-hidden="true">
+                                            <use xlink:href={iconMap.utility.expand_alt}></use>
+                                        </svg>
+                                    </span>
+                                    <span class="slds-assistive-text">Expand Composer Panel</span>
+                                </button>
+                                <!--End Expand pop-up-->
+
+           
+                                <!--Close pop-up-->
+                                <button class="slds-button
+                                    slds-button_icon
+                                    slds-m-right_xx-small
+                                    no-shadow"
+                                    onclick={removeComposer} 
+                                    title="Close"
+                                    data-element="header-button"
+                                    tabindex="0"
+                                >
+                                    <span class="slds-button__icon" aria-hidden="true">
+                                        <svg class="slds-button__icon header-icon-btn" aria-hidden="true">
+                                            <use xlink:href={iconMap.utility.close}></use>
+                                        </svg>
+                                    </span>
+                                    <span class="slds-assistive-text">Close Composer Panel</span>
+                                </button>
+                                <!--End Close pop-up-->
+                            </div>
+                            <!--End Component State Controls-->
+                        </header>
+                        <!--End Header-->
+
+                        <!--Body-->
+                        <div class="slds-docked-composer__body slds-docked-composer__body_form"
+                            id="dialog-content-id-1"
+                        >
+                            <slot name="body"></slot>
+                        </div>
+                        <!--End Body-->
+
+                        <!--Footer-->
+                        <footer class="slds-docked-composer__footer slds-shrink-none" style="border-radius: 0 0 var(--slds-g-radius-border-1, 0.25rem) var(--slds-g-radius-border-1, 0.25rem);">
+                            <button class="slds-button slds-button_brand slds-col_bump-left"
+                                tabindex={footerBtnTabIndex}
+                                onclick={handleFooterButtonClick}
+                            >Save</button>
+                        </footer>
+                        <!--End Footer-->
+                    </section>
+                </div>
+            </div>
+        </section>
+        <div data-id="slds-backdrop" role="presentation" class={_expandController.sldsBackdrop}></div>
+    </template>
+    <!--End Component is Visible-->
+</template>

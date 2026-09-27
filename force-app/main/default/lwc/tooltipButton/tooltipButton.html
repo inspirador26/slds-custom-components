@@ -1,0 +1,109 @@
+<template>
+
+    <div class={_wrapperCl}
+        onmouseenter={handleHelpEnter}
+        onmouseleave={handleHelpLeave}
+    >   
+        <span class="tip-anchor">
+            <!--Button or icon slot 🗳️-->
+            <slot name="tipTrigger">
+
+            </slot> 
+            <!--End Button or icon slot-->
+
+            <div
+                class={_popoverClasses}
+                data-id="help-tooltip"
+                role="tooltip"
+                style="
+                    position:absolute;  
+                    z-index:2.5; 
+                    width: var(--tip-width, max-content);
+                    max-width: var(--tip-max-width, 20rem);
+                "
+            >
+                <template lwc:if={_isConventionalVariant}> 
+                    <header class="slds-popover__header header-section">
+                        <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+                            <!--Icon Variant-->
+                            <template lwc:if={_iconConfig}>
+                                <div class="slds-media__figure">
+                                    <div class="slds-media__figure">
+                                        <span class={_iconConfig.container} title={iconLabel}>
+                                            <svg class={_iconConfig.svg} aria-hidden="true">
+                                                <use xlink:href={_iconConfig.icon}></use>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                            </template>
+                            <div class="slds-media__body">
+                                <h2 class="slds-truncate slds-text-heading_medium" id="dialog-heading-id-1" title={headerLabel}>{headerLabel}</h2>
+                            </div>
+                        </div>
+                    </header>
+                </template>
+
+                <div class={_popoverBodyCl} id="dialog-body-id-116">
+
+                    <template lwc:if={_hasHeader}>
+                        <div class="slds-media">
+                            <div class="slds-media__body">
+                                <div class="slds-media">
+                                    <!--Icon Variant-->
+                                    <template lwc:if={_iconConfig}>
+                                        <div class="slds-media__figure header-section">
+                                            <div class="slds-media__figure">
+                                                <span class={_iconConfig.container} title={iconLabel}>
+                                                    <svg class={_iconConfig.svg} aria-hidden="true">
+                                                        <use xlink:href={_iconConfig.icon}></use>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template lwc:elseif={_hasIcon}> 
+                                        <div class="slds-media__figure header-section">
+                                            <div class="slds-media__figure">
+                                                <span class="slds-icon-container">
+                                                    <slot name="icon"></slot>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <!--////////////////-->
+
+                                    <!--Header Variant Body-->
+                                    <div class="slds-media__body">
+
+                                        <!--Header Title for Header Variant 📥-->
+                                        <h2 if:true={headerLabel} id="dialog-heading-id-4" 
+                                            class="slds-text-heading_small slds-p-bottom_x-small header-section slds-text-align_center"
+                                        >{headerLabel}</h2>
+                                        <!--//////////////////////////////////-->
+
+                                        <!--Header Variant Body Slot 🗳️-->
+                                        <slot name="headerBody"> 
+                                        </slot>
+                                        <!--///////////////////////////-->
+                                        
+                                    </div>
+                                    <!--/////////////////////////-->
+
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!--Simple Variant Body Slot 🗳️-->
+                    <template lwc:else> 
+                        <slot name="simpleBody"></slot>
+                    </template>
+                    <!--///////////////////////////-->
+
+                </div>
+            </div>
+        </span>
+        
+    </div>
+</template>

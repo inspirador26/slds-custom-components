@@ -1,0 +1,375 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <c-toast-lwc
+            variant={toastObj.variant}
+            mode={toastObj.mode}
+            object-api-name={toastObj.objectApiName}
+            header={toastObj.header}
+            message={toastObj.message}
+        ></c-toast-lwc>
+    </template>
+
+    <div>    
+        <div class={_mainFormElementCl}>
+            <template lwc:if={label}>
+                <label class="slds-form-element__label" for="combobox-id-1">
+                    <abbr if:true={isRequired} class="slds-required" title="required">* </abbr>
+                    {label}
+                </label>
+            </template> 
+            <template lwc:elseif={isRequired}> 
+                <abbr if:true={isRequired} class="slds-required" title="required">* </abbr>
+            </template>
+            <div class="slds-form-element__control">
+
+                <div class="slds-combobox_container">
+                    <!--add class "slds-is-open" and set "aria-expanded" to "false" to open-->
+                    <div class={dropdownCl} 
+                        aria-expanded="false" 
+                        data-id="combobox"
+                        aria-haspopup="listbox" 
+                        role="combobox"
+                        onclick={toggleCombobox}  
+                        onkeydown={toggleCombobox}
+                        onmousedown={handleDropdownMouseDown}   
+                        onmouseup={handleDropdownMouseUp}    
+                        style="user-select: none !important;"
+                    >
+                        <div class={formElementClass} role="none">
+
+                            <template lwc:if={selectedInputIcon}>
+                                <span class={selectedInputIcon.container} title={selectedInputIcon.title}>
+                                    <svg class={selectedInputIcon.svg} aria-hidden="true">
+                                        <use xlink:href={selectedInputIcon.icon}></use>
+                                    </svg>
+                                </span>
+                            </template>
+
+                            <input 
+                                type="text" 
+                                class={inputCl}
+                                id="combobox-id-1" 
+                                style="caret-color: transparent; user-select: none !important;"
+                                aria-controls="listbox-id-1" 
+                                aria-autocomplete="off" 
+                                lwc:ref="input"
+                                autocomplete="off" 
+                                role="textbox" 
+                                disabled={isDisabled}
+                                required={isRequired}
+                                value={currentValueLabel}
+                                placeholder={placeHolder} 
+                                data-id="sldsComboboxInput"
+                                onblur={handleBlur}
+                                aria-activedescendant={highlightedOptionId} 
+                                title={currentValueLabel}
+                                onfocusout={handleFocusOut}
+                                onkeydown={handleInputKeyDown}
+                                onfocus={handleFocus}
+                                readonly
+                            />
+                            <template lwc:if={isDisabled}> 
+
+                            </template>
+                            <template lwc:else>
+                                <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                    <lightning-icon icon-name="utility:down" size={_downIconSize}></lightning-icon>
+                                </span>
+                            </template>
+                        </div>
+
+                        <!--List of Options-->
+                        <div id="listbox-id-1" class={dropdownLengthCl} role="listbox">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation" data-id="comboboxListOptions">
+                                <template lwc:if={localOptions}> 
+                                    <template for:each={localOptions} for:item="option"> 
+                                        <!--Picklist Option-->
+                                        <li role="presentation" key={option.value} class="slds-listbox__item">
+                                            <!--Unselected options w/ meta-->
+                                            <template lwc:if={hasMeta}>  
+                                                <div class={option.optionsClass}
+                                                    role="option" 
+                                                    data-id="comboboxOption" 
+                                                    data-value={option.value} 
+                                                    data-label={option.label}
+                                                    onmousedown={deflectFocus}
+                                                    onmouseenter={handleHover} 
+                                                    onmouseleave={handleUnhover}
+                                                    onclick={handleOptionClick}
+                                                >        
+                                                    <!--Selected Option-->
+                                                    <template lwc:if={option.isSelected}>
+
+                                                        <!--Option Icon-->
+                                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                                            <!--Has Icon Config Property-->
+                                                            <template lwc:if={option.iconConfig}> 
+                                                                <!--Has iconconfig.iconName-->
+                                                                <template lwc:if={option.iconConfig.iconName}> 
+                                                                    <span class="slds-icon_container">
+                                                                        <lightning-icon 
+                                                                            icon-name={option.iconConfig.iconName} 
+                                                                            class={option.iconConfig.iconClass} 
+                                                                            title={option.iconConfig.title}
+                                                                            size="small"
+                                                                        ></lightning-icon>
+                                                                    </span>
+                                                                </template>
+                                                                <!--End Has iconconfig.iconName-->
+                                                                <!--Missing iconConfig.Name-->
+                                                                <template lwc:else> 
+                                                                    <span class="slds-icon_container">
+                                                                        <lightning-icon icon-name='standard:empty' class='slds-hidden' size="small"></lightning-icon>
+                                                                    </span>
+                                                                </template>
+                                                                <!--End Missing iconConfig.Name-->
+                                                            </template>
+                                                            <!--End Has Icon Config Property-->
+                                                        </span>
+                                                        <!--End Option Icon-->
+                                                        
+                                                        <!--Option Details-->
+                                                        <span class="slds-media__body">
+                                                            
+                                                            <template lwc:if={option.hasMeta}>
+                                                                <!--Requried Option Detail-->
+                                                                <template lwc:if={option.fieldOne}>
+                                                                    <span class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" 
+                                                                        title={option.label}
+                                                                    >{option.label}</span>
+                                                                </template>
+                                                                <template lwc:elseif={option.fieldTwo}>
+                                                                    <span class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" title={option.label}>{option.label}</span>
+                                                                </template>
+                                                                <template lwc:else> 
+                                                                    <span class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" title={option.label}>{option.label}</span>
+                                                                </template>
+                                                                <!--End Requried Option Detail-->
+
+                                                                <!--Additional Option Field Details-->
+                                                                <template lwc:if={option.fieldOne}> 
+                                                                    <template lwc:if={option.fieldTwo}> 
+                                                                        <!--All Fields Provided-->
+                                                                        <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">{option.fieldOne} • {option.fieldTwo}</span>
+                                                                        <!--End All Fields Provided-->
+                                                                    </template>
+                                                                    <template lwc:else> 
+                                                                        <!--Only Field One-->
+                                                                        <span class="slds-listbox__option-meta slds-listbox__option-meta_entity" title={option.fieldOne}>{option.fieldOne}</span>
+                                                                        <!--End Only Field One-->
+                                                                    </template>
+                                                                </template>
+                                                                <template lwc:else> 
+                                                                    <template lwc:if={option.fieldTwo}> 
+                                                                        <!--Only Field Two-->
+                                                                        <span class="slds-listbox__option-meta slds-listbox__option-meta_entity" title={option.fieldTwo}>{option.fieldTwo}</span>
+                                                                        <!--End Only Field Two-->
+                                                                    </template>
+                                                                    <template lwc:else> 
+                                                                        <!--No Field Details-->
+                                                                        <span class="slds-listbox__option-meta slds-listbox__option-meta_entity"></span>
+                                                                        <!--End No Field Details-->
+                                                                    </template>
+                                                                </template>
+                                                                <!--End Additional Option Field Details-->
+                                                            </template>
+                                                            <template lwc:else> 
+                                                                <span class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" 
+                                                                    title={option.label}
+                                                                >{option.label}</span>
+                                                            </template>
+
+                                                        </span>
+                                                        <!--End Option Details-->
+                                                    
+                                                        <div class="slds-media__figure slds-float-right"> 
+                                                            <lightning-icon 
+                                                                icon-name="utility:check" 
+                                                                class="brand-icon-check" 
+                                                                size="x-small"
+                                                            ></lightning-icon>
+                                                        </div>
+
+                                                    </template>
+                                                    <!--End Selected Option-->
+
+                                                    <template lwc:else> 
+                                                        <!--Icon-->
+                                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                                            <!--Has Icon Config Property-->
+                                                            <template lwc:if={option.iconConfig}> 
+                                                                <!--Has iconconfig.iconName-->
+                                                                <template lwc:if={option.iconConfig.iconName}> 
+                                                                    <span class="slds-icon_container">
+                                                                        <lightning-icon 
+                                                                            icon-name={option.iconConfig.iconName} 
+                                                                            class={option.iconConfig.iconClass} 
+                                                                            title={option.iconConfig.title}
+                                                                            size="small"
+                                                                        ></lightning-icon>
+                                                                    </span>
+                                                                </template>
+                                                                <!--End Has iconconfig.iconName-->
+                                                                <!--Missing iconConfig.Name-->
+                                                                <template lwc:else> 
+                                                                    <span class="slds-icon_container">
+                                                                        <lightning-icon icon-name='standard:empty' class='slds-hidden' size="small"></lightning-icon>
+                                                                    </span>
+                                                                </template>
+                                                                <!--End Missing iconConfig.Name-->
+                                                            </template>
+                                                            <!--End Has Icon Config Property-->
+
+                                                            <!--Missing Icon Config-->
+                                                            <template lwc:else> 
+                                                                <span class="slds-icon_container">
+                                                                    <lightning-icon icon-name='standard:empty' class='slds-hidden' size="small"></lightning-icon>
+                                                                </span>
+                                                            </template>
+                                                            <!--End Missing Icon Config-->
+                                                        </span>
+                                                        <!--End Icon-->
+
+                                                        <!--Option Details-->
+                                                        <span class="slds-media__body">
+                                                            <template lwc:if={option.hasMeta}>
+                                                                <template lwc:if={option.fieldOne}> 
+                                                                    <!--Requried Option Detail-->
+                                                                    <span class="slds-listbox__option-text slds-listbox__option-text_entity" title={option.label}>{option.label}</span>
+                                                                    <!--End Requried Option Detail-->
+                                                                </template>
+                                                                <template lwc:elseif={option.fieldTwo}> 
+                                                                    <!--Requried Option Detail-->
+                                                                    <span class="slds-listbox__option-text slds-listbox__option-text_entity" title={option.label}>{option.label}</span>
+                                                                    <!--End Requried Option Detail-->
+                                                                </template>
+                                                                <template lwc:else> 
+                                                                    <!--Requried Option Detail-->
+                                                                    <span class="slds-listbox__option-text slds-listbox__option-text_entity" title={option.label}>{option.label}</span>
+                                                                    <!--End Requried Option Detail-->
+                                                                </template>
+
+                                                                <!--Additional Option Field Details-->
+                                                                <template lwc:if={option.fieldOne}> 
+                                                                    <template lwc:if={option.fieldTwo}> 
+                                                                        <!--All Fields Provided-->
+                                                                        <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">{option.fieldOne} • {option.fieldTwo}</span>
+                                                                        <!--End All Fields Provided-->
+                                                                    </template>
+                                                                    <template lwc:else> 
+                                                                        <!--Only Field One-->
+                                                                        <span class="slds-listbox__option-meta slds-listbox__option-meta_entity" title={option.fieldOne}>{option.fieldOne}</span>
+                                                                        <!--End Only Field One-->
+                                                                    </template>
+                                                                </template>
+                                                                <template lwc:else> 
+                                                                    <template lwc:if={option.fieldTwo}> 
+                                                                        <!--Only Field Two-->
+                                                                        <span class="slds-listbox__option-meta slds-listbox__option-meta_entity" title={option.fieldTwo}>{option.fieldTwo}</span>
+                                                                        <!--End Only Field Two-->
+                                                                    </template>
+                                                                </template>
+                                                                <!--End Additional Option Field Details-->
+                                                            </template>
+                                                            <template lwc:else> 
+                                                                <span class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" title={option.label}>{option.label}</span>
+                                                            </template>
+                                                        </span>
+                                                        <!--End Option Details-->
+                                                    </template>
+                                                </div>
+                                            </template>
+                                            <!--End Unselected options w/ meta-->
+
+                                            <!--hasMeta is False-->
+                                            <template lwc:else> 
+                                                <!--To focus/Select: aria-selected="true" aria-checked="true" class="slds-is-selected slds-has-focus"-->
+                                                <!--Selected Option-->
+                                                <template lwc:if={option.isSelected}>
+                                                    <!--slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta-->
+                                                    <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected slds-has-focus" 
+                                                        aria-selected="true" 
+                                                        aria-checked="true"
+                                                        role="option" 
+                                                        onmouseenter={handleHover} 
+                                                        onmouseleave={handleUnhover}
+                                                        data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                                        onclick={handleOptionClick}
+                                                    >
+                                                        <!--Icon (optional)-->
+                                                        <span class="slds-media__figure slds-listbox__option-icon slds-align-middle">
+                                                            <template lwc:if={option.isSelected}>  
+                                                                <lightning-icon icon-name="utility:check" class="brand-icon-check" size="x-small"></lightning-icon>
+                                                            </template>
+                                                        </span>
+                                                        <!--End Icon (optional)-->
+
+                                                        <!--Option Label-->
+                                                        <span class="slds-media__body">
+                                                            <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                        </span>
+                                                        <!--End Option Label-->
+                                                    </div>
+                                                </template>
+                                                <!--End Selected Option-->
+
+                                                <!--Unselected Options-->
+                                                <template lwc:else> 
+                                                    <!--slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta-->
+                                                    <!--"slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" -->
+                                                    <div class={option.optionsClass}
+                                                        role="option" 
+                                                        data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                                        onmousedown={deflectFocus}
+                                                        onmouseenter={handleHover} 
+                                                        onmouseleave={handleUnhover}
+                                                        onclick={handleOptionClick}
+                                                    >
+                                                        <!--Icon (optional)-->
+                                                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                                        <!--End Icon (optional)-->
+
+                                                        <!--Option Label-->
+                                                        <span class="slds-media__body">
+                                                            <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                        </span>
+                                                        <!--End Option Label-->
+                                                    </div>
+                                                </template>
+                                                <!--End Unselected Options-->
+                                            </template>
+                                            <!--End hasMeta is False-->
+
+                                        </li>
+                                        <!--End Picklist Option-->
+                                    </template>
+                                </template>
+                            </ul>
+                        </div>
+                        <!--End List of Options-->
+
+                    </div>
+                </div>
+            
+            </div>
+
+            <template if:false={suppressErrorText}>
+                <div if:true={_hasError} 
+                    class="slds-form-element__help" 
+                    id="error-message-unique-id"
+                > 
+                    <template lwc:if={_errorMsg}> 
+                        {_errorMsg}
+                    </template>
+                    <template lwc:else> 
+                        Enter a value.
+                    </template> 
+                </div>  
+            </template>
+
+        </div>
+
+    </div>    
+
+</template>

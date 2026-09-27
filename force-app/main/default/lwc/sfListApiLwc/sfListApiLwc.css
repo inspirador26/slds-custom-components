@@ -1,0 +1,19 @@
+@import 'c/sharedStylesGlobal';
+@import 'c/sharedStylesSldsTable';
+
+:host {
+    --c-table-border-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+
+.paginate-footer {
+    background: var(--slds-g-color-neutral-base-100);
+    border: solid 1px var(--slds-g-color-border-1);
+    border-top: none;
+    border-bottom-left-radius: var(--c-table-border-radius, var(--slds-g-radius-border-3, 0.75rem));
+    border-bottom-right-radius: var(--c-table-border-radius, var(--slds-g-radius-border-3, 0.75rem));
+}
+
+.loading-skeleton {
+    height: 142px;
+    border: solid 1px var(--slds-g-color-border-base-1);
+}

@@ -1,0 +1,31 @@
+:host  {
+    --content-bg: var(--slds-g-color-neutral-base-100);
+    --content-border: none;
+
+    /*--slds-c-tabs-item-spacing-inline-end: 0.25rem;
+    --slds-c-tabs-item-spacing-inline-start: 0.25rem;*/
+    --slds-c-tabs-panel-spacing-block-end: 0.75rem;
+    --slds-c-tabs-panel-spacing-block-start: 0.75rem;
+}
+
+.slds-tabs_default__link {
+    color: var(--slds-g-color-neutral-base-10);
+}
+
+.slds-tabs_default__nav li a {
+    color: var(--slds-g-color-neutral-base-10);
+}
+.slds-tabs_default__nav li:hover a {
+    text-decoration: none;
+}
+
+.slds-tabs_default__content {
+    background-color: var(--content-bg, var(--slds-g-color-neutral-base-100));
+    border: var(--content-border, none);
+    border-top: none;
+}
+
+
+.slds-tabs_default__nav li {
+    font-size: 1rem;
+}

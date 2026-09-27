@@ -1,0 +1,99 @@
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --item-detail-width: 70%;
+    --item-label-width: calc(100% - var(--item-detail-width));
+
+    --vg-font-size-tile-default: 0.9125rem;
+    --c-tile-margin-top: 0.75rem;
+
+    --tile-title_padding-bottom: 0px;
+
+    --c-detail-font-size: var(--vg-font-size-tile-default, 0.9125rem);
+    --vg-tile-border-style: none;
+    --vg-tile-border-radius: var(--slds-g-radius-border-1, 0.25rem);
+    --vg-tile-bg: var(--slds-g-color-neutral-base-100, #fff);
+    --vg-tile-padding: 0px;
+    --tile-title_font-size: var(--c-detail-font-size, 0.9125rem);
+}
+
+.tile-wrapper {
+    padding: var(--vg-tile-padding);
+}
+
+.slds-tile {
+    border-radius: var(--vg-tile-border-radius);
+    border: var(--vg-tile-border-style);
+    background-color: var(--vg-tile-bg);
+    margin-top: var(--c-tile-margin-top, 0.75rem);
+    padding: var(--vg-tile-padding, 0px);
+}
+
+
+.slds-list_horizontal .slds-item_label {
+    width: max(3rem, var(--item-label-width));
+}
+
+.slds-list_horizontal .slds-item_detail {
+    width: calc(100% - max(3rem, var(--item-label-width)));
+}
+
+.slds-item_label {
+    font-size: var(--c-detail-font-size, 0.9125rem);
+}
+
+.slds-item_detail {
+    font-size: var(--c-detail-font-size, 0.9125rem);
+}
+
+.comm-space-reducer {
+    margin-top: -0.15rem;
+}
+
+.field-label {
+    width: max(3rem, var(--item-label-width));
+    font-size: var(--c-detail-font-size, var(--vg-font-size-tile-default, 0.9125rem));
+}
+.field-value {
+    width: calc(100% - max(3rem, var(--item-label-width)));
+    font-size: var(--c-detail-font-size, var(--vg-font-size-tile-default, 0.9125rem));
+}
+
+
+.tile-field {
+    border-right: 1px solid var(--slds-g-color-border-base-1);
+}
+
+/* 2 columns: strip every 2nd item */
+.fields-2 .tile-field:nth-child(2n) { border-right: none; }
+
+/* 3 columns */
+.fields-3 .tile-field:nth-child(3n) { border-right: none; }
+
+/* 4 columns */
+.fields-4 .tile-field:nth-child(4n) { border-right: none; }
+.tile-field:last-child { border-right: none; }
+
+
+
+.invisible {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.min-width-zero {
+    min-width: 0;
+}
+
+.value-nowrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0; /* critical for truncate inside flex/grid */
+}
+
+.slds-tile__title {
+    font-size: var(--tile-title_font-size, 0.9125rem);
+    padding-bottom: var(--tile-title_padding-bottom, 0px);
+}

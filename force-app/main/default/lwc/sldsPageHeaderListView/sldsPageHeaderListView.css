@@ -1,0 +1,17 @@
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --border-top: solid 1px var(--slds-g-color-border-1);
+    --c-border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+
+.slds-page-header {
+    /*border-bottom: 1px solid #dddbda !important;*/
+    border-radius: 0.25rem 0.25rem 0 0;
+    border: solid 1px var(--slds-g-color-border-1);
+    border-top: var(--border-top, solid 1px var(--slds-g-color-border-1));
+    border-bottom: none;
+    border-top-left-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-top-right-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}

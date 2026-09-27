@@ -1,0 +1,98 @@
+@import 'c/sharedStylesGlobal';
+@import 'c/sharedStylesSldsTable';
+
+:host {
+    --vg-color-default-stripe-table: #cceeff;
+    --vg-table-height: none;
+    --vg-max-height: 70vh;
+    display: block;  /* make sure the host can size itself */
+    --vg-color-columns-bg-table: var(--slds-g-color-neutral-base-95);
+    --vg-color-rows-bg-table:   var(--slds-g-color-neutral-base-100);
+    --vg-color-striped-bg-table: var(--vg-color-default-stripe-table);
+
+    --vg-border-illustration: solid 1px var(--slds-g-color-border-base-1);
+
+    --c-font-size: 1.0rem;
+    --c-footer-border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+
+.slds-docked-form-footer {
+    border-bottom-left-radius: var(--c-footer-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-right-radius: var(--c-footer-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+
+.custom-table-container  {
+    position: relative;
+    overflow-y: visible;          /* default; JS will toggle to auto */
+    height: auto;  /* Let the container's height be determined by its content */
+    scrollbar-gutter: auto;  /* reserve gutter even when no scrollbar */
+    scrollbar-width: thin;
+    max-height: var(--vg-max-height);
+    min-height: 0;
+    padding: 0px;
+    background-color: var(--slds-g-color-neutral-base-95);
+    font-size: var(--c-font-size, 1.0rem);
+}
+
+.custom-table-container__simple  {
+    position: relative;
+    overflow-y: visible;          /* default; JS will toggle to auto */
+    height: auto;  /* Let the container's height be determined by its content */
+    overflow-x: auto;
+    scrollbar-gutter: auto;  /* reserve gutter even when no scrollbar */
+    scrollbar-width: thin;
+    max-height: var(--vg-max-height);
+    min-height: 0;
+    padding: 0px;
+    background-color: var(--slds-g-color-neutral-base-95);
+}
+
+.rows-limit-footer {
+    position: sticky; 
+    bottom: 0;
+    background: var(--slds-g-color-neutral-base-95);
+    border: none;
+    border-bottom: solid 1px var(--slds-g-color-border-1);
+    border-top: solid 1px var(--slds-g-color-border-1);
+    font-size: 14px !important;
+    border-bottom-left-radius: var(--c-footer-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-right-radius: var(--c-footer-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+
+
+
+
+.popover-layer {
+    position: fixed;
+    z-index: 5;               /* above table cells/resize handles */
+}
+
+
+
+/* ----=------- Illustration Styles -------=----- */
+.illustration-wrap {
+    background-color: var(--slds-g-color-neutral-base-100);
+    border-radius: var(--slds-g-radius-border-1);
+    border: var(--vg-border-illustration);
+    border-top: none;
+    padding: 1.5rem;
+}
+/* ---------------------------------------------- */
+
+.slds-button.slds-button_icon.slds-cell-edit__button {
+    color: var(--slds-g-color-neutral-base-10, #181818);
+}
+
+.slds-resizable__divider::after {
+    max-height: var(--vg-table-height);
+}
+.slds-table--bordered, .slds-table_bordered {
+    border-top: none;
+    border-bottom: none;
+}
+
+.slds-table_edit_container.has-footer {
+    border-bottom-left-radius: var(--c-footer-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-right-radius: var(--c-footer-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}

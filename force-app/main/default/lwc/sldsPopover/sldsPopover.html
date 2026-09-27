@@ -1,0 +1,86 @@
+<template>
+
+    <div class="slds-is-relative">
+
+        <!--Button or icon slot 🗳️-->
+        <slot name="trigger">
+        </slot> 
+        <!--End Button or icon slot-->
+
+        <section 
+            class={_popoverClasses}
+            data-id="popover"
+            role="dialog"
+            style="position:absolute; z-index:20;"
+        >
+            <button 
+                class={_buttonCl} 
+                title="Close dialog"
+                onclick={closePopover}
+            >
+                <svg class="slds-button__icon" aria-hidden="true">
+                    <use xlink:href={iconMap.utility.close}></use>
+                </svg>
+                <span class="slds-assistive-text">Close dialog</span>
+            </button>
+
+            <template lwc:if={isNotifyHeader}> 
+                <template lwc:if={header}> 
+                    <header class="slds-popover__header slds-text-align_left"> 
+                        <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+                            <template lwc:if={_iconConfig}>
+                                <div class="slds-media__figure">
+                                    <span class={_iconConfig.container} title={iconLabel}>
+                                        <svg class={_iconConfig.svg} aria-hidden="true">
+                                            <use xlink:href={_iconConfig.icon}></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </template>
+                            <div class="slds-media__body">
+                                <h2 class="slds-truncate slds-text-heading_medium" id="dialog-heading-id-2" title={header}>
+                                    {header}
+                                </h2>
+                            </div>
+                        </div>
+                    </header>
+                </template>
+            </template>
+            
+            <div class={_bodyCl} id="dialog-body-id-3">
+                <!--p>Lorem ipsum dolor sit amet.</p>
+
+                    <div class="slds-form-element slds-p-top_small">
+                        <label class="slds-form-element__label slds-assistive-text" for="email-text-input-01">Email Address</label>
+                        <div class="slds-form-element__control">
+                            <input type="text" id="email-text-input-01" class="slds-input" placeholder="Email Address" />
+                        </div>
+                    </div-->
+
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <template if:false={isNotifyHeader}>
+                            <template lwc:if={header}>
+                                <header class="slds-popover__header">
+                                    <h2 class="slds-text-heading_small" id="dialog-heading-id-117">{header}</h2>
+                                </header>
+                            </template>
+                        </template>
+                        <slot name="body"></slot>
+                    </div>
+                </div>
+
+                <slot name="notiftyBody"></slot>
+            </div>
+
+            <footer if:true={footer} class="slds-popover__footer">
+                <slot name="footer"></slot>
+                <!--div class="slds-grid slds-grid_vertical-align-center">
+                <span class="slds-text-title">Step 2 of 4</span>
+                    <button class="slds-button slds-button_inverse slds-col_bump-left">Skip</button>
+                    <button class="slds-button slds-button_brand slds-col_bump-left">Next</button>
+                </div-->
+            </footer>
+        </section>
+    </div>
+</template>

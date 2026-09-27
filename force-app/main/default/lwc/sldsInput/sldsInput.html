@@ -1,0 +1,584 @@
+<template>
+
+    
+
+    <template lwc:if={toastObj}>
+        <c-toast-lwc
+            variant={toastObj.variant}
+            mode={toastObj.mode}
+            object-api-name={toastObj.objectApiName}
+            header={toastObj.header}
+            message={toastObj.message}
+        ></c-toast-lwc>
+    </template>
+
+    <div class="component-root">
+    <!--Add this if you need to detect when focus is within any of the elements within the component-->
+    <!--div onfocusin={handleFocusIn} onfocusout={handleFocusOut}-->
+
+        <!--Boolean Input-->
+        <template lwc:if={boolObj.isboolean}> 
+            <div data-id="componentRoot" data-element="checkbox-wrapper" dir={_dir}>
+                
+                <template lwc:if={formLabel}> 
+                    <div class={formElementClass} data-id="formElement">
+                        <!--Label-->
+                        <label class="slds-form-element__label" for="checkbox-unique-id-85">
+                            <abbr if:true={isRequired} class="slds-required" title="required" aria-hidden="true">* </abbr>
+                            {formLabel}
+                        </label>
+                        <!--End Label-->
+
+                        <!--Checkbox-->
+                        <div class="slds-form-element__control">
+                            <span class="slds-checkbox slds-checkbox_standalone">
+                                <input
+                                    onfocus={handleFocus} 
+                                    type="checkbox" 
+                                    tabindex="0"
+                                    name="options" 
+                                    data-id="booleanInput"
+                                    id="checkbox-unique-id-85" 
+                                    value="checkbox-unique-id-85" 
+                                    onchange={handleCheckBoxChange} 
+                                    onblur={handleCheckBoxBlur}
+                                    checked={booleanVal}
+                                    disabled={isDisabled}
+                                />
+                                <span class="slds-checkbox_faux"></span>
+                            </span>
+                        </div>
+                        <!--End Checkbox-->
+
+                        <!--Error-->
+                        <div if:true={hasError} class="slds-form-element__help" id="error_02"> 
+                            This field is required 
+                        </div>  
+                        <!--End Error-->
+                    </div>
+                </template>
+
+                <template lwc:else>
+                    <div class={formElementClass} data-id="formElement">
+                        <div class="slds-form-element__control">
+                            <div class="slds-checkbox">
+                                <!--Error Message-->
+                                <abbr if:true={isRequired} class="slds-required" title="required" aria-hidden="true">*</abbr>
+                                <!--End Error Message-->
+                                <input
+                                    onfocus={handleFocus} 
+                                    type="checkbox" 
+                                    tabindex="0"
+                                    name="options" 
+                                    data-id="booleanInput"
+                                    id="checkbox-unique-id-81" 
+                                    value="checkbox-unique-id-81" 
+                                    onchange={handleCheckBoxChange} 
+                                    onblur={handleCheckBoxBlur}
+                                    checked={booleanVal}
+                                    disabled={isDisabled}
+                                />
+                                <label class="slds-checkbox__label" for="checkbox-unique-id-81">
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="slds-form-element__label">{label}</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div if:true={hasError} class="slds-form-element__help" id="error_01"> 
+                            This field is required 
+                        </div>  
+                    </div>
+                </template>
+            </div>
+        </template>
+        <!--End Boolean Input-->
+
+        <!--Lightning Record Picker-->
+        <template lwc:elseif={boolObj.isreference}>
+            <template lwc:if={objectName}>
+                <template lwc:if={label}>
+                    <lightning-record-picker
+                        tabindex="0"
+                        style="color: black;"
+                        label={label}
+                        value={_currentValue}
+                        data-id="recordPicker"
+                        object-api-name={objectName}
+                        onchange={handleRecordPickerChange}
+                        onready={handleRecordPickerReady}
+                        onfocusout={handlePickerFocusout}
+                        onkeydown={handleRecordPickerKeyDown}
+                        filter={filter}
+                    ></lightning-record-picker>
+                </template>
+            </template>
+        </template>
+        <!--End Lightning Record Picker-->
+
+
+        <template lwc:elseif={boolObj.isrichtext}> 
+            <div class="rich-text-container">
+                <template lwc:if={isPopover}> 
+                    <div class="slds-media slds-p-vertical_xx-small"> 
+                        <div class="slds-media__figure">
+                            <lightning-icon 
+                                icon-name="utility:info_alt" 
+                                size="x-small"
+                            ></lightning-icon>
+                        </div>
+                        <div class="slds-media__body" style="font-size: 0.825rem;"> 
+                            To commit, click outside the editor or press "Shift + Enter".
+                        </div>
+                    </div>
+                </template>
+                
+                <div class="slds-no-flex">
+                    <lightning-input-rich-text 
+                        placeholder={placeHolder}
+                        id="rich-text"
+                        tabindex="0"
+                        formats={formats}
+                        style="color: var(--slds-g-color-neutral-base-10);"
+                        value={_currentValue} 
+                        data-id="richtextInput" 
+                        required={isRequired}
+                        onchange={handleInputEleChange} 
+                        onkeydown={handlePopoverKeyDown}
+                        onblur={handlePopoverBlur}
+                        disabled={isDisabled} 
+                        lwc:ref="richTextEle"
+                    ></lightning-input-rich-text>
+                </div>
+            
+            </div>
+        </template>
+
+        <!--All Other Inputs-->
+        <template lwc:else>
+            <div class={formElementClass} data-id="formElement">
+
+
+                <!--Label-->
+                <template lwc:if={focusHelpText}>
+                    <c-slds-popover
+                        nubbin={_helpNubbin}
+                        popover-bg="var(--slds-g-color-neutral-base-95)"
+                        onpopoverclose={handleHelpPopoverClose}
+                    > 
+                        <div class="help-popover-anchor" slot="trigger"></div>
+                        <div slot="body" style="color: var(--slds-g-color-neutral-base-10);"> 
+                            <div class="slds-media"> 
+                                <div class="slds-media__figure"> 
+                                    <lightning-icon icon-name="utility:info" size="small"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body"> 
+                                    <p style="font-size: 0.9rem;">{focusHelpText}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </c-slds-popover>
+                </template>
+                <label if:true={label} class="slds-form-element__label" for="text-input-id-1">
+                    <!--Required--><abbr if:true={isRequired} class="slds-required" title="required">* </abbr><!--End Required-->
+                    {label}
+                </label>
+                <!--End Label-->
+
+                <!--Text-->
+                <template lwc:if={boolObj.istext}>   
+
+                    <template lwc:if={suppressErrorText}> 
+                        <c-tooltip-button
+                            suppress-tooltip={_suppressErrorPopover}
+                            nubbin="bottom-left"
+                        >   
+                            <template lwc:if={_errorMessage}> 
+                                <template lwc:if={suppressErrorText}> 
+                                    <div slot="simpleBody"> 
+                                        <p>Complete this field</p>
+                                    </div>
+                                </template>
+                            </template>
+                            <div slot="tipTrigger" class="slds-form-element__control" title="">   
+                                <template lwc:if={_errorMessage}> 
+                                    <svg class="slds-input__icon error-icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.error}></use>
+                                    </svg>
+                                </template>
+                                <input 
+                                    type="text" 
+                                    data-id="textInput"
+                                    class="slds-input" 
+                                    id="regular-text-2" 
+                                    aria-invalid={hasError}
+                                    placeholder={placeHolder}
+                                    required={isRequired}
+                                    value={textVal} 
+                                    onchange={handleInputEleChange} 
+                                    onkeydown={handlePopoverKeyDown}
+                                    onblur={handlePopoverBlur}
+                                    disabled={isDisabled}
+                                />
+                            </div>
+                        </c-tooltip-button>
+                    </template>
+                    
+                    <template lwc:else>
+                        <div class={_inlineErrorIconFormElementCl}>
+                            <template lwc:if={_errorMessage}> 
+                                <svg class="slds-input__icon error-icon" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.error}></use>
+                                </svg>
+                            </template>
+                            <span if:true={addonLeft}
+                                class="slds-form-element__addon"
+                                id="fixed-text-text-left"
+                            >{addonLeft}</span>
+                            <input 
+                                type="text" 
+                                data-id="textInput"
+                                class={_inputCl}
+                                id="regular-text" 
+                                aria-invalid={hasError}
+                                placeholder={placeHolder}
+                                required={isRequired}
+                                value={textVal} 
+                                onchange={handleInputEleChange} 
+                                onkeydown={handlePopoverKeyDown}
+                                onblur={handlePopoverBlur}
+                                disabled={isDisabled}
+                            />
+                            <span if:true={addonRight} 
+                                class="slds-form-element__addon" 
+                                id="fixed-text-text-right"
+                            >{addonRight}</span>
+                        </div>
+                    </template>
+                    
+                </template>
+                <!--End Text-->
+
+                <!--Text Area (Long Text)-->
+                <template lwc:elseif={boolObj.istextarea}>   
+                    <div class="slds-form-element__control">
+                        <textarea 
+                            onfocus={handleFocus}
+                            oninput={handleInputChange}
+                            data-id="textareaInput"
+                            class="slds-textarea" 
+                            id="textarea" 
+                            required={isRequired}
+                            placeholder={placeHolder}
+                            onchange={handleInputEleChange}
+                            onkeydown={handlePopoverKeyDown}
+                            onblur={handlePopoverBlur}
+                        >{textVal}</textarea>
+                    </div>
+                </template>
+                <!--End Text Area (Long Text)-->
+
+                
+
+                <!--Whole Number-->
+                <template lwc:elseif={boolObj.isnumber}> 
+
+                    <template lwc:if={suppressErrorText}>
+                        <c-tooltip-button
+                            suppress-tooltip={_suppressErrorPopover}
+                            nubbin="bottom-left"
+                        >   
+                            <template lwc:if={_errorMessage}> 
+                                <template lwc:if={suppressErrorText}> 
+                                    <div slot="simpleBody"> 
+                                        <p>Complete this field</p>
+                                    </div>
+                                </template>
+                            </template>
+                            <template lwc:elseif={inlineHelp}>
+                                <div class="slds-form-element__help" 
+                                    id="help-message-id-49"
+                                >{inlineHelp}</div>
+                            </template>
+                            <div slot="tipTrigger" class={_inlineErrorIconFormElementCl} title="">   
+                                <template lwc:if={_errorMessage}> 
+                                    <svg class="slds-input__icon error-icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.error}></use>
+                                    </svg>
+                                </template>
+
+                                <template lwc:else>
+                                    <span if:true={addonLeft}
+                                        class="slds-form-element__addon"
+                                        id={numberInputIds.numberInputIdAddonLeft}
+                                    >{addonLeft}</span>
+                                </template>
+                                <input
+                                    onfocus={handleFocus} 
+                                    type="number" 
+                                    min={min}
+                                    max={max}
+                                    step={step}
+                                    class={_inputCl} 
+                                    data-id="numberInput"
+                                    id={numberInputIds.numberInputId}
+                                    aria-labelledby={_ariaLabelledBy}
+                                    aria-invalid={hasError}
+                                    required={isRequired}
+                                    value={numberVal} 
+                                    oninput={handleNumberInput}
+                                    onchange={handleInputEleChange} 
+                                    onkeydown={handlePopoverKeyDown}
+                                    onblur={handlePopoverBlur}
+                                    disabled={isDisabled}
+                                />
+                                <span if:true={addonRight} 
+                                    class="slds-form-element__addon" 
+                                    id={numberInputIds.numberInputIdAddonRight}
+                                >{addonRight}</span>
+                            </div>
+                        </c-tooltip-button>
+                    </template>
+
+                    <template lwc:else> 
+                        <div class={_inlineErrorIconFormElementCl}>
+                            <template lwc:if={_errorMessage}> 
+                                <svg class="slds-input__icon error-icon" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.error}></use>
+                                </svg>
+                            </template>
+                            <span if:true={addonLeft}
+                                class="slds-form-element__addon"
+                                id={numberInputClAddonLeft}
+                            >{addonLeft}</span>
+                            <input
+                                onfocus={handleFocus} 
+                                type="number" 
+                                min={min}
+                                max={max}
+                                step={step}
+                                class={_inputCl} 
+                                data-id="numberInput"
+                                id={numberInputId}
+                                aria-labelledby={_ariaLabelledBy}
+                                aria-invalid={hasError}
+                                required={isRequired}
+                                value={numberVal} 
+                                oninput={handleNumberInput}
+                                onchange={handleInputEleChange} 
+                                onkeydown={handlePopoverKeyDown}
+                                onblur={handlePopoverBlur}
+                                disabled={isDisabled}
+                            />
+                            <span if:true={addonRight} 
+                                class="slds-form-element__addon" 
+                                id="fixed-text-number-right"
+                            >{addonRight}</span>
+                        </div>
+                    </template>
+                </template>
+                <!--End Whole Number-->
+
+                <!--Currency-->
+                <template lwc:elseif={boolObj.iscurrency}>
+                    <div class={_formElementCl}>
+
+                        <svg if:false={suppressDefaultStyles} 
+                            class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" 
+                            aria-hidden="true"
+                        >
+                            <use xlink:href={iconMap.utility.money}></use>
+                        </svg>
+                        <span if:true={addonLeft} class="slds-form-element__addon" id="fixed-text-currency-left">{addonLeft}</span>
+
+                        <input
+                            onfocus={handleFocus} 
+                            type="number" 
+                            oninput={handleInputChange}
+                            id="text-input-currency" 
+                            placeholder={placeholder} 
+                            data-id="currencyInput"
+                            aria-invalid={hasError}
+                            aria-labelledby={_ariaLabelledBy} 
+                            class={_inputCl} 
+                            required={isRequired}
+                            value={currencyVal} 
+                            onchange={handleInputEleChange} 
+                            onkeydown={handlePopoverKeyDown}
+                            onblur={handlePopoverBlur}
+                            disabled={isDisabled}
+                        />
+                        <span if:true={addonRight} class="slds-form-element__addon" id="fixed-text-currency-right">{addonRight}</span>
+                    </div>
+                </template>
+                <!--End Currency-->
+
+                <!--Decimal-->
+                <template lwc:elseif={boolObj.isdecimal}>
+                    <div class={_formElementCl}>
+                        <span if:true={addonLeft} class="slds-form-element__addon" id="fixed-text-decimal-left">{addonLeft}</span>
+                        <input
+                            onfocus={handleFocus} 
+                            oninput={handleInputChange}
+                            type="number"
+                            min="0" step={_step} 
+                            id="text-input-id-decimal" 
+                            placeholder={placeholder} 
+                            data-id="decimalInput"
+                            class={_inputCl}
+                            aria-labelledby={_ariaLabelledBy} 
+                            aria-invalid={hasError}
+                            required={isRequired}
+                            value={decimalVal} 
+                            onchange={handleInputEleChange} 
+                            onkeydown={handlePopoverKeyDown}
+                            onblur={handlePopoverBlur}
+                            disabled={isDisabled}
+                        />
+                        <span if:true={addonRight} class="slds-form-element__addon" id="fixed-text-decimal-right">{addonRight}</span>
+                    </div>
+                </template>
+                <!--End Decimal-->
+
+                <!--Percent-->
+                <template lwc:elseif={boolObj.ispercent}>
+                    <div class={_formElementCl}>
+                        <span if:true={addonLeft} class="slds-form-element__addon" id="fixed-text-percent-left">{addonLeft}</span>
+                        <input
+                            onfocus={handleFocus} 
+                            oninput={handleInputChange}
+                            type="number"
+                            min={percentMin} max={percentMax} step={_step} 
+                            id="text-input-id-percent" 
+                            placeholder={placeholder} 
+                            data-id="percentInput"
+                            aria-invalid={hasError}
+                            aria-labelledby={_ariaLabelledBy}
+                            class={_inputCl} required={isRequired}
+                            value={_currentValue} 
+                            onchange={handleInputEleChange} 
+                            onkeydown={handlePopoverKeyDown}
+                            onblur={handlePopoverBlur}
+                            disabled={isDisabled}
+                        />
+                        <span if:false={suppressDefaultStyles} class="slds-form-element__addon" id="fixed-text-percent">%</span>
+                        <span if:true={addonRight} class="slds-form-element__addon" id="fixed-text-percent-right">{addonRight}</span>
+                    </div>
+                </template>
+                <!--End Percent-->
+
+                <!--Date-->
+                <template lwc:elseif={boolObj.isdate}> 
+                    <div class={dateGridClass.base}>
+                        <div class={dateGridClass.col}>
+                            <input
+                                onfocus={handleFocus} 
+                                oninput={handleInputChange}
+                                type="date"
+                                id="text-input-id-date"  
+                                class="slds-input" 
+                                aria-invalid={hasError}
+                                data-id="dateInput" 
+                                required={isRequired}
+                                value={dateVal} 
+                                onchange={handleInputEleChange}
+                                onkeydown={handlePopoverKeyDown}
+                                onblur={handlePopoverBlur}
+                                onmousedown={deflectBlur}
+                                disabled={isDisabled}
+                            />
+                        </div>
+                        <div if:true={isPopover} class="slds-m-left_x-small">
+                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="true" title="Submit"
+                            onclick={handlePopoverDate} onblur={handlePopoverBlur}>
+                                <svg class="slds-button__icon enlarge" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.success}></use>
+                                </svg>
+                                <span class="slds-assistive-text">Like</span>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+                <!--End Date-->
+
+                <!--DateTime-->
+                <template lwc:elseif={boolObj.isdatetime}> 
+                
+                    <div class={dateTimeGridClass}> 
+                        <div class="slds-form-element__control slds-size_4-of-9 slds-col">
+                            <!-- date only, starts blank -->
+                            <input
+                                onfocus={handleFocus}
+                                type="date"
+                                class="slds-input"
+                                aria-invalid={hasError}
+                                data-id="datetimeInputDate"
+                                value={datetimeDateVal}
+                                oninput={handleInputEleChange}
+                                required={isRequired}
+                                onkeydown={handlePopoverKeyDown}
+                                onblur={handlePopoverBlur}
+                                onmousedown={deflectBlur}
+                                disabled={isDisabled}
+                            />
+                        </div>
+                        
+                        <div class="slds-form-element__control slds-size_2-of-9 slds-m-left_xx-small slds-align-bottom">
+                            <!-- time only, defaults to 10:00 -->
+                            <input
+                                onfocus={handleFocus}
+                                type="time"
+                                class="slds-input"
+                                data-id="datetimeInputTime"
+                                step="60"
+                                value={datetimeTimeVal}
+                                oninput={handleInputEleChange}
+                                onkeydown={handlePopoverKeyDown}
+                                onblur={handlePopoverBlur}
+                                onmousedown={deflectBlur}
+                                disabled={isDisabled}
+                            />
+                        </div>
+                        <div if:true={isPopover} class="slds-col slds-size_1-of-9 slds-m-left_x-small">
+                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="true" title="Submit"
+                            onclick={handlePopoverDate} onblur={handlePopoverBlur}>
+                                <svg class="slds-button__icon enlarge" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.success}></use>
+                                </svg>
+                                <span class="slds-assistive-text">Like</span>
+                            </button>
+                        </div>
+                    </div>
+                
+                </template>
+                <!--End DateTime-->
+
+                <template if:false={suppressErrorText}>
+                    <div if:true={hasError} 
+                        class="slds-form-element__help" 
+                        id="error-message-unique-id"
+                    > 
+                        <template lwc:if={_errorMessage}> 
+                            {_errorMessage}
+                        </template>
+                        <template lwc:else> 
+                            This field is required
+                        </template> 
+                    </div>  
+                </template>
+                <template if:false={hasError}> 
+                    <template lwc:if={inlineHelp}>
+                        <div class="slds-form-element__help" 
+                            id={formHelpId}
+                        >{inlineHelp}</div>
+                    </template>
+                </template>
+            
+            </div>
+        </template>
+        <!--End All Other Inputs-->
+
+    </div>
+    <!--/div-->
+
+</template>

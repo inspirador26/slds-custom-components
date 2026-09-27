@@ -1,0 +1,54 @@
+<template>
+
+    <article class="feature-set-card slds-card">
+        <div class="slds-template__container">
+            
+            <div if:false={suppressHeader} class="slds-card__header slds-grid" data-id="card-header">
+                <template lwc:if={isCustomHeader}> 
+                    <slot name="cardHeader"></slot>
+                </template>
+                <template lwc:elseif={cardLabel}> 
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <template lwc:if={_iconConfig}>
+                            <div class="slds-media__figure">
+                                <span class={_iconConfig.container} title={iconLabel} data-id="iconContainer">
+                                    <svg class={_iconConfig.svg} aria-hidden="true" data-id="icon-svg">
+                                        <use xlink:href={_iconConfig.icon}></use>
+                                    </svg>
+                                </span>
+                            </div>
+                        </template>
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title slds-truncate">
+                                <template lwc:if={_headerLink}>
+                                    <a href={_headerLink} target="_blank" class="slds-card__header-link slds-truncate" title={cardLabel}>
+                                        <span data-id="cardLabel">{cardLabel}</span>
+                                    </a>
+                                </template>
+                                <template lwc:else> 
+                                    <span title={cardLabel} data-id="cardLabel" class="slds-truncate card-title">{cardLabel}</span>
+                                </template>
+                            </h2>
+                        </div>
+                        <template lwc:if={hasActionSlot}> 
+                            <div class="slds-no-flex">
+                                <slot name="actionSlot"></slot>
+                            </div>
+                        </template>
+                    </header>
+                </template>
+            </div>
+            
+            <div class="slds-card__body slds-card__body_inner slds-grow">
+                <slot name="cardBody"></slot>
+            </div>
+        
+        
+            <footer if:true={isFooter} class="slds-card__footer" style="margin-top: 0px;">
+                <slot name="cardFooter"></slot>
+            </footer>
+        
+        </div>
+    </article>
+
+</template>

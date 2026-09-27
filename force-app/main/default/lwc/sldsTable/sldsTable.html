@@ -1,0 +1,1603 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+    
+    <!--Wait for data to load-->
+    <template lwc:if={isDataLoaded}> 
+
+        <template lwc:if={isLoading}> 
+            <lightning-spinner variant="brand" size="medium"></lightning-spinner>
+        </template>
+
+        <!--Modals-->
+        <template lwc:if={modalConfig}>
+            <template lwc:if={modalConfig.tableModalMessage}>
+                <c-slds-modal
+                    modal-message={modalConfig.tableModalMessage}
+                    cancel-button-label={modalConfig.modalCancelLabel}
+                    okay-button-label={modalConfig.modalOkayLabel}
+                    onmodalclick={applyAllEdits}
+                    data-id="checkboxModal"
+                ></c-slds-modal>
+            </template>
+        </template>
+
+        <template lwc:if={modalConfig}>
+            <template lwc:if={modalConfig.recordId}>
+                <c-slds-modal
+                    modal-title={modalConfig.modalTitle}
+                    columns={modalConfig.columns}
+                    fields={modalConfig.fields}
+                    modal-message={modalConfig.modalMessage}
+                    cancel-button-label={modalConfig.cancelButtonLabel}
+                    okay-button-label={modalConfig.okayButtonLabel}
+                    onmodalclick={applyRowAction}
+                    data-id="deleteRecordsModal"
+                ></c-slds-modal>
+            </template>
+        </template>
+
+        <template lwc:if={updateListViewConfig}> 
+            <c-slds-modal-slot
+                modal-title={updateListViewConfig.headerTitle}
+                ok-label="Save"
+                object-api-name={objectName}
+                onclosemodal={cancelUpdateListView}
+                onmodalok={updateListViewLabel}
+            >
+                <div slot="modalBody" class="slds-p-around_medium"> 
+                    
+                    <c-new-list-view-lwc
+                        list-info-by-name={selectedListViewMeta}
+                        variant="label"
+                        render-focus="true"
+                    ></c-new-list-view-lwc>
+                
+                    <div style="padding-bottom: 5rem;"></div>
+                </div>
+            </c-slds-modal-slot>
+        </template>
+
+        <template lwc:if={updateDisplayColumnsConfig}> 
+            <c-slds-modal-slot
+                modal-title={updateDisplayColumnsConfig.headerTitle}
+                ok-label="Save"
+                object-api-name={objectName}
+                onclosemodal={cancelUpdateDisplayColumns}
+                onmodalok={updateDisplayColumns}
+                size="small"
+            >
+                <div slot="modalBody" class="slds-p-around_medium slds-scrollable_y">   
+                    <c-new-list-view-lwc
+                        list-info-by-name={selectedListViewMeta}
+                        variant="columns"
+                        data-id="updateDisplayColumns"
+                        render-focus="true"
+                        object-infos={_objectInfos}
+                    ></c-new-list-view-lwc>
+                    <div style="padding-bottom: 3rem;"></div>
+                </div>
+            </c-slds-modal-slot>
+        </template>
+
+        <template lwc:if={pageSizeModalConfig}> 
+            <c-slds-modal-slot
+                modal-title={pageSizeModalConfig.headerTitle}
+                ok-label="Update"
+                onclosemodal={closePageSizeModal}
+                onmodalok={updatePageSize}
+                border-radius="var(--slds-g-radius-border-4, 1.25rem)"
+                footer-slot="true"
+            >
+                <div slot="modalBody" class="slds-p-around_medium">   
+                    <c-slds-input
+                        dtype="number"
+                        current-value={pageSizeModalConfig.currentValue}
+                        data-id="page-size-input"
+                        suppress-blur-required="true"
+                        border-radius="var(--slds-g-radius-border-3, 0.75rem)"
+                        input-height="2.25rem"
+                        focus-on-ready="true"
+                        font-size="1.0rem"
+                        min="1"
+                        max="500"
+                        label="Page Size" 
+                        inline-help="Max: 500"
+                    ></c-slds-input>
+                    <div style="padding-bottom: 3rem;"></div>
+                </div>
+                <div slot="modalFooter"> 
+                    <div class="slds-grid slds-grid_align-end slds-grid_pull-padded-xx-small"> 
+                        <div class="slds-col slds-p-horizontal_xx-small">
+                            <button class="slds-button slds-button_neutral"
+                            onclick={closePageSizeModal}
+                            >Cancel</button>
+                        </div>
+                        <div class="slds-col slds-p-horizontal_xx-small">
+                            <button class="slds-button slds-button_outline-brand"
+                                onclick={updatePageSize}
+                            >Apply</button>
+                        </div>
+                        <div class="slds-col slds-p-horizontal_xx-small">
+                            <button class="slds-button slds-button_brand"
+                                onclick={savePageSize}
+                            >Apply & Save</button>
+                        </div>
+                    </div>
+                </div>
+            </c-slds-modal-slot>
+        </template>
+
+        <template lwc:if={sortDetailsConfig}> 
+            <c-slds-modal-slot
+                modal-title="Column Sort"
+                onclosemodal={closeEditSort}
+                object-api-name={objectName}
+                footer-slot="true"
+                size="small"
+            >
+                <div slot="modalBody">   
+                    <c-new-list-view-lwc
+                        list-info-by-name={selectedListViewMeta}
+                        variant="sort"
+                        data-id="updateDefaultSort"
+                        onorderbystate={updateSortFooterState}
+                        render-focus="true"
+                    ></c-new-list-view-lwc>
+                    <div style="padding-bottom: 12rem;"></div>
+                </div>  
+
+                <div slot="modalFooter" class="slds-grid slds-grid_align-spread">
+                    <div> 
+                        <lightning-button
+                            label="Clear"
+                            variant="neutral"
+                            onclick={handleClearSorts}
+                        ></lightning-button>
+                    </div>
+                    <div> 
+                        <div class="slds-grid slds-grid_pull-padded-x-small"> 
+                            <div class="slds-col slds-p-horizontal_x-small"> 
+                                <button class="slds-button slds-button_neutral" 
+                                    onclick={closeEditSort}
+                                >Cancel</button>
+                            </div>
+                            <div class="slds-col slds-p-horizontal_x-small"> 
+                                <button class="slds-button slds-button_brand" 
+                                    onclick={updateDefaultSort}
+                                    disabled={sortDetailsConfig.applyDisabled}
+                                >Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c-slds-modal-slot>
+        </template>
+
+        <template lwc:if={createListViewConfig}> 
+            <c-slds-modal-slot
+                modal-title="New List View"
+                ok-label="Save"
+                object-api-name={objectName}
+                onclosemodal={cancelNewListView}
+                onmodalok={createListView}
+            >
+                <div slot="modalBody" class="slds-p-around_medium"> 
+                    
+                    <c-new-list-view-lwc
+                        object-api-name={createListViewConfig.objectApiName}
+                        plural-label={pluralLabel}
+                        variant="create"
+                        render-focus="true"
+                    ></c-new-list-view-lwc>
+                
+                    <div style="padding-bottom: 5rem;"></div>
+                </div>
+            </c-slds-modal-slot>
+        </template>
+
+        <template lwc:if={deleteListViewConfig}> 
+            <c-slds-modal-slot
+                modal-title="Delete List View"
+                ok-label="Delete"
+                object-api-name={objectName}
+                onclosemodal={cancelDeleteListView}
+                onmodalok={deleteListView}
+                render-focus="true"
+            >
+                <div slot="modalBody" class="slds-p-around_medium"> 
+                    <c-new-list-view-lwc
+                        list-info-by-name={selectedListViewMeta}
+                        variant="delete"
+                    ></c-new-list-view-lwc>
+                </div>
+            </c-slds-modal-slot>
+        </template>
+        <!--End Modals-->
+
+        <div if:false={suppressHeader} data-id="table-header">
+            <template lwc:if={hasPageHeaderExtension}>
+                <slot name="pageHeaderExtension"></slot>
+            </template>
+            <c-slds-page-header-list-view 
+                page-label={_pageHeaderConfig.pluralLabel} 
+                object-label={_pageHeaderConfig.objectLabel}
+                icon-config={_pageHeaderConfig.iconConfig}
+                sorted-by={_pageHeaderConfig.sortedByInfo}
+                filtered-by={_pageHeaderConfig.filteredByInfo} 
+                list-length={_pageHeaderConfig.itemCount}
+                grouped-options={_pageHeaderConfig.listViewOptions}
+                current-list-view={_pageHeaderConfig.selectedListView}
+                settings-options={_pageHeaderConfig.settingsOptions}
+                list-view-editable={listViewEditable}
+                send-checked-label={_pageHeaderConfig.sendCheckedLabel}
+
+                columns={_columns}
+                is-db-controlled={isDbControlled}
+                is-sf-list-api={isSfListApi}
+
+                has-extension={hasPageHeaderExtension}
+
+                sort-disabled={listViewEditable}
+                suppress-charts={suppressCharts}
+                suppress-filter={suppressFilter}
+                suppress-settings={suppressSettings}
+                suppress-view-options={suppressViewOptions}
+                suppress-overflow-menu={suppressOverflowMenu}
+                suppress-edit={suppressEdit}
+                suppress-new-record={suppressNewRecord}
+                suppress-sort={suppressPageHeaderSort}
+
+
+                onnewrecord={handleNewRecord}
+
+                onresetcolumnwidths={resetColumnWidths}
+                onsettingsselected={handleSettingsSelected}
+                onsearchfilter={handleSearchFilter}
+                oneditsort={handleEditSort}
+                onfilter={handleFilter}
+                oncurrentsearchfilter={handleEveryFilter}
+
+                border-radius={borderRadius}
+            ></c-slds-page-header-list-view>
+        </div>
+        <template lwc:if={_columns.length}> 
+            <div class={tableGridCls.one}> 
+                <template lwc:if={_rows.length}> 
+                </template>
+            </div>
+        </template>
+        <div class={tableGridCls.one}> 
+            <div class={tableGridCls.two}>
+                <template lwc:if={isNoData}> 
+                    <div class="slds-card 
+                        slds-card_boundary 
+                        slds-p-around_large 
+                        slds-align_absolute-center 
+                        slds-is-relative"
+                    > 
+                        <c-slds-illustration
+                            is-no-content="true"
+                            help-text="Nothing to see here"
+                            additional-help-text="There's nothing in your list yet. Try adding a new record."
+                            size="large"
+                        ></c-slds-illustration>
+                    </div>
+                </template>
+                <template lwc:else> 
+                    <!--Edit Table Container-->
+                    <template lwc:if={_rows.length}>
+                        <div class="slds-table_edit_container slds-is-relative">
+                            <!--Edit Popover-->
+                            <section aria-describedby="dialog-body-id-14" 
+                                class="slds-popover slds-popover slds-popover_edit slds-hide" 
+                                role="dialog" 
+                                style="position:absolute;top:0;left:0.0625rem"
+                                data-id="popoverEdit"    
+                            >
+                                <div class="slds-popover__body" id="dialog-body-id-14">
+
+                                    <div class="slds-form-element slds-grid slds-wrap">
+                                        <label class="slds-form-element__label slds-form-element__label_edit slds-no-flex" for="company-01">
+                                            <span class="slds-assistive-text">Company</span>
+                                        </label>
+
+                                        <div class="slds-form-element__control slds-grow">
+
+                                            <!--Picklist-->
+                                            <template lwc:if={popoverEdit.ispicklist}> 
+                                                <c-dropdown-plain 
+                                                    place-holder="Make a Selection..." 
+                                                    current-value={popoverEdit.value}
+                                                    options={picklistOptions}
+                                                    is-popover={_isPopover}
+                                                    onselection={handleInputMessage}
+                                                    onescape={inputEleBlur}
+                                                    data-id="picklistEdit">
+                                                </c-dropdown-plain>
+                                            </template>
+                                            <!--End Picklist-->
+
+                                            <!--Picklist-->
+                                            <template lwc:elseif={popoverEdit.ismultipicklist}> 
+                                                <c-custom-slds-combobox-multi-select-practice 
+                                                    place-holder="Make a Selection..." 
+                                                    value={popoverEdit.value}
+                                                    parent-combobox-options={picklistOptions}
+                                                    is-popover={_isPopover}
+                                                    onmutlipicklistselected={handleInputMessage}
+                                                    onescape={inputEleBlur}
+                                                    data-id="multiPicklistEdit">
+                                                </c-custom-slds-combobox-multi-select-practice>
+                                            </template>
+                                            <!--End Picklist-->
+
+                                            <!--Regular Input Element-->
+                                            <template lwc:else> 
+                                                <!--Reference-->
+                                                <template lwc:if={popoverEdit.isreference}>
+                                                    <c-slds-input
+                                                        current-value={popoverEdit.value}
+                                                        object-name={popoverEdit.objectApiName}
+                                                        label={popoverEdit.fieldLabel}
+                                                        dtype="reference"
+                                                        name-field="Name"
+                                                        onescape={inputEleBlur}
+                                                        onnewinput={handleInputMessage}
+                                                        focus-on-ready="true"
+                                                        is-popover="true"
+                                                        data-id="recordPicker"
+                                                        data-is-popover-edit="true"
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Reference-->
+
+                                                <!--Rich Text-->
+                                                <template lwc:if={popoverEdit.isrichtext}> 
+                                                    <c-slds-input
+                                                        dtype="richtext" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        current-value={popoverEdit.displayValue}
+                                                        is-popover={_isPopover}
+                                                        onescape={inputEleBlur}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Rich Text-->
+                                                
+                                                <!--Text-->
+                                                <template lwc:if={popoverEdit.istext}>
+                                                    <c-slds-input 
+                                                        dtype="text" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        current-value={popoverEdit.displayValue}
+                                                        is-popover={_isPopover}
+                                                        onescape={inputEleBlur}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Text-->
+
+                                                <!--Text Area-->
+                                                <template lwc:if={popoverEdit.istextarea}>
+                                                    <c-slds-input 
+                                                        dtype="textarea" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        current-value={popoverEdit.displayValue}
+                                                        onescape={inputEleBlur}
+                                                        is-popover={_isPopover}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Text Area-->
+
+                                                <!--Whole Number-->
+                                                <template lwc:elseif={popoverEdit.isnumber}> 
+                                                    <c-slds-input 
+                                                        dtype="number" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        onescape={inputEleBlur}
+                                                        is-popover={_isPopover}
+                                                        current-value={popoverEdit.value}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Whole Number-->
+
+                                                <!--Decimal-->
+                                                <template lwc:elseif={popoverEdit.isdecimal}> 
+                                                    <c-slds-input 
+                                                        dtype="decimal" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        onescape={inputEleBlur}
+                                                        is-popover={_isPopover}
+                                                        current-value={popoverEdit.value}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Decimal-->
+
+                                                <!--Currency-->
+                                                <template lwc:elseif={popoverEdit.iscurrency}>
+                                                    <c-slds-input 
+                                                        dtype="currency" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        onescape={inputEleBlur}
+                                                        current-value={popoverEdit.value}
+                                                        is-popover={_isPopover}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Currency-->
+
+                                                <!--Percent-->
+                                                <template lwc:elseif={popoverEdit.ispercent}>
+                                                    <c-slds-input 
+                                                        dtype="percent" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        current-value={popoverEdit.value}
+                                                        onescape={inputEleBlur}
+                                                        is-popover={_isPopover}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Percent-->
+
+                                                <!--Date-->
+                                                <template lwc:elseif={popoverEdit.isdate}> 
+                                                    <c-slds-input 
+                                                        dtype="date" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        current-value={popoverEdit.value}
+                                                        onescape={inputEleBlur}
+                                                        is-popover={_isPopover}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Date-->
+
+                                                <!--Datetime-->
+                                                <template lwc:elseif={popoverEdit.isdatetime}> 
+                                                    <c-slds-input 
+                                                        dtype="datetime" 
+                                                        label="" 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        current-value={popoverEdit.value}
+                                                        onescape={inputEleBlur}
+                                                        is-popover={_isPopover}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Datetime-->
+
+                                                <!--Boolean-->
+                                                <template lwc:elseif={popoverEdit.isboolean}> 
+                                                    <c-slds-input 
+                                                        dtype="boolean" 
+                                                        label={popoverEdit.fieldName} 
+                                                        place-holder=""
+                                                        is-required="false"
+                                                        current-value={popoverEdit.value}
+                                                        onescape={inputEleBlur}
+                                                        is-popover={_isPopover}
+                                                        onnewinput={handleInputMessage}
+                                                    ></c-slds-input>
+                                                </template>
+                                                <!--End Boolean-->
+
+                                            </template>                            
+                                            <!--End Regular Input Element-->
+
+                                        </div>
+                                    </div>
+                                    <!--Apply Edit to all Selected-->
+                                    <div if:true={_isMultiEditPopover} 
+                                        class="slds-form-element slds-p-around_x-small"
+                                    >
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-checkbox">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="applyToAll" 
+                                                    value="applyToAll"
+                                                    tabindex="0"
+                                                    id="apply-to-all"
+                                                    checked={_isApplyToAll}
+                                                    onchange={handleEditAllSelectedRows}
+                                                />
+                                                <label class="slds-checkbox__label" for="apply-to-all">
+                                                    <span class="slds-checkbox_faux"></span>
+                                                    <span class="slds-form-element__label">
+                                                        Update {checkboxArray.length} selected items
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End Apply Edit to all Selected-->
+                                </div>
+                                <footer if:true={_isMultiEditPopover} class="slds-popover__footer slds-popover__footer_form slds-grid slds-grid_align-end">
+                                    <button class="slds-button slds-button_neutral" onclick={handleApplyAllCancel}>Cancel</button>
+                                    <button class="slds-button slds-button_brand" value={popoverEdit.dtype} onclick={handleApplyAllOkay}>
+                                        Apply
+                                    </button>
+                                </footer>
+                            </section>
+                            <!--End Edit Popover-->
+
+                            <!--Table Col Resize Container-->
+                            <div class="custom-table-container slds-scrollable_x" 
+                                onmousemove={handlemousemove} 
+                                onmouseup={handlemouseup}
+                                lwc:ref="tableContainer"
+                                data-element="tableRoot"
+                                onclick={handleTableClick}
+                            > 
+                                <table aria-multiselectable="true" class={tableCl} role="grid">
+                                    <!--Header Row-->
+                                    <thead if:true={localColumns.length}>
+                                        <tr class="slds-line-height_reset">
+
+                                            <!--Row Count-->
+                                            <th if:false={suppressRowCount} 
+                                                class="slds-cell_action-mode" 
+                                                scope="col" 
+                                                data-is-fixed-width="true"
+                                                style="width:3.0rem; max-width: 3.0rem;"
+                                            >
+                                                <div class="slds-truncate slds-assistive-text" title="Errors">Errors</div>
+                                            </th>
+                                            <!--End Row Count-->
+                    
+                                            <!--Select All Header Checkbox-->
+                                            <template lwc:if={radio}> 
+                                                <th class={checkboxThCl}
+                                                    scope="col"
+                                                    data-is-fixed-width="true"
+                                                >
+                                                    <div class="slds-truncate slds-assistive-text"
+                                                        id="column-group-header-radio" 
+                                                        title="Choose a row to select"
+                                                    >Choose a row to select</div>
+                                                </th>
+                                            </template>
+
+                                            <template lwc:else>
+                                                <th if:false={suppressCheckboxes} 
+                                                    class={checkboxThCl} 
+                                                    scope="col"
+                                                    data-is-fixed-width="true"
+                                                >
+                                                    <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
+                                                    <div class="slds-th__action slds-th__action_form">
+                                                        <div class="slds-checkbox">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                name="options" 
+                                                                id="checkbox-unique-id-297" 
+                                                                value="Select All Rows"
+                                                                data-element="selectAllCheckbox" 
+                                                                tabindex="0" 
+                                                                lwc:ref="selectAllCheckbox"
+                                                                onchange={handleSelectAllRows}
+                                                                aria-labelledby="check-select-all-label column-group-header" 
+                                                            />
+                                                            <label class="slds-checkbox__label" for="checkbox-unique-id-297" id="check-select-all-label">
+                                                                <span class="slds-checkbox_faux"></span>
+                                                                <span class="slds-form-element__label slds-assistive-text">Select All</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </th>
+                                            </template>
+                                            <!--End Select All Header Checkbox-->
+                    
+                                            <!--Loop the Columns-->
+                                            <template iterator:it={localColumns}> 
+                                                <!--Column 1-->
+                                                <th key={it.value.fieldName} 
+                                                    aria-label={it.value.label} 
+                                                    aria-sort="none" 
+                                                    class={colsCl}
+                                                    scope="col"
+                                                    width={it.value.width} 
+                                                    data-field-name={it.value.fieldName} 
+                                                    data-element="tableColumn"
+                                                    data-id={it.value.colId}
+                                                    style="min-width: 40px;"
+                                                >
+                                                    <!--Col Sort Button-->
+                                                    <template lwc:if={suppressSort}> 
+                                                        <template lwc:if={suppressColActions}> 
+                                                            <div title={it.value.label} class="slds-truncate">
+                                                                <span class="slds-truncate">{it.value.label}</span>
+                                                            </div>
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                <div class="slds-p-horizontal_x-small slds-truncate">
+                                                                    {it.value.label}
+                                                                </div>
+                                                                <div class="slds-p-horizontal_x-small slds-m-left_x-small">
+                                                                    <c-slds-menu-popover-button 
+                                                                        options={colTextOptions}
+                                                                        value={it.value.textStyle} 
+                                                                        is-left="false"
+                                                                        is-check="true"
+                                                                        menu-id={it.value.fieldName}
+                                                                        onselection={handleColAction}
+                                                                    >
+                                                                        <button 
+                                                                            class="slds-button slds-button_icon slds-th__action-button slds-button_icon-x-small" 
+                                                                            aria-haspopup="true" 
+                                                                            tabindex="-1" 
+                                                                            title=""
+                                                                        >
+                                                                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                                                                                <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                                            </svg>
+                                                                            <span class="slds-assistive-text">Show column actions</span>
+                                                                        </button>
+                                                                    </c-slds-menu-popover-button>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                    </template>
+
+                                                    <template lwc:elseif={it.value.notSortable}> 
+                                                        <template lwc:if={suppressColActions}> 
+                                                            <div title={it.value.label} class="slds-truncate">
+                                                                <span class="slds-truncate">{it.value.label}</span>
+                                                            </div>
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                <div class="slds-p-horizontal_x-small slds-truncate">
+                                                                    {it.value.label}
+                                                                </div>
+                                                                <div class="slds-p-horizontal_x-small slds-m-left_x-small">
+                                                                    <c-slds-menu-popover-button 
+                                                                        options={colTextOptions}
+                                                                        value={it.value.textStyle} 
+                                                                        is-left="false"
+                                                                        is-check="true"
+                                                                        menu-id={it.value.fieldName}
+                                                                        onselection={handleColAction}
+                                                                    >
+                                                                        <button 
+                                                                            class="slds-button slds-button_icon slds-th__action-button slds-button_icon-x-small" 
+                                                                            aria-haspopup="true" 
+                                                                            tabindex="-1" 
+                                                                            title=""
+                                                                        >
+                                                                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                                                                                <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                                            </svg>
+                                                                            <span class="slds-assistive-text">Show column actions</span>
+                                                                        </button>
+                                                                    </c-slds-menu-popover-button>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                    </template>
+
+                                                    <template lwc:else>
+                                                        <!--End Col Sort Button-->
+                                                        <a class="slds-th__action slds-text-link_reset" 
+                                                            href="#" 
+                                                            role="button" 
+                                                            tabindex="-1" 
+                                                            onclick={sortCol} 
+                                                            data-parent-id={it.value.colId} 
+                                                            data-col-field-name={it.value.fieldName}
+                                                            data-not-sortable={it.value.notSortable}
+                                                        >
+                                                            <span class="slds-assistive-text">Sort by: </span>
+                                                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                <span class="slds-truncate" 
+                                                                    title={it.value.label} 
+                                                                >{it.value.label}</span>
+                                                                <template lwc:if={it.value.notSortable}> 
+                                                                    <span if:false={it.value.notSortable} class="slds-icon_container slds-icon-utility-sort_policy">
+                                                                        <svg class="slds-icon slds-icon-text-default" aria-hidden="true">
+                                                                            <use xlink:href={iconMap.utility.sort_policy}></use>
+                                                                        </svg>
+                                                                    </span>
+                                                                </template>
+                                                                <template lwc:else>
+                                                                    <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                                                        <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon" aria-hidden="true">
+                                                                            <use xlink:href={iconMap.utility.arrowdown}></use>
+                                                                        </svg>
+                                                                    </span>
+                                                                </template>
+                                                            </div>
+                                                        </a>
+                                                        <!--End Col Sort Button-->
+
+                                                        <!--Column Action Button-->
+                                                        <template if:false={suppressColActions}>
+                                                            <c-slds-menu-popover-button 
+                                                                options={colTextOptions}
+                                                                value={it.value.textStyle} 
+                                                                is-left="false"
+                                                                is-check="true"
+                                                                menu-id={it.value.fieldName}
+                                                                onselection={handleColAction}
+                                                            >
+                                                                <button 
+                                                                    class="slds-button slds-button_icon slds-th__action-button slds-button_icon-x-small" 
+                                                                    aria-haspopup="true" 
+                                                                    tabindex="-1" 
+                                                                    title=""
+                                                                >
+                                                                    <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                                                                        <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                                    </svg>
+                                                                    <span class="slds-assistive-text">Show column actions</span>
+                                                                </button>
+                                                            </c-slds-menu-popover-button>
+                                                        </template>
+                                                        <!--End Column Action Button-->
+                                                    </template>
+
+                                                    <!--Resizer-->
+                                                    <div if:false={suppressResizableCols} class="slds-resizable" data-is-last-col={it.last}>
+                                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" max="1000" min="40" tabindex="0" />
+                                                        <span class="slds-resizable__handle" onmousedown={handlemousedown}>
+                                                            <span class="slds-resizable__divider"></span>
+                                                        </span>
+                                                    </div>
+                                                    <!--End Resizer-->
+                    
+                                                </th>
+                                                <!--End Column 1-->
+                                            </template>
+                                            <!--End Loop the Columns-->
+                                            
+                                            <!--Actions Button Column-->
+                                            <th if:false={suppressRowActions} data-is-fixed-width="true" class={_rowActionClsObj.th} scope="col" data-id="action-column">
+                                                <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                            </th>
+                                            <!--End Actions Column-->
+                                        </tr>
+                                    </thead>
+                                    <!--End Header Row-->   
+
+                                    <!--No Results Found-->
+                                    <template lwc:if={noResultsFound}> 
+                                        <tbody>
+                                            <tr>
+                                                <td colspan={_noResultsColSpan}> 
+                                                    <div class="slds-grid slds-grid_align-center slds-p-around_large"> 
+                                                        <c-slds-illustration 
+                                                            help-text={noResultMsg}
+                                                            is-no-content="true"
+                                                            size="small"
+                                                        ></c-slds-illustration>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                    <!--End No Results Found-->
+
+                                    <!--Table-->
+                                    <template lwc:else> 
+                                        <tbody if:true={_rows.length}>
+                                            <!--Loop the records-->
+                                            <template for:each={localRows} for:item="row"> 
+                        
+                                                <!--Rows-->
+                                                <tr key={row.id} 
+                                                    aria-selected="false" 
+                                                    class="slds-hint-parent" 
+                                                    data-id={row.rowId} 
+                                                    data-name="tableRow" 
+                                                    data-element="fieldRow"
+                                                >
+
+                                                    <!--Row Count-->
+                                                    <td if:false={suppressRowCount} 
+                                                        class="slds-cell-edit slds-cell-error row-action-cell" 
+                                                        role="gridcell"
+                                                        data-is-fixed-width="true"
+                                                    >
+                                                        <button
+                                                            class="slds-button slds-button_icon slds-button_icon-error slds-m-horizontal_xxx-small slds-hidden" 
+                                                            aria-hidden="true" 
+                                                            tabindex="-1" 
+                                                            title="Item 3 has errors"
+                                                        >
+                                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.error}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Item 3 has errors</span>
+                                                        </button>
+                                                        <span class="slds-text-body_small slds-text-color_weak">{row._rowNumber}</span>
+                                                    </td>
+                                                    <!--End Row Count-->
+                        
+                                                    <!--Checkbox Cell-->
+                                                    <template lwc:if={radio}> 
+                                                        <td class="slds-text-align_right row-action-cell" 
+                                                            role="gridcell"
+                                                            data-is-fixed-width="true"
+                                                        >   
+                                                            <span class="slds-radio">
+                                                                <input 
+                                                                    type="radio" 
+                                                                    id={row.id} 
+                                                                    value={row.id} 
+                                                                    data-element="rowRadio"
+                                                                    data-parent-id={row.rowId}
+                                                                    name="sldstableoptions" 
+                                                                    tabindex="-1" 
+                                                                    onchange={handleRadioChange}
+                                                                    aria-labelledby={row.ariaLabelledBy}
+                                                                />
+                                                                <label class="slds-radio__label" for={row.id} id={row.ariaLabelId}>
+                                                                    <span class="slds-radio_faux"></span>
+                                                                    <span class="slds-form-element__label slds-assistive-text">Select Record</span>
+                                                                </label>
+                                                            </span>
+                                                        </td>
+                                                    </template>
+                                                    <template lwc:else>
+                                                        <td if:false={suppressCheckboxes} 
+                                                            class="slds-text-align_right row-action-cell" 
+                                                            role="gridcell"
+                                                            data-is-fixed-width="true"
+                                                        >
+                                                            <!--Row Checkbox-->
+                                                            <div class="slds-checkbox">
+                                                                <input 
+                                                                    type="checkbox" 
+                                                                    name="options" 
+                                                                    data-element="rowCheckbox"
+                                                                    data-parent-id={row.rowId}
+                                                                    id={row.id} 
+                                                                    value={row.id} 
+                                                                    tabindex="0" 
+                                                                    onchange={handleCheckboxChange}
+                                                                    aria-labelledby="check-button-label-01 column-group-header" 
+                                                                />
+                                                                <label class="slds-checkbox__label" for={row.id} id={row.id}>
+                                                                    <span class="slds-checkbox_faux"></span>
+                                                                    <span class="slds-form-element__label slds-assistive-text">Select item {row.id}</span>
+                                                                </label>
+                                                            </div>
+                                                            <!--End Row Checkbox-->
+                                                        </td>
+                                                    </template>
+                                                    <!--End Checkbox Cell-->
+                        
+                                                    <!--Loop Rows-->
+                                                    <template iterator:it={row.fields}> 
+
+                                                        <!--Row 1 Col 1 Value-->
+                                                        <template lwc:if={it.first}> 
+
+                                                            <!--First Cell with th-->
+                                                            <th key={it.value.keyId} 
+                                                                scope="row" 
+                                                                class="slds-cell-edit slds-cell-wrap"  
+                                                                data-id={it.value.fieldId} 
+                                                                onfocusin={focusCell}
+                                                                onfocusout={blurCell}
+                                                            >
+                                                                <span class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                                                    <!--Cell Value w/ Icon--> 
+                                                                    <template lwc:if={it.value.icon}>
+                                                                        <span class="slds-media slds-media_center"> 
+                                                                            <span class="slds-media__figure"> 
+                                                                                <template lwc:if={it.value.url}> 
+                                                                                    <a
+                                                                                        class="slds-text-link slds-truncate"
+                                                                                        title={it.value.displayValue}
+                                                                                        href={it.value.url}
+                                                                                        data-cell-field-name={it.value.fieldName}
+                                                                                        data-field-id={it.value.fieldId}
+                                                                                        value={it.value.value}
+                                                                                        data-record-id={row.id}
+                                                                                    >
+                                                                                        <span class={it.value.textClass}> 
+                                                                                            <template lwc:if={it.value.highlightFragments}>
+                                                                                                <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                    <template lwc:if={frag.isHit}>
+                                                                                                        <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                    </template>
+                                                                                                    <template lwc:else>
+                                                                                                        <span key={frag.key}>{frag.text}</span>
+                                                                                                    </template>
+                                                                                                </template>
+                                                                                            </template>
+                                                                                            <template lwc:else>
+                                                                                                {it.value.displayValue}
+                                                                                            </template>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </template>
+                                                                                <template lwc:elseif={it.value.isExternalUrl}> 
+                                                                                    <a
+                                                                                        class="slds-text-link slds-truncate"
+                                                                                        title={it.value.displayValue}
+                                                                                        href="#"
+                                                                                        onclick={openExternalLink}
+                                                                                        data-cell-field-name={it.value.fieldName}
+                                                                                        data-field-id={it.value.fieldId}
+                                                                                        value={it.value.value}
+                                                                                        data-record-id={row.id}
+                                                                                    >
+                                                                                        <span class={it.value.textClass}> 
+                                                                                            <template lwc:if={it.value.highlightFragments}>
+                                                                                                <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                    <template lwc:if={frag.isHit}>
+                                                                                                        <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                    </template>
+                                                                                                    <template lwc:else>
+                                                                                                        <span key={frag.key}>{frag.text}</span>
+                                                                                                    </template>
+                                                                                                </template>
+                                                                                            </template>
+                                                                                            <template lwc:else>
+                                                                                                {it.value.displayValue}
+                                                                                            </template>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </template>  
+                                                                                <template lwc:else>
+                                                                                    <span title={it.value.displayValue} 
+                                                                                        class="slds-truncate" 
+                                                                                        data-cell-field-name={it.value.fieldName} 
+                                                                                        data-element="cellValue"
+                                                                                        data-field-display-val={it.value.displayValue} 
+                                                                                    >
+                                                                                        <span class={it.value.textClass}> 
+                                                                                            <template lwc:if={it.value.highlightFragments}>
+                                                                                                <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                    <template lwc:if={frag.isHit}>
+                                                                                                        <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                    </template>
+                                                                                                    <template lwc:else>
+                                                                                                        <span key={frag.key}>{frag.text}</span>
+                                                                                                    </template>
+                                                                                                </template>
+                                                                                            </template>
+                                                                                            <template lwc:else>
+                                                                                                <template lwc:if={it.value.isrichtext}> 
+                                                                                                    <lightning-formatted-rich-text value={it.value.displayValue}></lightning-formatted-rich-text>
+                                                                                                </template>
+                                                                                                <template lwc:elseif={it.value.isemail}> 
+                                                                                                    <lightning-formatted-email value={it.value.displayValue} hide-icon></lightning-formatted-email>
+                                                                                                </template>
+                                                                                                <template lwc:else>{it.value.displayValue}</template>
+                                                                                            </template>
+                                                                                        </span>
+                                                                                    </span>
+                                                                                </template>
+                                                                            </span>
+                                                                            <span class="slds-media__body">
+                                                                                <span class={it.value.icon.container}>
+                                                                                    <svg class={it.value.icon.svg} aria-hidden="true">
+                                                                                        <use xlink:href={it.value.icon.icon}></use>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </template>
+                                                                    <!--End Cell Value w/ Icon--> 
+
+                                                                    <!--Cell Value Plain--> 
+                                                                    <template lwc:else> 
+                                                                        <template lwc:if={it.value.url}> 
+                                                                            <a
+                                                                                class="slds-text-link slds-truncate"
+                                                                                title={it.value.displayValue}
+                                                                                href={it.value.url}
+                                                                                data-cell-field-name={it.value.fieldName}
+                                                                                data-field-id={it.value.fieldId}
+                                                                                value={it.value.value}
+                                                                                data-record-id={row.id}
+                                                                            >
+                                                                                <span class={it.value.textClass}> 
+                                                                                    <template lwc:if={it.value.highlightFragments}>
+                                                                                        <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                            <template lwc:if={frag.isHit}>
+                                                                                                <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                            </template>
+                                                                                            <template lwc:else>
+                                                                                                <span key={frag.key}>{frag.text}</span>
+                                                                                            </template>
+                                                                                        </template>
+                                                                                    </template>
+                                                                                    <template lwc:else>
+                                                                                        {it.value.displayValue}
+                                                                                    </template>
+                                                                                </span>
+                                                                            </a>
+                                                                        </template>
+                                                                        <template lwc:elseif={it.value.isExternalUrl}> 
+                                                                            <a
+                                                                                class="slds-text-link slds-truncate"
+                                                                                title={it.value.displayValue}
+                                                                                href="#"
+                                                                                onclick={openExternalLink}
+                                                                                data-cell-field-name={it.value.fieldName}
+                                                                                data-field-id={it.value.fieldId}
+                                                                                value={it.value.value}
+                                                                                data-record-id={row.id}
+                                                                            >
+                                                                                <span class={it.value.textClass}> 
+                                                                                    <template lwc:if={it.value.highlightFragments}>
+                                                                                        <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                            <template lwc:if={frag.isHit}>
+                                                                                                <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                            </template>
+                                                                                            <template lwc:else>
+                                                                                                <span key={frag.key}>{frag.text}</span>
+                                                                                            </template>
+                                                                                        </template>
+                                                                                    </template>
+                                                                                    <template lwc:else>
+                                                                                        {it.value.displayValue}
+                                                                                    </template>
+                                                                                </span>
+                                                                            </a>
+                                                                        </template>  
+                                                                        <template lwc:else> 
+                                                                            <span class="slds-truncate"
+                                                                                data-element="cellValue"
+                                                                                data-cell-field-name={it.value.fieldName}
+                                                                                data-field-display-val={it.value.displayValue}
+                                                                            >
+                                                                                <span class={it.value.textClass}> 
+                                                                                    <template lwc:if={it.value.highlightFragments}>
+                                                                                        <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                            <template lwc:if={frag.isHit}>
+                                                                                                <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                            </template>
+                                                                                            <template lwc:else>
+                                                                                                <span key={frag.key}>{frag.text}</span>
+                                                                                            </template>
+                                                                                        </template>
+                                                                                    </template>
+                                                                                    <template lwc:else>
+                                                                                        <template lwc:if={it.value.isrichtext}> 
+                                                                                            <lightning-formatted-rich-text value={it.value.displayValue}></lightning-formatted-rich-text>
+                                                                                        </template>
+                                                                                        <template lwc:elseif={it.value.isemail}> 
+                                                                                            <lightning-formatted-email value={it.value.displayValue} hide-icon></lightning-formatted-email>
+                                                                                        </template>
+                                                                                        <template lwc:else>{it.value.displayValue}</template>
+                                                                                    </template>
+                                                                                </span>
+                                                                            </span>
+                                                                        </template>
+                                                                    </template>
+                                                                    <!--End Cell Value Plain-->
+
+                                                                    <!--Edit Button-->
+                                                                    <template lwc:if={it.value.isEditable}>
+                                                                        <button 
+                                                                            class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" 
+                                                                            tabindex="0" 
+                                                                            data-id={row.id} 
+                                                                            data-field-id={it.value.fieldId}
+                                                                            data-record-type-id={it.value.recordTypeId}
+                                                                            onclick={handleEditClick}
+                                                                            onfocus={focusEditButton} 
+                                                                            onblur={blurEditButton}
+                                                                        >
+                                                                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit edit-icon" aria-hidden="true">
+                                                                                <use xlink:href={iconMap.utility.edit}></use>
+                                                                            </svg>
+                                                                            <span class="slds-assistive-text">Edit {it.value.fieldName}</span>
+                                                                        </button>
+                                                                    </template>
+                                                                    <!--End Edit Button-->
+
+                                                                    <!--Locked Field Icon-->
+                                                                    <template lwc:else> 
+                                                                        <button class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" disabled="" tabindex="0" title="Edit">
+                                                                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small" aria-hidden="true">
+                                                                                <use xlink:href={iconMap.utility.lock}></use>
+                                                                            </svg>
+                                                                            <span class="slds-assistive-text">Edit</span>
+                                                                        </button>
+                                                                    </template>
+                                                                    <!--End Locked Field Icon-->
+
+                                                                </span>
+                                                            </th>
+                                                            <!--End First Cell with th-->
+                                                        </template>
+                                                        <!--End Row 1 Col 1 Value-->
+                        
+                                                        <!--All other Fields-->
+                                                        <template lwc:else> 
+                                                            <td key={it.value.keyId} 
+                                                                class="slds-cell-edit slds-cell-wrap" 
+                                                                role="gridcell" 
+                                                                data-id={it.value.fieldId} 
+                                                                onfocusin={focusCell}
+                                                                onfocusout={blurCell}
+                                                            >       
+                                                                <!--Boolean Cell-->   <!--  false = utility:steps  true = utility:check  -->
+                                                                <template lwc:if={it.value.isBoolean}> 
+                                                                    <div class="boolean-cell">
+                                                                        <!--Editable-->
+                                                                        <template lwc:if={it.value.isEditable}>
+                                                                            <div class={booleanCellStyle}>
+                                                                                <div class="slds-form-element__control">
+                                                                                    <div class="slds-checkbox">
+                                                                                        <input 
+                                                                                            type="checkbox" 
+                                                                                            name={it.value.keyId} 
+                                                                                            id={it.value.keyId} 
+                                                                                            value={it.value.fieldId} 
+                                                                                            checked={it.value.value}
+                                                                                            onchange={handleBooleanCellClick}
+                                                                                        />
+                                                                                        <label class="slds-checkbox__label" for={it.value.keyId}>
+                                                                                            <span class="slds-checkbox_faux"></span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </template>
+                                                                        <!--End Editable-->
+                                                                        <!--Not Editable-->
+                                                                        <template lwc:else> 
+                                                                            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                                                                <!--Value is "true"-->
+                                                                                <template lwc:if={it.value.value}>
+                                                                                    <span class="slds-icon_container slds-icon-utility-check slds-current-color" title="True">
+                                                                                        <svg class="slds-icon slds-icon_x-small larger-icon" aria-hidden="true">
+                                                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                                                        </svg>
+                                                                                        <span class="slds-assistive-text">True</span>
+                                                                                    </span>
+                                                                                </template>
+                                                                                <!--End Value is "true"-->
+
+                                                                                <!--Value is "false"-->
+                                                                                <template lwc:else> 
+                                                                                    <span class="slds-icon_container slds-icon-utility-steps slds-current-color" title="False">
+                                                                                        <svg class="slds-icon slds-icon_x-small larger-icon" aria-hidden="true">
+                                                                                            <use xlink:href={iconMap.utility.steps}></use>
+                                                                                        </svg>
+                                                                                        <span class="slds-assistive-text">False</span>
+                                                                                    </span>
+                                                                                </template>
+                                                                                <!--End Value is "false"-->
+
+                                                                                <button if:false={isSimpleTable} 
+                                                                                    class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" 
+                                                                                    disabled="" 
+                                                                                    tabindex="0" 
+                                                                                    title="Locked"
+                                                                                >
+                                                                                    <svg class="slds-button__icon 
+                                                                                        slds-button__icon_hint 
+                                                                                        slds-button__icon_lock " 
+                                                                                        aria-hidden="true"
+                                                                                    >
+                                                                                        <use xlink:href={iconMap.utility.lock}></use>
+                                                                                    </svg>
+                                                                                    <span class="slds-assistive-text">Not Editable</span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </template>
+                                                                        <!--End Not Editable-->
+                                                                    </div>
+                                                                </template>
+                                                                <!--End Boolean Cell-->
+
+                                                                <template lwc:else>
+                                                                    <span class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                                                        <!--Cell Value--> 
+                                                                        <template lwc:if={it.value.icon}>
+                                                                            <span class="slds-media slds-media_center"> 
+                                                                                <span class="slds-media__figure"> 
+                                                                                    <template lwc:if={it.value.url}> 
+                                                                                        <a
+                                                                                            class="slds-text-link slds-truncate"
+                                                                                            title={it.value.displayValue}
+                                                                                            href={it.value.url}
+                                                                                            data-cell-field-name={it.value.fieldName}
+                                                                                            data-field-id={it.value.fieldId}
+                                                                                            value={it.value.value}
+                                                                                            data-record-id={row.id}
+                                                                                        >
+                                                                                            <span class={it.value.textClass}> 
+                                                                                                <template lwc:if={it.value.highlightFragments}>
+                                                                                                    <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                        <template lwc:if={frag.isHit}>
+                                                                                                            <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                        </template>
+                                                                                                        <template lwc:else>
+                                                                                                            <span key={frag.key}>{frag.text}</span>
+                                                                                                        </template>
+                                                                                                    </template>
+                                                                                                </template>
+                                                                                                <template lwc:else>
+                                                                                                    {it.value.displayValue}
+                                                                                                </template>
+                                                                                            </span>
+                                                                                        </a>
+                                                                                    </template>
+                                                                                    <template lwc:elseif={it.value.isExternalUrl}> 
+                                                                                        <a
+                                                                                            class="slds-text-link slds-truncate"
+                                                                                            title={it.value.displayValue}
+                                                                                            href="#"
+                                                                                            onclick={openExternalLink}
+                                                                                            data-cell-field-name={it.value.fieldName}
+                                                                                            data-field-id={it.value.fieldId}
+                                                                                            value={it.value.value}
+                                                                                            data-record-id={row.id}
+                                                                                        >
+                                                                                            <span class={it.value.textClass}> 
+                                                                                                <template lwc:if={it.value.highlightFragments}>
+                                                                                                    <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                        <template lwc:if={frag.isHit}>
+                                                                                                            <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                        </template>
+                                                                                                        <template lwc:else>
+                                                                                                            <span key={frag.key}>{frag.text}</span>
+                                                                                                        </template>
+                                                                                                    </template>
+                                                                                                </template>
+                                                                                                <template lwc:else>
+                                                                                                    {it.value.displayValue}
+                                                                                                </template>
+                                                                                            </span>
+                                                                                        </a>
+                                                                                    </template> 
+                                                                                    <template lwc:else>
+                                                                                        <span title={it.value.displayValue} 
+                                                                                            class="slds-truncate" 
+                                                                                            data-cell-field-name={it.value.fieldName} 
+                                                                                            data-element="cellValue"
+                                                                                            data-field-display-val={it.value.displayValue} 
+                                                                                        >
+                                                                                            <span class={it.value.textClass}> 
+                                                                                                <template lwc:if={it.value.highlightFragments}>
+                                                                                                    <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                        <template lwc:if={frag.isHit}>
+                                                                                                            <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                        </template>
+                                                                                                        <template lwc:else>
+                                                                                                            <span key={frag.key}>{frag.text}</span>
+                                                                                                        </template>
+                                                                                                    </template>
+                                                                                                </template>
+                                                                                                <template lwc:else>
+                                                                                                    <template lwc:if={it.value.isrichtext}> 
+                                                                                                        <lightning-formatted-rich-text value={it.value.displayValue}></lightning-formatted-rich-text>
+                                                                                                    </template>
+                                                                                                    <template lwc:elseif={it.value.isemail}> 
+                                                                                                        <lightning-formatted-email value={it.value.displayValue} hide-icon></lightning-formatted-email>
+                                                                                                    </template>
+                                                                                                    <template lwc:else>{it.value.displayValue}</template>
+                                                                                                </template>
+                                                                                            </span>
+                                                                                        </span>
+                                                                                    </template>
+                                                                                </span>
+                                                                                <span class="slds-media__body">
+                                                                                    <span class={it.value.icon.container}>
+                                                                                        <svg class={it.value.icon.svg} aria-hidden="true">
+                                                                                            <use xlink:href={it.value.icon.icon}></use>
+                                                                                        </svg>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </template>
+                                                                        <template lwc:else> 
+                                                                            <template lwc:if={it.value.url}>
+                                                                                <a
+                                                                                    class="slds-text-link slds-truncate"
+                                                                                    title={it.value.displayValue}
+                                                                                    href={it.value.url}
+                                                                                    data-cell-field-name={it.value.fieldName}
+                                                                                    data-field-id={it.value.fieldId}
+                                                                                    value={it.value.value}
+                                                                                    data-record-id={row.id}
+                                                                                >
+                                                                                    <span class={it.value.textClass}> 
+                                                                                        <template lwc:if={it.value.highlightFragments}>
+                                                                                            <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                <template lwc:if={frag.isHit}>
+                                                                                                    <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                </template>
+                                                                                                <template lwc:else>
+                                                                                                    <span key={frag.key}>{frag.text}</span>
+                                                                                                </template>
+                                                                                            </template>
+                                                                                        </template>
+                                                                                        <template lwc:else>
+                                                                                            <template lwc:if={it.value.isrichtext}> 
+                                                                                                <lightning-formatted-rich-text value={it.value.displayValue}></lightning-formatted-rich-text>
+                                                                                            </template>
+                                                                                            <template lwc:elseif={it.value.isemail}> 
+                                                                                                <lightning-formatted-email value={it.value.displayValue} hide-icon></lightning-formatted-email>
+                                                                                            </template>
+                                                                                            <template lwc:else>{it.value.displayValue}</template>
+                                                                                        </template>
+                                                                                    </span>
+                                                                                </a>
+                                                                            </template>
+                                                                            <template lwc:elseif={it.value.isExternalUrl}> 
+                                                                                <a
+                                                                                    class="slds-text-link slds-truncate"
+                                                                                    title={it.value.displayValue}
+                                                                                    href="#"
+                                                                                    onclick={openExternalLink}
+                                                                                    data-cell-field-name={it.value.fieldName}
+                                                                                    data-field-id={it.value.fieldId}
+                                                                                    value={it.value.value}
+                                                                                    data-record-id={row.id}
+                                                                                >
+                                                                                    <span class={it.value.textClass}> 
+                                                                                        <template lwc:if={it.value.highlightFragments}>
+                                                                                            <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                <template lwc:if={frag.isHit}>
+                                                                                                    <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                </template>
+                                                                                                <template lwc:else>
+                                                                                                    <span key={frag.key}>{frag.text}</span>
+                                                                                                </template>
+                                                                                            </template>
+                                                                                        </template>
+                                                                                        <template lwc:else>
+                                                                                            {it.value.displayValue}
+                                                                                        </template>
+                                                                                    </span>
+                                                                                </a>
+                                                                            </template> 
+                                                                            <template lwc:else> 
+                                                                                <span class="slds-truncate"
+                                                                                    title={it.value.displayValue}
+                                                                                    data-cell-field-name={it.value.fieldName}
+                                                                                >
+                                                                                    <span class={it.value.textClass}> 
+                                                                                        <template lwc:if={it.value.highlightFragments}>
+                                                                                            <template for:each={it.value.highlightFragments} for:item="frag">
+                                                                                                <template lwc:if={frag.isHit}>
+                                                                                                    <mark key={frag.key} class="search-hit">{frag.text}</mark>
+                                                                                                </template>
+                                                                                                <template lwc:else>
+                                                                                                    <span key={frag.key}>{frag.text}</span>
+                                                                                                </template>
+                                                                                            </template>
+                                                                                        </template>
+                                                                                        <template lwc:else>
+                                                                                            <template lwc:if={it.value.isrichtext}> 
+                                                                                                <lightning-formatted-rich-text value={it.value.displayValue}></lightning-formatted-rich-text>
+                                                                                            </template>
+                                                                                            <template lwc:elseif={it.value.isemail}> 
+                                                                                                <lightning-formatted-email value={it.value.displayValue} hide-icon></lightning-formatted-email>
+                                                                                            </template>
+                                                                                            <template lwc:else>{it.value.displayValue}</template>
+                                                                                        </template>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </template>
+                                                                        </template>
+                                                                        <!--End Cell Value-->
+
+                                                                        <!--Edit Button-->
+                                                                        <template lwc:if={it.value.isEditable}>
+                                                                            <button 
+                                                                                class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" 
+                                                                                tabindex="0" 
+                                                                                data-id={row.id} 
+                                                                                data-field-id={it.value.fieldId}
+                                                                                data-record-type-id={it.value.recordTypeId}
+                                                                                onclick={handleEditClick}
+                                                                                onfocus={focusEditButton} 
+                                                                                onblur={blurEditButton}
+                                                                            >
+                                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit edit-icon" aria-hidden="true">
+                                                                                    <use xlink:href={iconMap.utility.edit}></use>
+                                                                                </svg>
+                                                                                <span class="slds-assistive-text">Edit {it.value.fieldName}</span>
+                                                                            </button>
+                                                                        </template>
+                                                                        <!--End Edit Button-->
+                                                                        <!--Locked Field Icon-->
+                                                                        <template lwc:else> 
+                                                                            <button class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" disabled="" tabindex="0" title="Edit">
+                                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small" aria-hidden="true">
+                                                                                    <use xlink:href={iconMap.utility.lock}></use>
+                                                                                </svg>
+                                                                                <span class="slds-assistive-text">Edit</span>
+                                                                            </button>
+                                                                        </template>
+                                                                        <!--End Locked Field Icon-->
+
+                                                                    </span>
+                                                                </template>
+                                                            </td>
+                                                        </template>
+                                                        <!--End All other Fields-->
+                        
+                                                    </template>
+                                                    <!--End Loop Rows-->
+                                                    
+                                                    <!--Actions Cell-->
+                                                    <td if:false={suppressRowActions} 
+                                                        class={_rowActionClsObj.td} 
+                                                        role="gridcell"
+                                                        data-is-fixed-width="true"
+                                                    >
+                                                        <c-slds-menu-popover-button 
+                                                            options={rowActions} 
+                                                            is-left="false"
+                                                            menu-id={row.id}
+                                                            onselection={handleRowAction}
+                                                        >
+                                                            <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" 
+                                                                aria-haspopup="true" 
+                                                                tabindex="0" 
+                                                                aria-selected="false"
+                                                                title="More actions"
+                                                                data-menu-id={row.menuId}
+                                                                data-row-action-id={row.id}
+                                                            >
+                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.down}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">More actions</span>
+                                                            </button>
+                                                        </c-slds-menu-popover-button>
+                                                    </td>
+                                                    <!--End Actions Cell-->
+                                                    
+
+                                                </tr>
+                                                <!--End Rows-->
+                        
+                                            </template>
+                                            <!--End Loop the records-->
+                        
+                                        </tbody>
+                                    </template>
+                                    <!--End Table-->    
+                                </table>
+                            </div>
+                            <!--End Table Col Resize Container-->
+
+                            <!--Edit Footer-->
+                            <template lwc:if={isTableEdited}>
+                                <footer class="slds-popover__footer vg-table_edit-footer">
+                                    <div class="slds-grid slds-grid_align-center slds-gutters_xx-small"> 
+                                        <div class="slds-col"> 
+                                            <button class="slds-button slds-button_neutral" onclick={cancelEdits}>Cancel</button>
+                                        </div>
+                                        <div class="slds-col"> 
+                                            <button class="slds-button slds-button_brand" onclick={saveEdits}>Save</button>
+                                        </div>
+                                    </div>
+                                </footer>
+                            </template>
+                            <!--End Edit Footer-->
+                        </div>
+                    </template>
+                    <!--End Edit Table Container-->
+                    <!--Missing Data-->
+                    <template lwc:else> 
+                        <template lwc:if={loadingMinHeight}> 
+                            <div style="min-height: var(--c-loading-min-height); background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);">
+                                <template lwc:if={localColumns.length}>
+                                    <div class="slds-grid">
+                                        <div class="illustration-wrap slds-grow slds-p-around_large"> 
+                                            <c-slds-illustration
+                                                is-no-data="true"
+                                                help-text={noDataMsg}
+                                                additional-help-text={additionalHelpText}
+                                                size="small"
+                                            ></c-slds-illustration>
+                                        </div>
+                                        <template lwc:if={filterDetails}> 
+                                            <div> 
+                                                <c-slds-table-filter-panel-ui-lists-api
+                                                    table-name={filterDetails.tableName}
+                                                    list-view-meta={selectedListViewMeta}
+                                                    is-list-object-info-variant="true"
+                                                    wired-picklist-vals={_wiredPicklistVals}
+                                                    size="large"
+                                                    object-label={objectLabel}
+                                                    object-api-name={objectName}
+                                                    plural-label={pluralLabel}
+                                                    onclose={closeFilterPanel}
+                                                    onfiltersupdated={handleFiltersUpdated}
+                                                ></c-slds-table-filter-panel-ui-lists-api>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:else> 
+                            <div class="slds-grid" style="background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);">
+                                <div class="illustration-wrap slds-grow slds-p-around_large"> 
+                                    <c-slds-illustration
+                                        is-no-data="true"
+                                        help-text={noDataMsg}
+                                        additional-help-text={additionalHelpText}
+                                        size="small"
+                                    ></c-slds-illustration>
+                                </div>
+                                <template lwc:if={filterDetails}> 
+                                    <div> 
+                                        <c-slds-table-filter-panel-ui-lists-api
+                                            table-name={filterDetails.tableName}
+                                            list-view-meta={selectedListViewMeta}
+                                            is-list-object-info-variant="true"
+                                            wired-picklist-vals={_wiredPicklistVals}
+                                            size="large"
+                                            object-label={objectLabel}
+                                            object-api-name={objectName}
+                                            plural-label={pluralLabel}
+                                            onclose={closeFilterPanel}
+                                            onfiltersupdated={handleFiltersUpdated}
+                                        ></c-slds-table-filter-panel-ui-lists-api>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </template>
+                    <!--End Missing Data-->
+                </template>
+            </div>
+            <template lwc:if={filterDetails}> 
+                <div class={tableGridCls.three}> 
+                    <c-slds-table-filter-panel-ui-lists-api
+                        table-name={filterDetails.tableName}
+                        list-view-meta={selectedListViewMeta}
+                        is-list-object-info-variant="true"
+                        wired-picklist-vals={_wiredPicklistVals}
+                        size="large"
+                        object-label={objectLabel}
+                        object-api-name={objectName}
+                        plural-label={pluralLabel}
+                        onclose={closeFilterPanel}
+                        onfiltersupdated={handleFiltersUpdated}
+                    ></c-slds-table-filter-panel-ui-lists-api>
+                </div>
+            </template>
+        </div>
+    </template>
+    <!--End Wait for data to load-->
+
+</template>

@@ -1,0 +1,240 @@
+<template>
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+    <div data-id="datepicker-root" lwc:ref="datepickerRoot" class={_unifiedCl} onclick={handleUnifiedClick} onkeydown={handleRootKeyDown}>
+        <!-- Add slds-is-open here -->
+        <div class={formElementClass}
+            style="color: var(--slds-g-color-neutral-base-10);"
+            onmousedown={handleComponentMousedown}
+        >
+
+            <template lwc:if={suppressBorder}>
+                <label if:true={label} class="slds-form-element__label slds-truncate slds-p-left_small" for="date-input-id-default"
+                >
+                    <abbr if:true={isRequired} class="slds-required" title="required" aria-hidden="true">* </abbr>
+                    {label}
+                </label>
+            </template>
+            <template lwc:else>
+                <label if:true={label} class="slds-form-element__label slds-truncate" for="date-input-id-default"
+                >
+                    <abbr if:true={isRequired} class="slds-required" title="required" aria-hidden="true">* </abbr>
+                    {label}
+                </label>
+            </template>
+
+            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+
+                <input 
+                    type="text" 
+                    value={_currentValue} 
+                    id="date-input-id-default" 
+                    placeholder={placeHolder} 
+                    class="slds-input" 
+                    data-component="sldsDatePicker"
+                    oninput={handleTextInput}
+                    onclick={toggleDatePicker}
+                    onfocus={handleInputFocus}
+                    onblur={handleInputBlur}
+                    onchange={handleDateChange}
+                    style="width: 100%;"
+                    onkeydown={handleInputKeyDown}
+                    autocomplete="off"
+                    data-id="date-input"
+                    required={isRequired}
+                    aria-invalid={hasError}
+                    aria-describedby={inputAriaDescribedBy}
+                />
+
+                <button if:false={suppressIconButton} 
+                    class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" 
+                    title="Select a date"
+                    onclick={toggleDatePicker}
+                    data-component="sldsDatePicker"
+                    onkeydown={handleTriggerKeyDown}
+                    onfocus={handleToggleButtonFocus}
+                    data-id="button-calendar"
+                >
+                    <svg class="slds-button__icon" aria-hidden="true">
+                        <use xlink:href={iconMap.utility.event}></use>
+                    </svg>
+                    <span class="slds-assistive-text">Select a date</span>
+                </button>
+            </div>
+
+            <div if:true={hasError}
+                class="slds-form-element__help"
+                id="date-input-error"
+            >
+                <template lwc:if={_errorMessage}>
+                    {_errorMessage}
+                </template>
+                <template lwc:else>
+                    This field is required
+                </template>
+            </div>
+
+            <div class="slds-form-element__help slds-assistive-text">Format: 12/31/2024</div>
+
+            <div class={dropdownCl}
+                data-id="date-dropdown"
+                aria-hidden="false" 
+                aria-label="Date picker: June" 
+                role="dialog"
+            >
+
+                <div class="slds-datepicker__filter slds-grid">
+
+                    <div class="slds-datepicker__filter_month slds-grid slds-grid_align-spread slds-grow">
+
+                        <div class="slds-align-middle">
+                            <button class="slds-button slds-button_icon slds-button_icon-container"
+                                style="color: var(--slds-g-color-neutral-base-10)"
+                                title={templateLabels.previousMonth}
+                                onclick={handlePrevMonth} 
+                                data-component="sldsDatePicker"
+                                lwc:ref="leftbutton"
+                                data-id="leftbutton"
+                                disabled={prevDisabled} 
+                                onfocus={handleBtnFocus}
+                            >
+                                <svg class="slds-button__icon" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.left}></use>
+                                </svg>
+                                <span class="slds-assistive-text">{templateLabels.previousMonth}</span>
+                            </button>
+                        </div>
+
+                        <h3 class="slds-align-middle" aria-live="polite">{monthLabel}</h3>
+
+                        <div class="slds-align-middle">
+                            <button class="slds-button slds-button_icon slds-button_icon-container"
+                                    title={templateLabels.nextMonth}
+                                    style="color: var(--slds-g-color-neutral-base-10)"
+                                    onclick={handleNextMonth} 
+                                    data-component="sldsDatePicker"
+                                    lwc:ref="rightbutton"
+                                    data-id="rightbutton"
+                                    disabled={nextDisabled}
+                                    onfocus={handleBtnFocus}
+                                >
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.right}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">{templateLabels.nextMonth}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="slds-shrink-none">
+                        <label class="slds-assistive-text" for="defaultPicker_select">{templateLabels.pickAYear}</label>
+                        <div class="slds-select_container">
+                            <select class="slds-select slds-p-horizontal_medium" 
+                                id="defaultPicker_select" 
+                                onchange={handleYearChange}
+                                onfocus={handleBtnFocus}
+                            >
+                                <template for:each={years} for:item="y">
+                                    <option key={y.value}
+                                        value={y.value}
+                                        selected={y.isSelected}
+                                        class="slds-p-horizontal_medium"
+                                    >{y.label}</option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <table aria-multiselectable="true" 
+                    class="slds-datepicker__month" 
+                    role="grid" 
+                >
+                    <thead>
+                        <tr id="defaultPicker-weekdays">
+                            <th id="defaultPicker-Sunday" scope="col">
+                                <abbr title="Sunday">Sun</abbr>
+                            </th>
+                            <th id="defaultPicker-Monday" scope="col">
+                                <abbr title="Monday">Mon</abbr>
+                            </th>
+                            <th id="defaultPicker-Tuesday" scope="col">
+                                <abbr title="Tuesday">Tue</abbr>
+                            </th>
+                            <th id="defaultPicker-Wednesday" scope="col">
+                                <abbr title="Wednesday">Wed</abbr>
+                            </th>
+                            <th id="defaultPicker-Thursday" scope="col">
+                                <abbr title="Thursday">Thu</abbr>
+                            </th>
+                            <th id="defaultPicker-Friday" scope="col">
+                                <abbr title="Friday">Fri</abbr>
+                            </th>
+                            <th id="defaultPicker-Saturday" scope="col">
+                                <abbr title="Saturday">Sat</abbr>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <template iterator:it={weeks}>
+                            <tr key={it.value.keyId}>
+                                <template for:each={it.value.days} for:item="d">
+                                    <td key={d.key}
+                                        role="gridcell"
+                                        aria-label={d.aria}
+                                        aria-selected={d.isSelected}
+                                        aria-current={d.isToday}
+                                        aria-disabled={d.disabled}
+                                        class={d.tdClass}
+                                        data-value={d.iso}
+                                    >
+                                        <span
+                                            class="slds-day"
+                                            role="button"
+                                            tabindex={d.tabIndex}
+                                            data-iso={d.iso}
+                                            data-value={d.iso}
+                                            data-week={it.value.weekNum}
+                                            data-day={d.day}
+                                            data-idx={d.idx}
+                                            onclick={handleDayClick}
+                                            onfocus={handleDayFocus}
+                                            onkeydown={handleTbodyKeydown}
+                                        >{d.day}</span>
+                                    </td>
+                                </template>
+                            </tr>
+                            <template lwc:if={it.last}>
+                                <template lwc:if={evenHeightArr.length}>
+                                    <template for:each={evenHeightArr} for:item="ht">
+                                        <tr key={ht}>
+                                            <td colspan="7"></td>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </template>
+                        </template>
+                    </tbody>
+
+                </table>
+                <button class="slds-button slds-align_absolute-center slds-text-link" 
+                    onclick={assignToday}
+                    lwc:ref="todayButton"
+                    onfocus={handleBtnFocus}
+                >{templateLabels.today}</button>
+            </div>
+            
+        </div>
+    </div>
+</template>

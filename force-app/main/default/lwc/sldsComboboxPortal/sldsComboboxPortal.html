@@ -1,0 +1,100 @@
+<template>
+  <template lwc:if={toastObj}>
+    <c-toast-lwc
+      variant={toastObj.variant}
+      mode={toastObj.mode}
+      object-api-name={toastObj.objectApiName}
+      header={toastObj.header}
+      message={toastObj.message}
+    ></c-toast-lwc>
+  </template>
+
+  <div class={mainFormElementCl}>
+    <template lwc:if={label}>
+      <label class="slds-form-element__label" for="combobox-input">
+        <abbr if:true={isRequired} class="slds-required" title="required"
+          >*
+        </abbr>
+        {label}
+      </label>
+    </template>
+    <template lwc:elseif={isRequired}>
+      <abbr class="slds-required" title="required">* </abbr>
+    </template>
+
+    <div class="slds-form-element__control">
+      <div class="slds-combobox_container">
+        <div
+          class={dropdownCl}
+          aria-expanded={isOpenString}
+          aria-haspopup="listbox"
+          role="combobox"
+          data-id="combobox"
+          onclick={handleComboboxClick}
+          onkeydown={handleKeyDown}
+          onmousedown={handleMouseDown}
+          onmouseup={handleMouseUp}
+        >
+          <div class={formElementClass} role="none">
+            <input
+              type="text"
+              id="combobox-input"
+              class={inputCl}
+              style="caret-color: transparent; user-select: none !important"
+              aria-autocomplete="off"
+              aria-controls={listboxId}
+              aria-activedescendant={highlightedOptionId}
+              autocomplete="off"
+              role="textbox"
+              disabled={isDisabled}
+              required={isRequired}
+              value={currentValueLabel}
+              placeholder={placeHolder}
+              data-id="sldsComboboxInput"
+              onblur={handleBlur}
+              onfocus={handleFocus}
+              onfocusout={handleFocusOut}
+              title={currentValueLabel}
+              readonly
+            />
+            <template lwc:if={showDropdownIcon}>
+              <span
+                class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right"
+              >
+                <lightning-icon
+                  icon-name="utility:down"
+                  size={_downIconSize}
+                ></lightning-icon>
+              </span>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template if:false={suppressErrorText}>
+      <div
+        if:true={hasError}
+        class="slds-form-element__help"
+        id="error-message-unique-id"
+      >
+        <template lwc:if={errorMsg}> {errorMsg} </template>
+        <template lwc:else> Enter a value. </template>
+      </div>
+    </template>
+
+    <div class={dropdownHostClass}>
+        <c-slds-combobox-portal-dropdown
+            listbox-id={listboxId}
+            options={localOptions}
+            current-value={currentValue}
+            has-meta={hasMeta}
+            dropdown-length={dropdownLength}
+            flip-up={flipUp}
+            font-size={fontSize}
+            onselection={handleDropdownSelection}
+            onoptionmousedown={handleDropdownMouseDown}
+        ></c-slds-combobox-portal-dropdown>
+    </div>
+  </div>
+</template>

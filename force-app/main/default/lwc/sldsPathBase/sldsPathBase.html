@@ -1,0 +1,429 @@
+<template>
+    <!-- 
+        With coaching
+        <div class="slds-path slds-path_has-coaching">
+            <div class="slds-grid slds-path__track">
+                <div class="slds-grid slds-path__scroller-container">
+                    <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-path__trigger" title="Toggle Sales Coaching" aria-expanded="false" aria-controls="path-coaching-1">
+                        <svg class="slds-button__icon" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.chevronright}></use>
+                        </svg>
+                        <span class="slds-assistive-text">Show Details</span>
+                    </button>
+    -->
+
+    <div class={_regionCl} lwc:ref="pathRegion">
+        <!--Coaching Variant-->
+        <template lwc:if={isCoaching}> 
+            <!--Coaching Variant-->
+            <div class="slds-path slds-path_has-coaching">
+
+                <!--Stages Section-->
+                <div class="slds-grid slds-path__track">
+                    <div class="slds-grid slds-path__scroller-container">
+
+                        <!--Active Coaching Button-->
+                        <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-path__trigger" 
+                            title="Toggle Sales Coaching" 
+                            aria-expanded="false" 
+                            aria-controls="path-coaching-1"
+                            onclick={toggleCoaching}
+                        >
+                            <svg class="slds-button__icon" aria-hidden="true">
+                                <use xlink:href={iconMap.utility.chevronright}></use>
+                            </svg>
+                            <span class="slds-assistive-text">Show Details</span>
+                        </button>
+                        <!--End Active Coaching Button-->
+
+                        <!--Path Stages List-->
+                        <div class="slds-path__scroller">
+                            <div class="slds-path__scroller_inner">
+                                <ul class="slds-path__nav" 
+                                    role="tabset" 
+                                    aria-orientation="horizontal" 
+                                    aria-labelledby="slds-path__stage-name-2"
+                                >
+
+                                    <template for:each={localSteps} for:item="step" for:index="index"> 
+
+                                        <!--aria-expanded="true" on slds-path__link if coaching is toggled-->
+                                        <!--aria-selected="true" on active slds-path__link (not current)-->
+
+                                        <!--Current Step (Coaching)-->
+                                        <template lwc:if={step.isCurrent}> 
+                                            <li class="slds-path__item slds-is-current" 
+                                                role="presentation" 
+                                                key={step.keyId} 
+                                                data-index={index}
+                                                data-value={step.value}
+                                                onmouseenter={showTooltip}
+                                                onmouseleave={hideTooltip}
+                                                title=""
+                                            >
+                                                <a aria-selected="false" 
+                                                    class="slds-path__link" 
+                                                    href="#" 
+                                                    id={step.keyId} 
+                                                    role="tab" 
+                                                    aria-expanded="false"
+                                                    tabindex="-1"
+                                                    title=""
+                                                    onclick={handleStepClick}
+                                                >
+                                                    <span class="slds-path__stage" title="">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                    </span>
+                                                    <span class="slds-path__title" title="">{step.label}</span>
+                                                </a>
+                                            </li>
+                                        </template>
+                                        <!--End Current Step (Coaching)-->
+
+                                        <!--Incomplete Step (Coaching)-->
+                                        <template lwc:elseif={step.isIncomplete}> 
+                                            <li class="slds-path__item slds-is-incomplete" 
+                                                role="presentation" 
+                                                key={step.keyId} 
+                                                data-value={step.value}
+                                                data-index={index}
+                                                onmouseenter={showTooltip}
+                                                onmouseleave={hideTooltip}
+                                                title=""
+                                            >
+                                                <a aria-selected="false" 
+                                                    class="slds-path__link" 
+                                                    href="#" 
+                                                    id={step.keyId} 
+                                                    role="tab" 
+                                                    tabindex="-1"
+                                                    title=""
+                                                    aria-expanded="false"
+                                                    onclick={handleStepClick}
+                                                >
+                                                    <span class="slds-path__stage" title="">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                    </span>
+                                                    <span class="slds-path__title" title="">{step.label}</span>
+                                                </a>
+                                            </li>
+                                        </template>
+                                        <!--End Incomplete Step (Coaching)-->
+                                        
+                                        <!--Completed Step (Coaching)-->
+                                        <template lwc:elseif={step.isComplete}> 
+                                            <li class="slds-path__item slds-is-complete" 
+                                                role="presentation" 
+                                                key={step.keyId} 
+                                                data-index={index}
+                                                data-value={step.value}
+                                                onmouseenter={showTooltip}
+                                                onmouseleave={hideTooltip}
+                                            >
+                                                <a aria-selected="false" 
+                                                    class="slds-path__link" 
+                                                    href="#" 
+                                                    id={step.keyId} 
+                                                    role="tab" 
+                                                    tabindex="-1"
+                                                    aria-expanded="false"
+                                                    onclick={handleStepClick}
+                                                >
+                                                    <span class="slds-path__stage">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">{stepName} Complete</span>
+                                                    </span>
+                                                    <span class="slds-path__title">{step.label}</span>
+                                                </a>
+                                            </li>
+                                        </template>
+                                        <!--End Completed Step (Coaching)-->
+
+                                    </template>
+
+                                </ul>
+                            </div>
+                        </div>
+                        <!--End Path Stages List-->
+                    </div>
+
+                    <!--Stage Actions-->
+                    <div class="slds-grid slds-path__action">
+                        <span id="slds-path__stage-name" class="slds-path__stage-name">{stepName}: {_activeStepLabel}</span>
+
+                        <template lwc:if={_activeStepLabel}> 
+                            <!--Mark as Complete Button-->
+                            <template lwc:if={_isCurrentActive}>
+                                <button class="slds-button slds-button_brand slds-path__mark-complete" onclick={sendNewStage}>
+                                    <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.check}></use>
+                                    </svg>Mark {stepName} as Complete
+                                </button>
+                            </template>
+                            <!--End Mark as Complete Button-->
+
+                            <!--Mark as Current Stage Button-->
+                            <template lwc:else>
+                                <button class="slds-button slds-button_brand slds-path__mark-complete" onclick={sendNewStage}>Mark as Current {stepName}</button>
+                            </template>
+                            <!--End Mark as Current Stage Button-->
+                        </template>
+
+                        <!--Disabled Mark as Complete Button-->
+                        <template lwc:else> 
+                            <button class="slds-button slds-button_brand slds-path__mark-complete slds-is-disabled" disabled="" style="cursor: not-allowed">
+                                <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.check}></use>
+                                </svg>Mark {stepName} as Complete
+                            </button>
+                        </template>
+                        <!--End Disabled Mark as Complete Button-->
+
+                        <!--Expand Coaching Section Button-->
+                        <button class="slds-button slds-button_neutral slds-path__trigger-coaching-content" 
+                            aria-expanded="false" 
+                            aria-controls="path-coaching-1"
+                            onclick={toggleCoaching}
+                        >Show More</button>
+                        <!--End Expand Coaching Section Button-->
+                    </div>
+                    <!--End Stage Actions-->
+
+                </div>
+                <!--End Stages Section-->
+
+                <!--Stage Coaching Section-->
+                <div class="slds-path__content slds-is-collapsed" id="path-coaching-1">
+                    <div class="slds-path__coach slds-grid slds-p-top_small">
+
+                        <!--Key Fields Section-->
+                        <div class="slds-path__keys">
+                            <div class="slds-grid slds-grid_align-spread slds-path__coach-title">
+                                <h2>Key Fields This {stepName}</h2>
+                                <button class="slds-button slds-path__coach-edit slds-text-body_small">Edit</button>
+                            </div>
+                            <div class="slds-form" role="list">
+                                <!--Field Label & Value-->
+                                <div class="slds-form__row">
+                                    <div class="slds-form__item" role="listitem">
+                                        <div class="slds-form-element slds-form-element_readonly slds-form-element_stacked slds-hint-parent">
+                                            <span class="slds-form-element__label">Expected Budget</span>
+                                            <div class="slds-form-element__control">
+                                                <div class="slds-form-element__static">$10,000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--End Field Label & Value-->
+                            </div>
+                        </div>
+                        <!--End Key Fields Section-->
+
+                        <!--Stage Guidance Section-->
+                        <div class="slds-path__guidance">
+                            <template lwc:if={activeCoaching}>
+                                <h2 class="slds-path__coach-title">Guidance for Success - {_activeStepLabel}</h2>
+                                <div class="slds-text-longform slds-path__guidance-content">
+                                    <template for:each={activeCoaching} for:item="item" for:index="i">
+                                        <div key={item.header}> 
+                                            <p>
+                                                <span style="font-weight: bold;">{item.header}</span>
+                                                &nbsp;
+                                                {item.text}
+                                            </p>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                        <!--End Stage Guidance Section-->
+
+                    </div>
+                </div>
+                <!--End Stage Coaching Section-->
+
+            </div>
+            <!--End Coaching Variant-->
+        </template>
+        <!--End Coaching Variant-->
+        
+
+        <!--Base Variant-->
+        <template lwc:else>
+            <div class="slds-path">
+                <div class="slds-grid slds-path__track">
+                    <div class="slds-grid slds-path__scroller-container slds-wrap">
+                        <div class="slds-path__scroller">
+                            <div class="slds-path__scroller_inner">
+                                <!--Path Stages-->
+                                <ul class="slds-path__nav" 
+                                    role="listbox" 
+                                    aria-orientation="horizontal" 
+                                    aria-labelledby="slds-path__stage-name"
+                                    onkeydown={handleKeyDown}
+                                >
+
+                                    <template for:each={localSteps} for:item="step" for:index="index"> 
+
+                                        <!--Current Step-->
+                                        <template lwc:if={step.isCurrent}> 
+                                            <li class="slds-path__item slds-is-current" 
+                                                role="presentation" 
+                                                key={step.keyId} 
+                                                data-index={index}
+                                                data-value={step.value}
+                                                onmouseenter={showTooltip}
+                                                onmouseleave={hideTooltip}
+                                            >
+                                                <a aria-selected="false" 
+                                                    class="slds-path__link" 
+                                                    href="#" 
+                                                    id={step.keyId} 
+                                                    role="option" 
+                                                    tabindex="-1"
+                                                    onclick={handleStepClick}
+                                                >
+                                                    <span class="slds-path__stage">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                    </span>
+                                                    <span class="slds-path__title">{step.label}</span>
+                                                </a>
+                                            </li>
+                                        </template>
+                                        <!--End Current Step-->
+
+                                        <!--Incomplete Step-->
+                                        <template lwc:elseif={step.isIncomplete}> 
+                                            <li class="slds-path__item slds-is-incomplete" 
+                                                role="presentation" 
+                                                key={step.keyId} 
+                                                data-value={step.value}
+                                                data-index={index}
+                                                onmouseenter={showTooltip}
+                                                onmouseleave={hideTooltip}
+                                            >
+                                                <a aria-selected="false" 
+                                                    class="slds-path__link" 
+                                                    href="#" 
+                                                    id={step.keyId} 
+                                                    role="option" 
+                                                    tabindex="-1"
+                                                    onclick={handleStepClick}
+                                                >
+                                                    <span class="slds-path__stage">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                    </span>
+                                                    <span class="slds-path__title">{step.label}</span>
+                                                </a>
+                                            </li>
+                                        </template>
+                                        <!--End Incomplete Step-->
+
+                                        <!--Completed Step-->
+                                        <template lwc:elseif={step.isComplete}> 
+                                            <li class="slds-path__item slds-is-complete" 
+                                                role="presentation" 
+                                                key={step.keyId} 
+                                                data-index={index}
+                                                data-value={step.value}
+                                                onmouseenter={showTooltip}
+                                                onmouseleave={hideTooltip}
+                                            >
+                                                <a aria-selected="false" 
+                                                    class="slds-path__link" 
+                                                    href="#" 
+                                                    id={step.keyId} 
+                                                    role="option" 
+                                                    tabindex="-1"
+                                                    onclick={handleStepClick}
+                                                >
+                                                    <span class="slds-path__stage">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">{stepName} Complete</span>
+                                                    </span>
+                                                    <span class="slds-path__title">{step.label}</span>
+                                                </a>
+                                            </li>
+                                        </template>
+                                        <!--End Completed Step-->
+
+                                    </template>
+
+                                </ul>
+                                <!--End Path Stages-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Save Stage Button-->
+                    <div class="slds-grid slds-path__action">
+                        <span id="slds-path__stage-name-1" class="slds-path__stage-name">{stepName}: {_activeStepLabel}</span>
+
+                        <template lwc:if={_activeStepLabel}> 
+                            <!--Mark as Complete Button-->
+                            <template lwc:if={_isCurrentActive}>
+
+                                <template lwc:if={isClosed}> 
+                                    <button class="slds-button slds-button_brand slds-path__mark-complete" onclick={changeClosedStage}>
+                                        <template lwc:if={_closedLabel}>Change {_closedLabel} {stepName}</template>
+                                        <template lwc:else>Change Closed {stepName}</template>
+                                    </button>
+                                </template>
+
+                                <template lwc:else>
+                                    <button class="slds-button slds-button_brand slds-path__mark-complete" onclick={sendNewStage}>
+                                        <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                            <use xlink:href={iconMap.utility.check}></use>
+                                        </svg>Mark {stepName} as Complete
+                                    </button>
+                                </template>
+                            </template>
+                            <!--End Mark as Complete Button-->
+
+                            <!--Mark as Current Stage Button-->
+                            <template lwc:else>
+                                <button class="slds-button slds-button_brand slds-path__mark-complete" onclick={sendNewStage}>Mark as Current {stepName}</button>
+                            </template>
+                            <!--End Mark as Current Stage Button-->
+                        </template>
+
+                        <template lwc:else> 
+                            <!--Mark as Complete Button-->
+                            <button class="slds-button slds-button_brand slds-path__mark-complete slds-is-disabled" disabled="" style="cursor: not-allowed">
+                                <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.check}></use>
+                                </svg>Mark {stepName} as Complete
+                            </button>
+                            <!--End Mark as Complete Button-->
+                        </template>
+                    </div>
+                    <!--End Save Stage Button-->
+                </div>
+
+                <div class="slds-popover slds-popover_tooltip slds-nubbin_top slds-hide"
+                    role="tooltip"
+                    data-el="tooltip"
+                >
+                    <div class="slds-popover__body slds-text-body_regular slds-text-color_inverse"
+                        style="font-size: var(--dxp-s-body-font-size, 1.0rem);"
+                    >{_tooltipText}</div>
+                </div>
+            </div>
+        </template>
+        <!--End Base Variant-->
+    </div>
+
+
+</template>

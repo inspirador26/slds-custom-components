@@ -1,0 +1,13 @@
+<template>
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+</template>

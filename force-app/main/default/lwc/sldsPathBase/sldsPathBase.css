@@ -1,0 +1,35 @@
+:host {
+    --lwc-colorBackgroundPathLost: #ea001e;
+    --lwc-colorBackgroundPathWon: #795311;
+
+    --path-width: 100%;
+    min-width: 0;
+}
+
+.slds-path__stage svg {
+    fill: var(--slds-g-color-neutral-base-100, #fff)
+}
+
+
+.path-region {
+    max-width: var(--path-width, 100%);
+    width: 100%;
+    min-width: 0;
+}
+
+/* Shrink all SLDS nubbins (any direction or variant) */
+[class*="slds-nubbin"]::before,
+[class*="slds-nubbin"]::after {
+    transform: rotate(45deg) scale(0.6);
+}
+
+.slds-popover__body {
+    font-size: 14px;
+}
+
+.slds-path__item,
+.slds-path__nav {
+    /* Only extend clipping horizontally */
+    -webkit-clip-path: inset(0.4px -30px 0.4px -30px);
+            clip-path: inset(0.4px -30px 0.4px -30px); 
+}

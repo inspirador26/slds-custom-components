@@ -1,0 +1,87 @@
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --c-content-overflow: auto;
+    --modal-border-radius: var(--slds-c-modal-radius-border, 0.25rem);
+}
+
+.slds-modal__container  {
+    border-radius: var(--modal-border-radius, var(--slds-c-modal-radius-border, 0.25rem));
+}
+
+.slds-modal__header .slds-modal__close { 
+    background-color: var(--slds-g-color-neutral-base-100, #fff);  
+    color: var(--slds-g-color-neutral-base-50);
+}
+
+.slds-modal__content.modal-body-frame {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: visible;
+}
+
+.modal-body-scroll {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: visible;
+}
+
+.modal-body-scroll.oveflow-visible {
+    overflow: visible;
+}
+
+.slds-modal__header {
+    border-top-left-radius: var(--modal-border-radius, var(--slds-c-modal-radius-border, 0.25rem));
+    border-top-right-radius: var(--modal-border-radius, var(--slds-c-modal-radius-border, 0.25rem));
+}
+.slds-modal__footer {
+    border-bottom-left-radius: var(--modal-border-radius, var(--slds-c-modal-radius-border, 0.25rem));
+    border-bottom-right-radius: var(--modal-border-radius, var(--slds-c-modal-radius-border, 0.25rem));
+}
+
+.slds-modal__header .modal-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-50);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-50);
+}
+
+
+.slds-modal__header .slds-modal__close:hover {
+    background-color: var(--slds-g-color-neutral-base-90);
+    color: var(--slds-g-color-neutral-base-30);
+}
+
+.slds-modal__header .slds-modal__close:active {
+    background-color: var(--slds-g-color-neutral-base-80);
+    color: var(--slds-g-color-neutral-base-30);
+}
+
+.slds-modal__header .slds-modal__close:not(:focus):not(:active):not(:hover) .slds-button__icon {
+    fill: var(--slds-g-color-neutral-base-30);
+}
+
+
+.slds-modal__header .slds-modal__close:focus .modal-icon,
+.slds-modal__header .slds-modal__close:hover .modal-icon,
+.slds-modal__header .slds-modal__close:active .modal-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-30);
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-30);        
+}
+
+.custom-body {
+    padding: 1rem;
+}
+
+.modal-shell {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+    min-height: 0;
+    overflow: visible;
+}
+
+.slds-modal__footer {
+    position: relative;
+    z-index: 1;
+}

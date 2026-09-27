@@ -1,0 +1,523 @@
+<template>
+
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <template lwc:if={modalConfig}>
+        <c-slds-modal
+            modal-title={modalConfig.modalTitle}
+            columns={modalConfig.columns}
+            fields={modalConfig.fields}
+            modal-message={modalConfig.modalMessage}
+            cancel-button-label={modalConfig.cancelButtonLabel}
+            okay-button-label={modalConfig.okayButtonLabel}
+            onmodalclick={_handleDeleteAction}
+            data-id="deleteRecordsModal"
+        ></c-slds-modal>
+    </template>
+
+    <template lwc:if={suppressLi}>
+        <article class="slds-tile slds-media slds-card__tile slds-hint-parent slds-p-around_small">
+            <div class="slds-media__figure">
+                <span 
+                    class={_icon.container}
+                    title="Description of icon when needed"
+                >
+                    <svg class={_icon.svg} aria-hidden="true">
+                        <use xlink:href={_icon.icon}></use>
+                    </svg>
+                    <span class="slds-assistive-text">Contact</span>
+                </span>
+            </div>
+            <div class="slds-media__body" data-id="spaceReduceTarget">
+                <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                    <h3 class="slds-tile__title slds-truncate slds-align-top">
+                        <template lwc:if={_tileUrl}> 
+                            <p>{_tileUrl}</p>
+                            <a if:true={_tileName} href={_tileUrl} title={_tileName}>{_tileName}</a>
+                        </template>
+                        <template lwc:else> 
+                            <template lwc:if={_tileName}>
+                                <span class="slds-truncate" style="font-weight: 600;" title={_tileName}>{_tileName}</span>
+                            </template>
+                            <template lwc:elseif={recordName}> 
+                                <span class="slds-truncate" style="font-weight: 600;" title={recordName}>{recordName}</span>
+                            </template>
+                        </template>
+                    </h3>
+                    <template lwc:if={actionSlot}> 
+                        <div class="slds-shrink-none slds-align-top">
+                            <template lwc:if={suppressActions}> 
+                                <slot name="actionSlot"></slot>
+                            </template>
+                            <template lwc:else> 
+                                <div class="slds-grid slds-grid_pull-padded-xx-small"> 
+                                    <div class="slds-col slds-p-horizontal_xx-small"> 
+                                        <slot name="actionSlot"></slot>
+                                    </div>
+                                    <div class="slds-col slds-p-horizontal_xx-small"> 
+                                        <c-slds-menu-popover-button 
+                                            options={recordActions}
+                                            is-left="false"
+                                            is-check="false"
+                                            data-record-id={_recordId}
+                                            onselection={handleRecordAction}
+                                        >
+                                            <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" title="More options">
+                                                <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.down}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">More options</span>
+                                            </button>
+                                        </c-slds-menu-popover-button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <div if:false={suppressActions} class="slds-shrink-none slds-align-top">
+                            <c-slds-menu-popover-button 
+                                options={recordActions}
+                                is-left="false"
+                                is-check="false"
+                                data-record-id={_recordId}
+                                onselection={handleRecordAction}
+                            >
+                                <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" title="More options">
+                                    <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.down}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">More options</span>
+                                </button>
+                            </c-slds-menu-popover-button>
+                        </div>
+                    </template>
+                </div>
+
+                <template lwc:if={fieldsPerRow}>
+                    <div class="slds-tile__detail">
+                        <!-- outer grid controls how many "field cells" per row -->
+                        <div class={_gridCl}>
+                            <template for:each={_fields} for:item="field">
+                                <template if:false={field.isHidden}>
+                                    <!-- one field cell -->
+                                    <div key={field.keyId} class={_fieldsPerRowCl}>
+                                        <!-- inner layout keeps label/value on one line and truncates -->
+                                        <div class="slds-grid slds-gutters_xx-small slds-min-width_0 slds-wrap">
+                                            <!-- Label -->
+                                            <template if:false={suppressFieldLabel}>
+                                                <div
+                                                    class="slds-col slds-grow-none slds-text-color_weak slds-truncate field-label"
+                                                    title={field.label}>
+                                                    {field.label}:
+                                                </div>
+                                            </template>
+
+                                            <!-- Value (takes remaining width, truncates) -->
+                                            <div class="slds-col slds-min-width_0 slds-truncate field-value" title={field.valueTitle}>
+                                                <template lwc:if={field.hasReference}>
+                                                    <template lwc:if={field.url}>
+                                                        <a class="value-link" href={field.url}>
+                                                            <template lwc:if={field.displayValue}>{field.displayValue}</template>
+                                                            <template lwc:else>—</template>
+                                                        </a>
+                                                    </template>
+                                                    <template lwc:else>
+                                                        <template lwc:if={field.displayValue}>{field.displayValue}</template>
+                                                        <template lwc:else>—</template>
+                                                    </template>
+                                                </template>
+
+                                                <template lwc:elseif={field.isboolean}> 
+                                                    <template lwc:if={field.value}> 
+                                                        <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                            <span class="slds-icon_container slds-icon-utility-check slds-current-color" title="True">
+                                                                <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.check}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">True</span>
+                                                            </span>
+                                                        </span>
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                            <span class="slds-icon_container slds-icon-utility-steps slds-current-color" title="False">
+                                                                <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.steps}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">False</span>
+                                                            </span>
+                                                        </span>
+                                                    </template>
+                                                </template>
+
+                                                <template lwc:elseif={field.displayValue}>
+                                                    <template lwc:if={field.isemail}> 
+                                                        <lightning-formatted-email value={field.displayValue} hide-icon></lightning-formatted-email>
+                                                    </template>
+                                                    <template lwc:else>{field.displayValue}</template>
+                                                </template>
+
+                                                <template lwc:else>
+                                                    — 
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <div class="slds-tile__detail">
+                        <dl class="slds-list_horizontal slds-wrap">
+                            <template for:each={_fields} for:item="field"> 
+
+                                <template if:false={field.isHidden}> 
+                                    <!--Field Label-->
+                                    <dt if:false={suppressFieldLabel} class="slds-item_label slds-text-color_weak slds-truncate" title={field.label} key={field.keyId}>
+                                        {field.label}:
+                                    </dt>
+                                    <!--End Field Label-->
+
+                                    <!--Field Value-->
+                                    <template lwc:if={suppressFieldLabel}> 
+                                        <template lwc:if={field.isboolean}> 
+                                            <dd class="slds-item_detail slds-truncate" title={field.valueTitle} key={field.keyId}>
+                                                <template lwc:if={field.value}> 
+                                                    <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                        <span class="slds-icon_container slds-icon-utility-check slds-current-color" title="True">
+                                                            <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.check}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">True</span>
+                                                        </span>
+                                                    </span>
+                                                </template>
+                                                <template lwc:else> 
+                                                    <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                        <span class="slds-icon_container slds-icon-utility-steps slds-current-color" title="False">
+                                                            <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.steps}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">False</span>
+                                                        </span>
+                                                    </span>
+                                                </template>
+                                            </dd>
+                                        </template>
+                                        <template lwc:elseif={field.displayValue}> 
+                                            <dd class="slds-item_detail slds-truncate" title={field.valueTitle} key={field.keyId}>
+                                                <template lwc:if={field.isemail}> 
+                                                    <lightning-formatted-email value={field.displayValue} hide-icon></lightning-formatted-email>
+                                                </template>
+                                                <template lwc:else>{field.displayValue}</template>
+                                            </dd>
+                                        </template>
+                                        <template lwc:else> 
+                                            <dd class="slds-item_detail slds-truncate" title={field.label} key={field.keyId}>
+                                                —
+                                            </dd>
+                                        </template>
+                                    </template>
+
+                                    <template lwc:else> 
+                                        <dd class="slds-item_detail slds-truncate" title={field.valueTitle} key={field.keyId}>
+                                            
+                                            <template lwc:if={field.hasReference}> 
+                                                <template lwc:if={field.url}> 
+                                                    <a href={field.url}>{field.displayValue}</a>
+                                                </template>
+                                                <template lwc:else> 
+                                                    <span if:true={field.displayValue}>{field.displayValue}</span>
+                                                    <span if:false={field.displayValue}>—</span>
+                                                </template>
+                                            </template>
+
+                                            <template lwc:elseif={field.isboolean}> 
+                                                <template lwc:if={field.value}> 
+                                                    <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                        <span class="slds-icon_container slds-icon-utility-check slds-current-color" title="True">
+                                                            <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.check}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">True</span>
+                                                        </span>
+                                                    </span>
+                                                </template>
+                                                <template lwc:else> 
+                                                    <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                        <span class="slds-icon_container slds-icon-utility-steps slds-current-color" title="False">
+                                                            <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.steps}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">False</span>
+                                                        </span>
+                                                    </span>
+                                                </template>
+                                            </template>
+
+                                            <template lwc:elseif={field.displayValue}> 
+                                                <template lwc:if={field.isemail}> 
+                                                    <lightning-formatted-email value={field.displayValue} hide-icon></lightning-formatted-email>
+                                                </template>
+                                                <template lwc:else>{field.displayValue}</template>
+                                            </template>
+                                            <template lwc:else> 
+                                                —
+                                            </template>
+                                        </dd>
+                                    </template>
+                                    <!--End Field Value-->
+                                    
+                                </template>
+
+                            </template>
+                        </dl>
+                    </div>
+                </template>
+            </div>
+        </article>
+    </template>
+
+    <template lwc:else>
+        <li class={_tileCl}> 
+            <article class="slds-tile slds-media slds-card__tile slds-hint-parent">
+                <div class="slds-media__figure">
+                    <span 
+                        class={_icon.container}
+                        title="Description of icon when needed"
+                    >
+                        <svg class={_icon.svg} aria-hidden="true">
+                            <use xlink:href={_icon.icon}></use>
+                        </svg>
+                        <span class="slds-assistive-text">Contact</span>
+                    </span>
+                </div>
+                <div class="slds-media__body" data-id="spaceReduceTarget">
+                    <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                        <h3 class="slds-tile__title slds-truncate slds-align-top">
+                            <template lwc:if={tileUrl}> 
+                                <a if:true={_tileName} href={tileUrl} title={_tileName}>{_tileName}</a>
+                            </template>
+                            <template lwc:else> 
+                                {_tileName}
+                            </template>
+                        </h3>
+
+                        <div if:false={suppressActions} class="slds-shrink-none slds-align-top">
+                            <c-slds-menu-popover-button 
+                                options={recordActions}
+                                is-left="false"
+                                is-check="false"
+                                data-record-id={_recordId}
+                                onselection={handleRecordAction}
+                            >
+                                <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" title="More options">
+                                    <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.down}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">More options</span>
+                                </button>
+                            </c-slds-menu-popover-button>
+                        </div>
+                    </div>
+                    <template lwc:if={fieldsPerRow}>
+                        <div class="slds-tile__detail">
+                            <!-- outer grid controls how many "field cells" per row -->
+                            <div class={_gridCl}>
+                                <template for:each={_fields} for:item="field">
+                                    <template if:false={field.isHidden}>
+                                        <!-- one field cell -->
+                                        <div key={field.keyId} class={_fieldsPerRowCl}>
+                                            <!-- inner layout keeps label/value on one line and truncates -->
+                                            <div class="slds-grid slds-gutters_xx-small slds-min-width_0 slds-wrap">
+                                                <!-- Label -->
+                                                <template if:false={suppressFieldLabel}>
+                                                    <div
+                                                        class="slds-col slds-grow-none slds-text-color_weak slds-truncate field-label"
+                                                        title={field.label}>
+                                                        {field.label}:
+                                                    </div>
+                                                </template>
+
+                                                <!-- Value (takes remaining width, truncates) -->
+                                                <div class="slds-col slds-min-width_0 slds-truncate field-value" title={field.valueTitle}>
+                                                    <template lwc:if={field.hasReference}>
+                                                        <template lwc:if={field.url}>
+                                                            <a class="value-link" href={field.url}>
+                                                                <template lwc:if={field.displayValue}>{field.displayValue}</template>
+                                                                <template lwc:else>—</template>
+                                                            </a>
+                                                        </template>
+                                                        <template lwc:else>
+                                                            <template lwc:if={field.displayValue}>{field.displayValue}</template>
+                                                            <template lwc:else>—</template>
+                                                        </template>
+                                                    </template>
+
+                                                     <template lwc:elseif={field.isboolean}> 
+                                                        <template lwc:if={field.value}> 
+                                                            <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                                <span class="slds-icon_container slds-icon-utility-check slds-current-color" title="True">
+                                                                    <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                        <use xlink:href={iconMap.utility.check}></use>
+                                                                    </svg>
+                                                                    <span class="slds-assistive-text">True</span>
+                                                                </span>
+                                                            </span>
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                                <span class="slds-icon_container slds-icon-utility-steps slds-current-color" title="False">
+                                                                    <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                        <use xlink:href={iconMap.utility.steps}></use>
+                                                                    </svg>
+                                                                    <span class="slds-assistive-text">False</span>
+                                                                </span>
+                                                            </span>
+                                                        </template>
+                                                    </template>
+
+                                                    <template lwc:elseif={field.displayValue}>
+                                                        <template lwc:if={field.isemail}> 
+                                                            <lightning-formatted-email value={field.displayValue} hide-icon></lightning-formatted-email>
+                                                        </template>
+                                                        <template lwc:else>{field.displayValue}</template>
+                                                    </template>
+
+                                                    <template lwc:else>
+                                                        — 
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <div class="slds-tile__detail">
+                            <dl class="slds-list_horizontal slds-wrap">
+                                <template for:each={_fields} for:item="field"> 
+
+                                    <template if:false={field.isHidden}> 
+                                        <!--Field Label-->
+                                        <dt if:false={suppressFieldLabel} class="slds-item_label slds-text-color_weak slds-truncate" title={field.label} key={field.keyId}>
+                                            {field.label}:
+                                        </dt>
+                                        <!--End Field Label-->
+
+                                        <!--Field Value-->
+                                        <template lwc:if={suppressFieldLabel}>
+                                            <template lwc:if={field.isboolean}> 
+                                                <dd class="slds-item_detail slds-truncate" title={field.valueTitle} key={field.keyId}>
+                                                    <template lwc:if={field.value}> 
+                                                        <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                            <span class="slds-icon_container slds-icon-utility-check slds-current-color" title="True">
+                                                                <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.check}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">True</span>
+                                                            </span>
+                                                        </span>
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                            <span class="slds-icon_container slds-icon-utility-steps slds-current-color" title="False">
+                                                                <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.steps}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">False</span>
+                                                            </span>
+                                                        </span>
+                                                    </template>
+                                                </dd>
+                                            </template> 
+                                            <template lwc:elseif={field.displayValue}> 
+                                                <dd class="slds-item_detail slds-truncate" title={field.valueTitle} key={field.keyId}>
+                                                    <template lwc:if={field.isemail}> 
+                                                        <lightning-formatted-email value={field.displayValue} hide-icon></lightning-formatted-email>
+                                                    </template>
+                                                    <template lwc:else>{field.displayValue}</template>
+                                                </dd>
+                                            </template>
+                                            <template lwc:else> 
+                                                <dd class="slds-item_detail slds-truncate" title={field.label} key={field.keyId}>
+                                                    —
+                                                </dd>
+                                            </template>
+                                        </template>
+
+                                        <template lwc:else> 
+                                            <dd class="slds-item_detail slds-truncate" title={field.valueTitle} key={field.keyId}>
+                                                
+                                                <template lwc:if={field.hasReference}> 
+                                                    <template lwc:if={field.url}> 
+                                                        <a href={field.url}>{field.displayValue}</a>
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        <span if:true={field.displayValue}>{field.displayValue}</span>
+                                                        <span if:false={field.displayValue}>—</span>
+                                                    </template>
+                                                </template>
+                                                <template lwc:elseif={field.isboolean}> 
+                                                    <template lwc:if={field.value}> 
+                                                        <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                            <span class="slds-icon_container slds-icon-utility-check slds-current-color" title="True">
+                                                                <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.check}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">True</span>
+                                                            </span>
+                                                        </span>
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        <span style="color: var(--slds-g-color-neutral-base-10, #181818);">
+                                                            <span class="slds-icon_container slds-icon-utility-steps slds-current-color" title="False">
+                                                                <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.steps}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">False</span>
+                                                            </span>
+                                                        </span>
+                                                    </template>
+                                                </template>
+                                                <template lwc:elseif={field.displayValue}> 
+                                                    <template lwc:if={field.isemail}> 
+                                                        <lightning-formatted-email value={field.displayValue} hide-icon></lightning-formatted-email>
+                                                    </template>
+                                                    <template lwc:else>{field.displayValue}</template>
+                                                </template>
+                                                <template lwc:else> 
+                                                    —
+                                                </template>
+                                            </dd>
+                                        </template>
+                                        <!--End Field Value-->
+                                        
+                                    </template>
+
+                                </template>
+                            </dl>
+                        </div>
+                    </template>
+                </div>
+            </article>
+        </li>
+    </template>
+        
+</template>

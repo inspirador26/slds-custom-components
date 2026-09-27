@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__HomePage,lightning__RecordPage,lightningCommunity__Default">
+            <property
+                name="objectApiName"
+                type="String"
+                label="Object API Name"
+                description="Example: Account, Opportunity, Custom_Object__c"
+                default="Lead"
+            />
+            <property
+                name="objectLabel"
+                type="String"
+                label="Object Label"
+                description="Example: Account, Opportunity, Finished Part"
+                default="Lead"
+            />
+            <property
+                name="pluralLabel"
+                type="String"
+                label="Plural Label (object api name)"
+                description="Example: Accounts, Opportunities, Finished Part"
+                default="Leads"
+            />
+            <property
+                name="borderRadius"
+                type="String"
+                label="Border Radius"
+                description="Border Radius of Table/Header/Footer (Default: var(--slds-g-radius-border-3, 0.75rem))"
+                default="var(--slds-g-radius-border-3, 0.75rem)"
+            />
+            <property 
+                name="sendCheckedConfig" 
+                type="String" 
+                label='Send Checked (JSON). Copy and paste the required properties in the info icon tooltip.'
+                default=""
+                description='{"label": "My Label", "apexMethod": "myMethod", "successMsg": "Success"}  ______END DESCRIPTION______'
+            />
+            <property 
+                name="childRelationColumn" 
+                type="String" 
+                label='Child Relation Column (JSON). Copy and paste the required properties in the info icon tooltip, alter the placeholder values to fit your needs. If using "Name" field, you can omit "dtype" and "childFieldApiName". Accepted dtypes: reference, number, decimal, boolean, richtext, text, currency, percent'
+                default=""
+                description='[{"relationName":"Public_Contacts__r","childObjectApiName":"Public_Contact__c","columns":[{"columnLabel":"Government POC","childFieldApiName":"Email__c","dtype":"text","condition":"Poc_Type__c = Government"},{"columnLabel":"Electronic POC","childFieldApiName":"Email__c","dtype":"text","condition":"Poc_Type__c = Electronic"}]}] ______END DESCRIPTION______'
+            />
+            <property
+                name="isTight"
+                type="String"
+                label="Reduce Table Column and Cell Height/Padding? (leave blank if no)"
+                description="True (or true) makes the table have a tighter layout."
+            />
+            <property
+                name="adminDefaultListView"
+                type="String"
+                label="Default List View (apiName or Label)"
+                description="This will be the first list view display when the page is opened"
+            />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

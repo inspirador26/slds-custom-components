@@ -1,0 +1,100 @@
+/* Direct classes on the <a> */
+/* make li.hovered style the anchor */
+@import "c/sharedStylesGlobal";
+
+:host {
+    --slds-c-dropdown-font-size: var(--dxp-s-body-font-size, 0.75rem);
+    --slds-c-tooltip-color-background: var(--slds-g-color-neutral-base-100, #fff);
+    --slds-c-tooltip-text-color: var(--slds-g-color-neutral-base-10, #181818);
+}
+
+
+.brand-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-brand-base-50, #0176d3);
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-brand-base-50, #0176d3);
+}
+
+.menu-save-footer {
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: solid 1px var(--slds-g-color-border-base-3);
+}
+
+/* whichever element currently has overflow:auto/hidden
+.slds-dropdown,
+.slds-dropdown__list {
+    overflow: visible;
+}
+*/
+
+.slds-dropdown__list {
+    overflow: visible;
+}
+
+.slds-dropdown_submenu-left {
+    left: auto;
+    right: 100%;
+}
+
+.slds-dropdown_submenu-right {
+    left: 100%;
+    right: auto;
+}
+
+
+.slds-listbox_vertical .slds-listbox__option.slds-is-disabled {
+    cursor: not-allowed;
+}
+
+
+.menu-button {
+    transform: scale(0.9);
+}
+
+.slds-dropdown__item {
+    border-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+.slds-dropdown__item>a {
+    border-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+.slds-dropdown__item.slds-has-focus {
+    box-shadow: none;
+}
+
+
+
+
+
+
+
+
+.slds-popover.slds-popover_tooltip[class*="slds-nubbin"]::before {
+    box-shadow: 
+        1px 0 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1)),   /* right */
+        0 -1px 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1));  /* top */
+}
+
+
+.disabled-body {
+    padding: 0px; 
+    margin: 0px;
+}
+
+.disabled-body .slds-media {
+    background-color: var(--vg-color-bg-info-message, #ecebea);
+    color: var(--slds-g-color-neutral-base-10);
+    border-top-left-radius: var(--slds-g-radius-border-1, 0.25rem);
+    border-top-right-radius: var(--slds-g-radius-border-1, 0.25rem);
+    padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+    font-size: var(--slds-g-font-scale-3);
+    margin-bottom: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.disabled-icon-wrapper {
+    color: var(--slds-g-color-neutral-base-10, #181818);
+}
+
+.tooltip-text {
+    padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+}

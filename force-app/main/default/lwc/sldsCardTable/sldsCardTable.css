@@ -1,0 +1,37 @@
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --columns-bg: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    --font-size: inherit;
+    --border-radius: 0px;
+}
+
+.slds-table thead th {
+    background-color: var(--columns-bg, var(--slds-g-color-neutral-base-95, #f3f3f3));
+}
+
+.slds-table {
+    font-size: var(--font-size, inherit);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-bottom-left-radius: var(--border-radius, 0px);
+    border-bottom-right-radius: var(--border-radius, 0px);
+}
+
+.slds-table tbody tr:last-child > *:first-child {
+    border-bottom-left-radius: var(--border-radius, 0px);
+}
+
+.slds-table tbody tr:last-child > *:last-child {
+    border-bottom-right-radius: var(--border-radius, 0px);
+}
+
+
+.slds-table.border-bottom-bare-table thead th {
+    border-bottom: solid 1px var(--slds-g-color-border-base-1);
+}
+
+
+.slds-badge {
+    --slds-c-badge-font-size: calc(var(--font-size, inherit) - 0.45rem);
+}

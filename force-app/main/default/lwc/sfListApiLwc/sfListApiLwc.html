@@ -1,0 +1,115 @@
+<template>
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template> 
+
+    <template lwc:if={_isNewListView}> 
+        <c-slds-modal-slot
+            modal-title={modalConfig.header}
+            ok-label="Save"
+            object-api-name={_waitObjectApiName}
+            onclosemodal={closeModal}
+            onmodalok={saveListView}
+            overflow="visible"
+        >
+            <div slot="modalBody" class="slds-p-around_medium" style="overflow: visible;"> 
+                
+                <c-new-list-view-lwc
+                    object-api-name={_waitObjectApiName}
+                ></c-new-list-view-lwc>
+            
+                <div style="padding-bottom: 5rem;"></div>
+            </div>
+        </c-slds-modal-slot>
+    </template>
+
+    <div class="spinner-backdrop__component-root" style="min-height: 200px;">
+        <template lwc:if={_isLoading}> 
+            <div class="spinner-backdrop__component">
+                <div class="slds-spinner slds-spinner_medium" role="status">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+            <div if:false={_objectLoaded} 
+                class="loading-skeleton"
+            ></div>
+        </template>
+        <template lwc:if={_waitObjectApiName}>
+            <template lwc:if={_isListViews}>
+                <c-slds-table
+                    rows={records}
+                    columns={productionColumns}
+                    object-name={_waitObjectApiName}
+                    plural-label={pluralLabel}
+                    object-label={objectLabel}
+                    page-header-config={tableHeaderConfig}
+                    additional-help-text={noDataHelp}
+                    page-token={pageToken}
+                    page-size={pageSize}
+                    is-db-controlled="true"
+                    loading-min-height="250px"
+                    selected-list-view-meta={selectedListViewInfos}
+                    col-width-config-name={colWidthConfigJson}
+                    is-sf-list-api={isSfListApi}
+                    is-no-data={_isEmptyListView}
+                    suppress-charts="true"
+                    suppress-overflow-menu="true"
+                    suppress-edit="true"
+                    suppress-view-options="true"
+                    suppress-new-record={suppressNewRecord}
+                    sorted-col={tableHeaderConfig.sortedCol}
+                    tight-table={isTight}
+                    border-radius={borderRadius}
+                    onsendcheckedrows={handleCheckedRows}
+
+                    onsortupdated={handleSortUpdated}
+                    ondeletelistview={handleDeletedListView}
+                    onnewlistview={handleNewListViewMessage}
+                    onnewlistviewlabel={handleListViewLabelChange}
+                    onsearch={handleSearchTerm}
+                    onlistviewchange={handleListViewChange}
+                    onrefresh={handleRefresh}
+                    onfiltersupdated={handleFiltersUpdated}
+                    onready={handleReady}
+                    onedited={handleEdited}
+                    onnotedited={handleNotEdited}
+                    onupdatepagesize={updatePageSize}
+                    onsavepagesize={savePageSize}
+                    ondefaultlistview={saveDefaultListView}
+                    onnewsort={handleNewSort}
+                    max-height="450px"
+                ></c-slds-table>
+                <footer if:false={_tableEdited} class="paginate-footer slds-grid slds-grid_align-center slds-p-vertical_small">
+                    <div>
+                        <lightning-button label="Previous" onclick={previousPage} disabled={_pageTokens.prevDisabled}></lightning-button>
+                    </div>
+                    <div class="slds-p-left_xx-small">
+                        <lightning-button label="Next" onclick={nextPage} disabled={_pageTokens.nextDisabled}></lightning-button>
+                    </div>
+                </footer>
+            </template>
+            <template lwc:else> 
+                <div class="slds-p-around_large slds-align_absolute-center"> 
+                    <c-slds-illustration
+                        is-no-data="true"
+                        is-open-road="true"
+                        help-text={noListViewHelp}
+                        call-to-action="New List View"
+                        is-button="true"
+                        onaction={handleNewListView}
+                    ></c-slds-illustration>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

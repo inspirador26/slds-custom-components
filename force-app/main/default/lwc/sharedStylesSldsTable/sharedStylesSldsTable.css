@@ -1,0 +1,393 @@
+:host {
+    /* width = biggest factor */
+    --vg-scrollbar-width: 6px;
+
+    /* make it visible but still glassy */
+    --vg-color-scrollbar-color: rgba(255, 255, 255, 0.28);
+
+    --vg-color-scrollbar-background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.38),
+        rgba(255, 255, 255, 0.14)
+    );
+
+    --vg-color-scrollbar-background-hover: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.55),
+        rgba(255, 255, 255, 0.22)
+    );
+}
+/* ===== DARK MODE SCROLLBAR (glassy / near-black) ===== */
+.custom-table-container,
+.tree-table-container {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: var(--vg-color-scrollbar-color, rgba(0, 0, 0, 0.18)) transparent;
+}
+/* Chrome / Edge / Safari */
+.custom-table-container::-webkit-scrollbar,
+.tree-table-container::-webkit-scrollbar {
+    width: var(--vg-scrollbar-width, 8px);
+    height: var(--vg-scrollbar-width, 8px);
+}
+.custom-table-container::-webkit-scrollbar-track,
+.tree-table-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-table-container::-webkit-scrollbar-thumb,
+.tree-table-container::-webkit-scrollbar-thumb {
+    background: var(
+        --vg-color-scrollbar-background, 
+        linear-gradient(180deg,rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.10))
+    );
+    border-radius: 999px;
+
+    /* glassy effect */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.custom-table-container::-webkit-scrollbar-thumb:hover,
+.tree-table-container::-webkit-scrollbar-thumb:hover {
+    background: var(
+        --vg-color-scrollbar-background-hover, 
+        linear-gradient( 180deg, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.18))
+    );
+}
+.custom-table-container::-webkit-scrollbar-corner,
+.tree-table-container::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.row-action-small {
+    width: 2.5rem;
+}
+.row-action-normal {
+    width: 3.25rem;
+}
+.check-th-small {
+    width: 2rem;
+}
+.check-th-normal {
+    width: 3.25rem;
+}
+.slds-table_col-bordered .row-action-small {
+    width: 2.5rem;
+}
+
+.slds-checkbox {
+    --slds-c-checkbox-mark-color-foreground: var(--slds-g-color-brand-base-50, #0176d3);
+}
+.slds-checkbox [type=checkbox]:indeterminate+.slds-checkbox_faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate+.slds-checkbox--faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate~.slds-checkbox_faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate~.slds-checkbox--faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate+.slds-checkbox__label .slds-checkbox_faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate+.slds-checkbox__label .slds-checkbox--faux:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--lwc-squareIconXSmallContent, 0.5rem);
+    height: 2px;
+    border: 0;
+    transform: translate3d(-50%, -50%, 0);
+    background: var(
+        --slds-c-checkbox-mark-color-foreground, 
+        var(--slds-g-color-brand-base-50, #0176d3)
+    );
+}
+
+
+.vg-table_edit-footer {
+    z-index: 4;
+    position: sticky; 
+    bottom: 0;
+    padding: 0.5rem;
+    border: none;
+    border-top: solid 1px var(--slds-s-table-resize-color, light-dark(#c9c9c9, #444));
+}
+
+.vg-table_edit-footer.slds-docked-form-footer {
+    box-shadow: none;
+}
+
+/* ---------- Resizable Col Styles ---------- */
+/* Header cells: add a right-edge seam via inset box-shadow */
+.custom-table-container thead th.slds-is-resizable {
+    /*box-shadow: inset -1px 0 0 var(--slds-g-color-border-base-1);*/
+    box-shadow: inset -1px 0 0 var(--slds-s-table-resize-color, light-dark(#c9c9c9, #444));
+    
+}
+.custom-table-container thead th .slds-resizable__divider {
+    background: transparent !important;
+    border: none !important;
+}
+.slds-table {
+    --_slds-c-datatable-radius-border: 0px;
+}
+
+.slds-table thead th .slds-resizable__divider:before {
+    background-color: var(--slds-g-color-border-base-1);
+}
+.slds-table thead th.slds-is-resizable:last-of-type {
+    box-shadow: none;
+}
+.slds-table thead th:last-of-type .slds-resizable__divider:before {
+    background-color: transparent;
+}
+.custom-table-container .slds-table_col-bordered.slds-table-resizable-cols thead th:not(.slds-cell_action-mode) + th:not(.slds-cell_action-mode), 
+.custom-table-container .slds-table_col-bordered.slds-table-resizable-cols thead td + th:not(.slds-cell_action-mode),
+.custom-table-container .slds-table_col-bordered.slds-table-resizable-cols thead th:not(.slds-cell_action-mode) + td  {
+    border-left: 0;
+}
+/* ------------------------------------------ */
+
+.classic-table thead th {
+    position: sticky; /* Fixes the header at the top */
+    top: 0;
+    z-index: 2;
+}
+.slds-table thead th {
+    background-color: var(--slds-g-color-neutral-base-95);
+    color: var(--slds-g-color-neutral-base-30, #444);
+}
+
+
+
+.no-select,
+.no-select * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.no-select .slds-table td,
+.no-select .slds-table th {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+
+
+.custom-table-container::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.slds-table:not(.tight-table) thead td,
+.slds-table:not(.tight-table) thead th, 
+.slds-table:not(.tight-table) th.slds-tree__item,
+.slds-table:not(.tight-table) thead th a {
+    height: 42px;
+}
+
+.slds-table thead th a.slds-th__action {
+    color: var(--slds-g-color-neutral-base-30, #444);
+}
+.slds-table:not(.tight-table) thead th a.slds-th__action:hover {
+    text-decoration: none;
+}
+.slds-table:not(.tight-table) thead th:not(.dv-dynamic-width, .slds-tree__item, .slds-cell_action-mode, .row-action-normal) {
+    padding: 0.5rem 0.5rem;
+}
+.slds-table:not(.tight-table) tbody th:not(.tree-checkbox, .row-action-cell),
+.slds-table:not(.tight-table) td:not(.tree-checkbox, .row-action-cell) {
+    padding: 0.5rem 0.5rem;
+}
+
+
+.slds-table_col-bordered thead tr>th.check-th-normal,
+.slds-table_col-bordered thead tr>th.check-th-small {
+    padding-left: 1.25rem;
+}
+
+
+.boolean-cell {
+    padding-left: 0.75rem;
+}
+
+.slds-cell_action-mode .slds-checkbox [type="checkbox"] + .slds-checkbox__label .slds-checkbox_faux,
+.row-action-cell .slds-checkbox [type="checkbox"] + .slds-checkbox__label .slds-checkbox_faux {
+    border-radius: var(--slds-g-radius-border-1);
+    border-color: var(--slds-g-color-border-base-4);
+}
+.slds-cell_action-mode .slds-checkbox [type="checkbox"]:not(:focus):not(:focus-visible) + .slds-checkbox__label .slds-checkbox_faux,
+.row-action-cell .slds-checkbox [type="checkbox"]:not(:focus):not(:focus-visible) + .slds-checkbox__label .slds-checkbox_faux {
+    box-shadow: inset 0 0 0 0.5px var(--slds-g-color-border-base-4);
+}
+
+/* highlight only the exact match text */
+.search-hit {
+    background-color: rgba(210, 126, 45, 0.38);
+    color: inherit;
+    box-shadow: 0 0 0 0.08em rgba(210, 126, 45, 0.38);
+    border-radius: 0.125rem;
+}
+/* “faint” the rest of the text */
+.search-dim {
+    opacity: 0.35;
+    transition: opacity .2s ease;
+}
+/* When matches appear */
+.search-match {
+    background-color: var(--slds-g-color-palette-orange-70, #fe9339);
+    animation: fadeInHighlight 0.8s ease;
+}
+/* Optional: when removing matches, fade out */
+.search-match.fade-out {
+    background-color: transparent;
+    transition: background-color 1.2s ease;
+}
+@keyframes fadeInHighlight {
+    from { background-color: transparent; }
+    to   { background-color: var(--slds-g-color-palette-orange-70, #fe9339); }
+}
+
+.slds-table:not(.tight-table) .empty-cols {
+    height: 42px;
+}
+.enlarge {
+    transform: scale(1.3);
+    display: inline-flex;
+}
+
+.edit-footer {
+    position: sticky; 
+    bottom: 0;
+}
+
+
+
+/* ---------------- Icon Styles ----------------- */
+.slds-button .edit-icon {
+    fill: var(--slds-g-color-neutral-base-10);
+}
+.slds-is-sortable .slds-th__action:not(:hover) .slds-is-sortable__icon {
+    fill: var(--slds-g-color-neutral-base-10);
+}
+/* ---------------------------------------------- */
+
+
+
+
+
+
+
+
+
+
+
+/* ------------ Striped Table Styles ------------ */
+.slds-table_striped tbody tr td.row-action-cell:hover {
+    background-color: #f0f0eb;
+    background: rgba(21, 137, 238, .1);
+}
+/* Striped even rows (non-selected) */
+.slds-table_striped tbody tr:nth-of-type(even):not(.slds-is-selected) > :is(td, th):not(.slds-is-edited) {
+    background-color: var(--striped-bg);
+}
+/* Whole striped row hover (skip edited cells) */
+.slds-table_striped tbody tr:nth-of-type(even):not(.slds-is-selected):hover
+  > :is(td, th):not(.slds-is-edited) {
+    background-color: color-mix(in srgb, var(--striped-bg) 40%, transparent);
+}
+/* Cell hover OR focus-within on striped rows (skip edited cells) */
+.slds-table_striped tbody tr:nth-of-type(even):not(.slds-is-selected) 
+ > :is(td, th):not(.slds-is-edited, .row-action-cell):is(:hover, :focus-within) {
+    background-color: color-mix(in srgb, var(--striped-bg) 15%, transparent);
+}
+/* Selected rows (base color) */
+.slds-table_striped tbody tr.slds-is-selected > :is(td, th):not(.slds-is-edited) {
+    background-color: #f0f0eb;
+}
+/* Selected row — hovered cell override */
+.slds-table_striped tbody tr.slds-is-selected > :is(td, th):not(.slds-is-edited, .row-action-cell):hover {
+    background-color: var(--slds-g-color-neutral-base-100);
+}
+/* ---------------------------------------------- */
+
+
+
+
+
+
+
+
+.tableShell {
+    position: relative;
+}
+/* Overlay */
+.skOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.88);
+    z-index: 10;
+    pointer-events: all;
+    padding: 12px 16px; /* match your table container */
+}
+/* Shared skeleton box */
+.skBox {
+    background: #d6d6d6;
+    border-radius: 6px;
+}
+/* ===== COLUMN / HEADER ===== */
+.skColumns {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.skCol {
+    height: 42px; /* EXACT */
+}
+/* ===== ROWS ===== */
+.skRows {
+    display: grid;
+    gap: 10px;
+}
+.skRow {
+    height: 37px; /* EXACT */
+}
+
+
+/* If table has resiable columns and now fixed-width cell on right end, reposition the resizable handle */
+.slds-table.slds-table-resizable-cols.classic-table.no-actions-table
+thead th.slds-is-resizable:last-of-type .slds-resizable__handle {
+    width: 1px;
+    right: 0.75rem;
+}
+.slds-table.slds-table-resizable-cols.classic-table.no-actions-table
+thead th.slds-is-resizable:last-of-type .slds-resizable__handle .slds-resizable__divider::after {
+    right: 0.75rem;
+}
+/* If table has resiable columns and now fixed-width cell on right end, reposition the resizable handle */
+.slds-table.slds-table-resizable-cols.classic-table.slds-table_cell-buffer:not(.no-actions-table)
+thead th.slds-is-resizable:last-of-type .slds-resizable__handle {
+    width: 1px;
+    right: 0px;
+}
+.slds-table.slds-table-resizable-cols.classic-table.slds-table_cell-buffer:not(.no-actions-table)
+thead th.slds-is-resizable:last-of-type .slds-resizable__handle .slds-resizable__divider::after {
+    right: 0px;
+}
+
+
+
+
+
+.custom-table-container .slds-table {
+    border-inline-start: none;
+    border-inline-end: none;
+    border-block-start: none;
+    border-block-end: none;
+}
+.custom-table-container .slds-table thead th {
+    border-bottom: solid 1px var(--slds-s-table-resize-color, light-dark(#c9c9c9, #444));
+}
+.slds-table_edit_container {
+    margin: 0px;
+    padding: 0px;
+    border: solid 1px var(--slds-s-table-resize-color, light-dark(#c9c9c9, #444));
+}

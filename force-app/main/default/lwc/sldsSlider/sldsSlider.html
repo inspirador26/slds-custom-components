@@ -1,0 +1,100 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <div class={_formElementCl}>
+
+        <label if:false={suppressLabel} class="slds-form-element__label" for="slider-id-4">
+            <span class="slds-slider-label">
+                <span class="slds-slider-label__label">{label}</span>
+                <span class="slds-slider-label__range">{_prefix}{_min}{_suffix} - {_prefix}{_max}{_suffix}</span>
+            </span>
+        </label>
+
+        <div class="slds-form-element__control">
+
+            <div class="slds-slider">
+                <input type="range" id="slider-id-4" class="slds-slider__range" 
+                    min={_min} 
+                    max={_max} 
+                    step={step} 
+                    value={_currentValue} 
+                    oninput={handleInput}   
+                    onchange={handleChange}
+                    disabled={_disabled}
+                    lwc:ref="sliderInput"
+                />
+
+                <div class="slds-slider__value slds-no-flex"> 
+                    <c-slds-input
+                        dtype={_dtype}
+                        focus-help-text="Press Enter or Tab to update calculations."
+                        suppress-default-styles="true"
+                        addon-left={_prefix}
+                        addon-right={_suffix}
+                        min={_min}
+                        max={_max}
+                        step={step}
+                        current-value={_currentValue}
+                        onnewinput={handleNewSliderVal}
+                    ></c-slds-input>
+                </div>
+                
+            </div>
+            <template lwc:if={_disabled}>
+                <div id="disabled-error-message-id-1" class="slds-form-element__help">
+                    <template lwc:if={disabledLabel}>
+                        <div class="slds-media slds-media_center"> 
+                            <div class="slds-media__figure"> 
+                                <lightning-icon icon-name="utility:warning" variant="error" size="small"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body error-slider-value"> 
+                                {disabledLabel}&nbsp;&nbsp;
+                                <span style="font-weight: 600;">
+                                    <template iterator:it={disabledMessage}> 
+                                        <template lwc:if={it.last}> 
+                                            &nbsp;{it.value}
+                                        </template>
+                                        <template lwc:elseif={it.first}> 
+                                            {it.value},
+                                        </template>
+                                        <template lwc:else> 
+                                            &nbsp;{it.value},
+                                        </template>
+                                    </template>
+                                </span>
+                            </div>
+                        </div>
+                    </template>
+                    <template lwc:else> 
+                        n/a
+                    </template>
+                </div>
+            </template>
+            <template lwc:elseif={_configError}>
+                <div id="config-error-message-id-1" class="slds-form-element__help">
+                    <!--div class="slds-media slds-media_center"> 
+                        <div class="slds-media__figure"> 
+                            <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body"> 
+                            {_configError}
+                        </div>
+                    </div-->
+                    {_configError}
+                </div>
+            </template>
+        </div>
+
+    </div>
+</template>

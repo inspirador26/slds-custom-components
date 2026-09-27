@@ -1,0 +1,524 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <template lwc:if={isAddon}>
+        <div class="slds-combobox_container slds-combobox-addon_end">
+            <!--aria-expanded && slds-is-open here-->
+            <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click"
+                onkeydown={handleKeyDown} 
+                aria-haspopup="listbox" 
+                role="combobox"
+                onclick={handleTriggerClick}
+            >
+
+                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combobox-search" role="none">
+                    <!--slds-has-focus here-->
+                    <input  
+                        type={dtype}
+                        class="slds-input slds-combobox__input slds-combobox__input-value" 
+                        id="combobox-id-15-addon" 
+                        aria-activedescendant={activeDescendant} 
+                        aria-autocomplete="list" 
+                        aria-controls="listbox-id-16" 
+                        autocomplete="off" 
+                        role="textbox" 
+                        data-id="inputEle"
+                        placeholder={placeHolder}
+                        onblur={closeCombobox}
+                        oninput={handleInput}
+                        value={_value.label}
+                    />
+                    <!--Custom Icon-->
+                    <template lwc:if={isComboboxLoading}>
+                        <span class="slds-input__icon slds-input__icon_right">
+                            <lightning-spinner size="xx-small" variant="brand"></lightning-spinner>
+                        </span>
+                    </template>
+                    <template lwc:else>
+                        <template lwc:if={inputIcon}> 
+                            <span class={inputIcon.container}>
+                                <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                    <use xlink:href={inputIcon.icon}></use>
+                                </svg>
+                            </span>
+                        </template>
+                        <!--End Custom Icon-->
+
+                        <!--Default Icon (Search)-->
+                        <template lwc:else> 
+                            <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.search}></use>
+                                </svg>
+                            </span>
+                        </template>
+                        <!--End Default Icon (Search)-->
+                    </template>
+
+                </div>
+
+                <div id="listbox-id-16-addon" class={dropdownClass} role="listbox">
+                    
+                    <ul class="slds-listbox slds-listbox_vertical" role={ulEleAttributes.role} aria-label={ulEleAttributes.ariaLabel}>
+                        <li if:true={menuTitle} role="presentation" class="slds-listbox__item">
+                            <div id="object00" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="presentation" data-element="groupHeader">
+                                <h3 class="slds-listbox__option-header" role="presentation">{menuTitle}</h3>
+                            </div>
+                        </li>
+                        <template lwc:if={currentOptions.length}> 
+                            <template for:each={currentOptions} for:item="option">
+                                <li key={option.id} role="presentation" class="slds-listbox__item">
+
+                                    <!--aria-selected="true" && slds-has-focus here-->
+                                    <div id={option.id} 
+                                        class={option.optionClass}
+                                        role="option"
+                                        onclick={handleOptionClick}
+                                        onmousedown={deflectFocus}
+                                        data-value={option.value}
+                                        data-label={option.label}
+                                    >
+                                        <!--Icon-->
+                                        <template lwc:if={isIcons}>
+                                            <template lwc:if={option.icon}>
+                                                <span class="slds-media__figure slds-listbox__option-icon">
+                                                    <span class={option.icon.container}>
+                                                        <svg class={option.icon.svg} aria-hidden="true">
+                                                            <use xlink:href={option.icon.icon}></use>
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                            </template>
+
+                                            <template lwc:elseif={option.img}>
+                                                <span class="slds-media__figure slds-listbox__option-icon">
+                                                    <span class="slds-avatar slds-avatar_medium">
+                                                        <img alt="Logo" src={option.img} title={option.label} aria-hidden="true" />
+                                                    </span>
+                                                </span>
+                                            </template>
+
+                                        </template>
+                                        <!--End Icon-->
+    
+                                        <!--Media-->
+                                        <span class="slds-media__body">
+                                            <!--Main Label-->
+                                            <span 
+                                                class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" 
+                                                title={option.label}> 
+                                                <span>{option.label}</span>
+                                            </span>
+                                            <!--End Main Label-->
+                                            <!--Label Meta-->
+                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                                
+                                                <span if:true={option.metaOne}>
+                                                    <span if:true={option.isMetaOneStrike} style="text-decoration:line-through">{option.metaOne}</span>
+                                                    <span if:false={option.isMetaOneStrike}>{option.metaOne}</span> 
+                                                </span> 
+                                                <span if:true={option.metaTwo}>
+                                                    <span if:true={option.isMetaTwoStrike} style="text-decoration:line-through"> • {option.metaTwo}</span>
+                                                    <span if:false={option.isMetaTwoStrike}> • {option.metaTwo}</span> 
+                                                </span>
+                                                <span if:true={option.metaThree}>
+                                                    <span if:true={option.isMetaThreeStrike} style="text-decoration:line-through"> • {option.metaThree}</span>
+                                                    <span if:false={option.isMetaThreeStrike}> • {option.metaThree}</span> 
+                                                </span>
+                                                <span if:true={option.metaFour}>
+                                                    <span if:true={option.isMetaFourStrike} style="text-decoration:line-through"> • {option.metaFour}</span>
+                                                    <span if:false={option.isMetaFourStrike}> • {option.metaFour}</span> 
+                                                </span>
+                                                font-size: var(--dxp-c-input-text-font-size, var(--dxp-s-form-element-text-font-size, var(--dxp-s-body-font-size)));
+                                                <template lwc:if={option.isMeta}> 
+                                                    <template if:false={option.hasMeta}>
+                                                        <span>&#8203;</span>
+                                                    </template>
+                                                </template>
+                                            </span>
+                                            <!--End Label Meta-->
+                                        </span>
+                                        <!--End Media-->
+                                    </div>
+                                </li>
+                            </template>
+                            <li class="load-more-sentinel"></li>
+                        </template>
+                        <template lwc:else>
+                            <li role="presentation" class="slds-listbox__item">
+                                <div id="optionerricon-addon" class="slds-media slds-listbox__option slds-listbox__option_plain slds-align_absolute-center" role="option">
+                                    <div class="slds-grid slds-grid_vertical">
+                                        <div class="slds-col slds-m-left_medium">
+                                            <span class="slds-listbox__option-icon">
+                                                <span class="slds-icon_container slds-icon-utility-error slds-current-color">
+                                                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                        <use xlink:href={iconMap.utility.error}></use>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="slds-col">
+                                            <span class="slds-truncate" title="No Matches">No Matches</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </template>
+
+
+    <template lwc:else>
+        <div class={_formElementCl} style="padding: 0px; margin: 0px;">
+
+            <label 
+                if:true={labelTop} 
+                class="slds-form-element__label slds-m-bottom_xx-small" 
+                for="combobox-id-15"
+            >
+                <!--Required--><abbr if:true={isRequired} class="slds-required" title="required">* </abbr><!--End Required-->
+                {labelTop}
+            </label>
+
+            <div if:true={helpText} class="slds-form-element__icon">
+                <c-tooltip-button tip-width="12rem" nubbin="bottom-right">
+                    <!--⭐ Tooltip Trigger Slot (slot="tipTrigger")-->
+                    <button class="slds-button slds-button_icon" aria-describedby="help" slot="tipTrigger">
+                        <svg class="slds-button__icon" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.info}></use>
+                        </svg>
+                        <span class="slds-assistive-text">Help</span>
+                    </button>
+                    <!--//////////////////////////-->
+
+                    <!--⭐ Text Body Slot (slot="simpleBody")-->
+                    <div slot="simpleBody"> 
+                        <p style="font-size: 14px;">{helpText}</p>
+                    </div> 
+                    <!--/////////////////-->
+                </c-tooltip-button>
+            </div>
+    
+            <div class="slds-form-element__control" style="padding: 0px; margin: 0px;">
+                <div class="slds-combobox_container">
+    
+                    <!--aria-expanded && slds-is-open here-->
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click trigger-search"
+                        onkeydown={handleKeyDown} 
+                        aria-haspopup="listbox" 
+                        role="combobox"
+                        onclick={handleTriggerClick}
+                    >
+    
+                        <div 
+                            class="slds-combobox__form-element 
+                                slds-input-has-icon 
+                                slds-input-has-icon_right 
+                                combobox-search" 
+                            role="none"
+                        >
+                            <!-- LEFT ICON (only when something is selected) -->
+                            <template lwc:if={_selectedOption}>
+                                <span class={_selectedOption.icon.container}>
+                                    <svg class={_selectedOption.icon.svg} aria-hidden="true">
+                                        <use xlink:href={_selectedOption.icon.icon}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">{_selectedOption.label}</span>
+                                </span>
+                            </template>
+                            <template lwc:elseif={leftIcon}> 
+                                <span class={leftIcon.icon.container}>
+                                    <svg class={leftIcon.icon.svg} aria-hidden="true">
+                                        <use xlink:href={leftIcon.icon.icon}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">{_leftIcon.label}</span>
+                                </span>
+                            </template>
+
+                            <!--slds-has-focus here-->
+                            <input  
+                                type={dtype}
+                                class="slds-input slds-combobox__input slds-combobox__input-value" 
+                                id="combobox-id-15" 
+                                aria-activedescendant={activeDescendant} 
+                                aria-autocomplete="list" 
+                                aria-controls="listbox-id-16" 
+                                autocomplete="off" 
+                                role="textbox" 
+                                required={isRequired}
+                                data-id="inputEle"
+                                readonly={_isReadOnly}
+                                placeholder={placeHolder}
+                                onblur={closeCombobox}
+                                oninput={handleInput}
+                                value={_value.label}
+                                onfocusout={handleFocusOut}
+                                onfocus={handleFocus}
+                            />
+
+                            <!--"Remove" Button (only when something is selected)-->
+                            <template lwc:if={_selectedOption}>
+                                <button
+                                    class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                    title="Clear selection"
+                                    type="button"
+                                    onkeydown={handleRemoveKeydown}
+                                    onclick={removeSelected}
+                                    onfocus={handleRemoveSelctedFocus}
+                                    onfocusout={handleRemoveSelectedFocusOut}
+                                    data-element="clear-selection"
+                                    tabindex="0"
+                                >
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.close}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Clear</span>
+                                </button>
+                            </template>
+                            <!--End "Remove" Button (only when something is selected)-->
+
+                            <!--Custom Icon (No Selection)-->
+                            <template lwc:else>
+                                <template lwc:if={isComboboxLoading}>
+                                    <span class="slds-input__icon slds-input__icon_right">
+                                        <lightning-spinner size="x-small" variant="brand"></lightning-spinner>
+                                    </span>
+                                </template>
+                                <template lwc:else>
+                                    <template lwc:if={inputIcon}> 
+                                        <span class={inputIcon.container} style="transform: scale(1.5)">
+                                            <svg class="slds-icon slds-icon slds-icon_x-small" aria-hidden="true">
+                                                <use xlink:href={inputIcon.icon}></use>
+                                            </svg>
+                                        </span>
+                                    </template>
+                                    
+                                    <!--Default Icon (Search)-->
+                                    <template lwc:else> 
+                                        <!-- SEARCH ICON when NOT selected -->
+                                            <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                            <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                <use xlink:href={iconMap.utility.search}></use>
+                                            </svg>
+                                        </span>
+                                    </template>
+                                    <!--End Default Icon (Search)-->
+                                </template>
+                            </template>
+                            <!--End Custom Icon-->
+
+                        </div>
+    
+                        <div id="listbox-id-16" 
+                            class={dropdownClass} 
+                            role="listbox"
+                        >
+
+                            <template lwc:if={isLoading}> 
+                                <div style="height: 100px" class="slds-p-horizontal_large slds-align_absolute-center"> 
+                                    <lightning-spinner variant="brand"></lightning-spinner>
+                                </div>
+                            </template>
+                            <template lwc:else>
+                                <ul 
+                                    class="slds-listbox slds-listbox_vertical" 
+                                    role={ulEleAttributes.role} 
+                                    aria-label={ulEleAttributes.ariaLabel}
+                                >
+                                    <li 
+                                        if:true={menuTitle} 
+                                        role="presentation" 
+                                        class="slds-listbox__item"
+                                    >
+                                        <div id="object0" 
+                                            class="slds-media slds-media_center slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                            role="presentation" 
+                                            data-element="groupHeader"
+                                        ><h3 class="slds-listbox__option-header" role="presentation">{menuTitle}</h3></div>
+                                    </li>
+
+                                    <template lwc:if={currentOptions.length}> 
+                                        <template for:each={currentOptions} for:item="option">
+                                            <li key={option.id} role="presentation" class="slds-listbox__item">
+                                                <!--aria-selected="true" && slds-has-focus here-->
+                                                <div id={option.id} 
+                                                    class={option.optionClass}
+                                                    role="option"
+                                                    onclick={handleOptionClick}
+                                                    onmousedown={deflectFocus}
+                                                    data-value={option.value}
+                                                    data-label={option.label}
+                                                >
+                                                    <!--Icon-->
+                                                    <template lwc:if={isIcons}>
+                                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                                            <!--Icon-->
+                                                            <template lwc:if={option.icon}>
+                                                                <span class={option.icon.container}>
+                                                                    <svg class={_optionIconCl} aria-hidden="true">
+                                                                        <use xlink:href={option.icon.icon}></use>
+                                                                    </svg>
+                                                                </span>
+                                                            </template>
+                                                            <!--End Icon-->
+
+                                                            <!--Image-->
+                                                            <template lwc:elseif={option.img}>
+                                                                <span class="slds-avatar slds-avatar_large">
+                                                                    <img alt="Logo" src={option.img} title={option.label} aria-hidden="true" />
+                                                                </span>
+                                                            </template>
+                                                            <!--End Image-->
+
+                                                            <!--Fallback-->
+                                                            <template lwc:elseif={option.fallback}>
+                                                                <span class="slds-avatar slds-avatar_medium">
+                                                                    <span class="fallback-avatar">{option.fallback}</span>
+                                                                </span>
+                                                            </template>
+                                                            <!--End Fallback-->
+
+                                                        </span>
+
+                                                    </template>
+
+                                                    <!--Media-->
+                                                    <span class="slds-media__body">
+                                                        <!--Main Label-->
+                                                        <span class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" title={option.label}>
+                                                            <span>{option.label}</span>
+                                                        </span>
+                                                        <!--End Main Label-->
+                                                        <!--Label Meta-->
+                                                        <template lwc:if={option.hasMeta}>
+                                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                                                <span if:true={option.metaOne}>
+                                                                    <span if:true={option.isMetaOneStrike} style="text-decoration:line-through">{option.metaOne}</span>
+                                                                    <span if:false={option.isMetaOneStrike}>{option.metaOne}</span> 
+                                                                </span> 
+                                                                <span if:true={option.metaTwo}>
+                                                                    <span if:true={option.isMetaTwoStrike} style="text-decoration:line-through"> • {option.metaTwo}</span>
+                                                                    <span if:false={option.isMetaTwoStrike}> • {option.metaTwo}</span> 
+                                                                </span>
+                                                                <span if:true={option.metaThree}>
+                                                                    <span if:true={option.isMetaThreeStrike} style="text-decoration:line-through"> • {option.metaThree}</span>
+                                                                    <span if:false={option.isMetaThreeStrike}> • {option.metaThree}</span> 
+                                                                </span>
+                                                                <span if:true={option.metaFour}>
+                                                                    <span if:true={option.isMetaFourStrike} style="text-decoration:line-through"> • {option.metaFour}</span>
+                                                                    <span if:false={option.isMetaFourStrike}> • {option.metaFour}</span> 
+                                                                </span>
+                                                                <template lwc:if={option.isMeta}>
+                                                                    <template if:false={option.hasMeta}>
+                                                                        <span>&#8203;</span>
+                                                                    </template>
+                                                                </template>
+                                                            </span>
+                                                        </template>
+                                                        <!--End Label Meta-->
+
+                                                    </span>
+                                                    <!--End Media-->
+                                                </div>
+                                            </li>
+                                        </template>
+                                        <li class="load-more-sentinel"></li>
+                                    </template>
+
+                                    <!--No Matches-->
+                                    <template lwc:else>
+                                        <li
+                                            role="presentation"
+                                            class="slds-listbox__item"
+                                        >
+                                            <div class="slds-align_absolute-center slds-p-vertical_small"> 
+                                                <span class="slds-grid slds-grid_vertical">
+                                                    <span class="slds-align-middle">
+                                                        <span class="slds-icon_container slds-icon-utility-error">
+                                                            <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.error}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text"></span>
+                                                        </span>
+                                                    </span>
+                                                    <span class="slds-p-top_x-small slds-align-middle slds-text-body_regular">
+                                                        No Results
+                                                    </span>
+                                                </span>
+                                            </div>    
+                                        </li>
+                                    </template>
+                                    <!--End No Matches-->
+
+                                </ul>
+                            </template>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <label if:true={labelBottom} class="slds-form-element__label" for="combobox-id-15">
+                {labelBottom}
+            </label>
+
+            <template lwc:if={_selectedOption}> 
+                <template if:false={_hasError}>
+                    <template lwc:if={shouldShowSelectionHelp}> 
+                        <div class="slds-form-element__help" 
+                            id="help-message-unique-id"
+                        > 
+                            <p> 
+                                <lightning-icon icon-name="utility:info" size="x-small" class="slds-p-right_x-small"></lightning-icon> 
+                                Press Backspace or Escape to remove selection
+                            </p>
+                        </div> 
+                    </template>
+                    <template lwc:elseif={_isCancelSelectionFocused}> 
+                        <div class="slds-form-element__help" 
+                            id="help-message-unique-id-2"
+                        > 
+                            <p> 
+                                <lightning-icon icon-name="utility:info" size="x-small" class="slds-p-right_x-small"></lightning-icon> 
+                                Press Enter or click <lightning-icon icon-name="utility:close" size="xx-small" class="slds-p-horizontal_xx-small"></lightning-icon> 
+                                to remove selection
+                            </p>
+                        </div>
+                    </template>
+                </template>
+            </template>
+
+            <!--Error Message-->
+            <template if:false={suppressErrorText}>
+                <div if:true={_hasError} 
+                    class="slds-form-element__help" 
+                    id="error-message-unique-id"
+                > 
+                    <template lwc:if={_errorMsg}> 
+                        {_errorMsg}
+                    </template>
+                    <template lwc:else> 
+                        Enter a value.
+                    </template> 
+                </div>  
+            </template>
+            <!--End Error Message-->
+    
+        </div>
+    </template>
+
+</template>

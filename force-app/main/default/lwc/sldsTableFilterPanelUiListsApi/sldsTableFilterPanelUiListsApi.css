@@ -1,0 +1,28 @@
+@import 'c/sharedStylesGlobal';
+
+/* Your popover element should already have slds-popover + nubbin class */
+.slds-popover.slds-nubbin_right-top::before,
+.slds-popover.slds-nubbin_right-top::after {
+    top: var(--nubbin-y, 24px);
+}
+
+.large-font {
+    font-size: 14px;
+}
+
+.larger {
+    transform: scale(1.2);
+}
+
+.filter-bottom-section {
+    background-color: var(--slds-g-color-neutral-base-95);
+}
+
+.preserve-whitespace {
+    white-space: pre-wrap !important;
+}
+
+.filter-popover {
+    position: fixed; /* easiest: anchors to viewport */
+    z-index: 9999;
+}

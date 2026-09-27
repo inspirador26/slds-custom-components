@@ -1,0 +1,58 @@
+:host  {
+    --vg-content-bg: var(--slds-g-color-neutral-base-100);
+    --content-border: solid 1px var(--slds-g-color-border-base-3);
+
+    --c-tab-padding: 1.0rem;
+}
+
+.no-border-radius-button {
+    border-radius: 0rem;
+}
+
+
+
+.slds-tabs_scoped__item.slds-is-active .slds-tabs_scoped__link {
+    background-color: var(--slds-g-color-neutral-base-100);
+    font-weight: 700;
+    color: var(--slds-g-color-neutral-base-10);
+    border: 0;
+    border-bottom: none;
+    border-right: solid 1px var(--slds-g-color-border-base-4);
+    border-left: solid 1px var(--slds-g-color-border-base-4);
+}
+
+
+/* First tab: remove left border */
+.slds-tabs_scoped__item:first-child.slds-is-active .slds-tabs_scoped__link {
+    border-left: 1px solid transparent;
+}
+
+
+
+.slds-tabs_scoped__link {
+    color: var(--slds-g-color-neutral-base-10);
+}
+
+.slds-tabs_scoped__nav li a {
+    color: var(--slds-g-color-neutral-base-10);
+}
+.slds-tabs_scoped__nav li:hover a {
+    text-decoration: none;
+}
+
+.slds-tabs_scoped__content {
+    background-color: var(--vg-content-bg, #fff);
+    border: var(--content-border, none);
+    border-top: none;
+    padding: var(--c-tab-padding, 1.0rem);
+}
+
+.slds-tabs_scoped:not(.slds-tabs_medium, .slds-tabs_large) .slds-tabs_scoped__nav li {
+    font-size: 1rem;
+}
+.slds-tabs_scoped .slds-tabs_medium .slds-tabs_scoped__nav li {
+    font-size: 1.25rem;
+}
+.slds-tabs_scoped .slds-tabs_large .slds-tabs_scoped__nav li {
+    font-size: 1.25rem;
+}

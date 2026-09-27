@@ -1,0 +1,53 @@
+<template>
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <fieldset class="slds-form-element" lwc:ref="formElement">
+        <template lwc:if={label}>
+            <legend class="slds-form-element__legend slds-form-element__label">
+                <abbr if:true={isRequired} class="slds-required" title="required" aria-hidden="true">*</abbr>
+                {label}
+            </legend>
+        </template>
+        <template lwc:elseif={isRequired}>
+            <legend class="slds-form-element__legend slds-form-element__label">
+                <abbr if:true={isRequired} class="slds-required" title="required" aria-hidden="true">*</abbr>
+            </legend>
+        </template>
+        <div class="slds-form-element__control">
+            <div class={_checkGroupCl}>
+                <template lwc:if={_options.length}>
+                    <template for:each={_options} for:item="option">
+                        <span class="slds-button slds-checkbox_button" key={option.keyId}>
+                            <input
+                                type="checkbox"
+                                id={option.keyId}
+                                value={option.value}
+                                name={_groupName} 
+                                data-key-id={option.keyId}
+                                checked={option.isSelected}
+                                onchange={handleChange}
+                            />
+                            <label class="slds-checkbox_button__label" for={option.keyId}>
+                                <span class="slds-checkbox_faux">{option.label}</span>
+                            </label>
+                        </span>
+                    </template>
+                </template>
+            </div>
+            <div if:true={requiredError} id="error-unique-id-219" class="slds-form-element__help">
+                This field is required
+            </div>
+        </div>
+    </fieldset>
+
+</template>

@@ -1,0 +1,52 @@
+@import 'c/sharedStylesGlobal';
+@import 'c/sharedStylesSldsCombobox';
+
+:host {
+    --input-height: 1.875rem;
+    --input-radius: var(--slds-c-input-radius-border, 0.25rem);  
+    --input-font-size: inherit;
+    --label-margin: var(--slds-g-spacing-1, 0.25rem);
+    --label-font-weight: normal;
+    --label-color: var(--slds-g-color-neutral-base-10, #181818);
+}
+
+.slds-form-element__label {
+    font-size: var(--input-font-size, inherit);
+    margin-bottom: var(--label-margin, var(--slds-g-spacing-1, 0.25rem));
+    font-weight: var(--label-font-weight, normal);
+    color: var(--label-color, var(--slds-g-color-neutral-base-10, #181818));
+
+}
+.slds-listbox.slds-listbox_vertical {
+    font-size: var(--input-font-size, inherit);
+}
+
+
+
+.slds-combobox__input-entity-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    position: absolute;
+    top: 50%;
+    left: calc(.35rem + 1px);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.dropdown-up {
+    top: 0;
+    left: 0;
+    transform: translateY(calc(-100% - 36.5px));
+}
+
+.slds-input.slds-combobox__input {
+    min-height: calc(var(--input-height) + (1px * 2));
+    line-height: var(--input-height);
+    border-radius: var(--input-radius, 0.25rem);
+    font-size: var(--input-font-size, inherit);
+}
+
+
+.slds-has-selection::selection { background: transparent; }
+.slds-has-selection::-moz-selection { background: transparent; }

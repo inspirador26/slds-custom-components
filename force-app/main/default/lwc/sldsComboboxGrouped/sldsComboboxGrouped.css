@@ -1,0 +1,6 @@
+@import 'c/sharedStylesSldsCombobox';
+@import 'c/sharedStylesGlobal';
+
+.dropdown-grow {
+    width: 100% !important;
+}

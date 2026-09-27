@@ -1,0 +1,226 @@
+<template>
+	<div class={_tabsCl}>
+
+		<ul class="slds-tabs_scoped__nav" role="tablist" data-role="nav">
+
+			<template lwc:if={tab1Label}>
+				<template lwc:if={tab1IsVisible}>
+					<li class={tab1ItemClass} role="presentation" title={tab1Label} data-tab-id="tab1">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab1"
+							tabindex={tab1TI} aria-selected={tab1Aria}
+							aria-controls="panel-tab1" id="link-tab1"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab1Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<template lwc:if={tab2Label}>
+				<template lwc:if={tab2IsVisible}>
+					<li class={tab2ItemClass} role="presentation" title={tab2Label} data-tab-id="tab2">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab2"
+							tabindex={tab2TI} aria-selected={tab2Aria}
+							aria-controls="panel-tab2" id="link-tab2"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab2Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<template lwc:if={tab3Label}>
+				<template lwc:if={tab3IsVisible}>
+					<li class={tab3ItemClass} role="presentation" title={tab3Label} data-tab-id="tab3">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab3"
+							tabindex={tab3TI} aria-selected={tab3Aria}
+							aria-controls="panel-tab3" id="link-tab3"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab3Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<template lwc:if={tab4Label}>
+				<template lwc:if={tab4IsVisible}>
+					<li class={tab4ItemClass} role="presentation" title={tab4Label} data-tab-id="tab4">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab4"
+							tabindex={tab4TI} aria-selected={tab4Aria}
+							aria-controls="panel-tab4" id="link-tab4"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab4Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<template lwc:if={tab5Label}>
+				<template lwc:if={tab5IsVisible}>
+					<li class={tab5ItemClass} role="presentation" title={tab5Label} data-tab-id="tab5">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab5"
+							tabindex={tab5TI} aria-selected={tab5Aria}
+							aria-controls="panel-tab5" id="link-tab5"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab5Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<template lwc:if={tab6Label}>
+				<template lwc:if={tab6IsVisible}>
+					<li class={tab6ItemClass} role="presentation" title={tab6Label} data-tab-id="tab6">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab6"
+							tabindex={tab6TI} aria-selected={tab6Aria}
+							aria-controls="panel-tab6" id="link-tab6"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab6Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<template lwc:if={tab7Label}>
+				<template lwc:if={tab7IsVisible}>
+					<li class={tab7ItemClass} role="presentation" title={tab7Label} data-tab-id="tab7">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab7"
+							tabindex={tab7TI} aria-selected={tab7Aria}
+							aria-controls="panel-tab7" id="link-tab7"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab7Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<template lwc:if={tab8Label}>
+				<template lwc:if={tab8IsVisible}>
+					<li class={tab8ItemClass} role="presentation" title={tab8Label} data-tab-id="tab8">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab8"
+							tabindex={tab8TI} aria-selected={tab8Aria}
+							aria-controls="panel-tab8" id="link-tab8"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab8Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<template lwc:if={tab9Label}>
+				<template lwc:if={tab9IsVisible}>
+					<li class={tab9ItemClass} role="presentation" title={tab9Label} data-tab-id="tab9">
+						<a class="slds-tabs_scoped__link"
+							href="#" role="tab"
+							data-id="tab9"
+							tabindex={tab9TI} aria-selected={tab9Aria}
+							aria-controls="panel-tab9" id="link-tab9"
+							onclick={onTabClick}
+							onkeydown={onTabKeyDown}
+						><span class="slds-truncate">{tab9Label}</span></a>
+					</li>
+				</template>
+			</template>
+
+			<!-- Overflow button -->
+			<template lwc:if={hasOverflow}>
+				<li class={overflowItemClass} role="presentation" data-tab-id="overflow"> 
+					<div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+						<c-slds-menu-popover-button 
+							options={hiddenTabs}
+							value={_active}
+							is-left="false"
+							is-check="true"
+							onselection={onOverflowItemClick}
+						>	
+							<button class={overflowButtonClass} aria-haspopup="true" role="tab"
+								data-id="overflow"
+								tabindex={overflowTI}
+								aria-selected={overflowAria}
+								onkeydown={onTabKeyDown}
+							>
+								More
+								<svg class="slds-button__icon slds-button__icon_small slds-button__icon_right" aria-hidden="true">
+									<use xlink:href={iconMap.utility.down}></use>
+								</svg>
+							</button>
+						</c-slds-menu-popover-button>
+					</div>
+				</li>
+			</template>
+
+		</ul>
+
+		<!-- Panels -->
+		<template lwc:if={tab1Label}>
+			<div id="panel-tab1" data-panel-id="tab1" class={tab1PanelClass} role="tabpanel" aria-labelledby="link-tab1" onkeydown={onPanelKeyDown}>
+				<slot name="tab1"></slot>
+			</div>
+		</template>
+
+		<template lwc:if={tab2Label}>
+			<div id="panel-tab2" data-panel-id="tab2" class={tab2PanelClass} role="tabpanel" aria-labelledby="link-tab2" onkeydown={onPanelKeyDown}>
+				<slot name="tab2"></slot>
+			</div>
+		</template>
+
+		<template lwc:if={tab3Label}>
+			<div id="panel-tab3" data-panel-id="tab3" class={tab3PanelClass} role="tabpanel" aria-labelledby="link-tab3" onkeydown={onPanelKeyDown}>
+				<slot name="tab3"></slot>
+			</div>
+		</template>
+
+		<template lwc:if={tab4Label}>
+			<div id="panel-tab4" data-panel-id="tab4" class={tab4PanelClass} role="tabpanel" aria-labelledby="link-tab4" onkeydown={onPanelKeyDown}>
+				<slot name="tab4"></slot>
+			</div>
+		</template>
+		
+		<template lwc:if={tab5Label}>
+			<div id="panel-tab5" data-panel-id="tab5" class={tab5PanelClass} role="tabpanel" aria-labelledby="link-tab5" onkeydown={onPanelKeyDown}>
+				<slot name="tab5"></slot>
+			</div>
+		</template>
+
+		<template lwc:if={tab6Label}>
+			<div id="panel-tab6" data-panel-id="tab6" class={tab6PanelClass} role="tabpanel" aria-labelledby="link-tab6" onkeydown={onPanelKeyDown}>
+				<slot name="tab6"></slot>
+			</div>
+		</template>
+
+		<template lwc:if={tab7Label}>
+			<div id="panel-tab7" data-panel-id="tab7" class={tab7PanelClass} role="tabpanel" aria-labelledby="link-tab7" onkeydown={onPanelKeyDown}>
+				<slot name="tab7"></slot>
+			</div>
+		</template>
+
+		<template lwc:if={tab8Label}>
+			<div id="panel-tab8" data-panel-id="tab8" class={tab8PanelClass} role="tabpanel" aria-labelledby="link-tab8" onkeydown={onPanelKeyDown}>
+				<slot name="tab8"></slot>
+			</div>
+		</template>
+		
+		<template lwc:if={tab9Label}>
+			<div id="panel-tab9" data-panel-id="tab9" class={tab9PanelClass} role="tabpanel" aria-labelledby="link-tab9" onkeydown={onPanelKeyDown}>
+				<slot name="tab9"></slot>
+			</div>
+		</template>
+		
+	</div>
+</template>

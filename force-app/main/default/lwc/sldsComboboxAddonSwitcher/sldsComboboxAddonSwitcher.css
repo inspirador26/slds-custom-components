@@ -1,0 +1,27 @@
+.font-normal .slds-input {
+    color: var(--slds-g-color-neutral-base-10) !important;
+    font-size: 12px;
+}
+
+.slds-combobox_object-switcher {
+    --addon-switcher-rest-width: 16ch;
+    --addon-switcher-focus-width: 22ch;
+    flex: 0 0 auto;
+}
+
+.slds-combobox_object-switcher .slds-combobox_container {
+    width: var(--addon-switcher-rest-width);
+    transition: width 160ms ease;
+}
+
+.slds-combobox_object-switcher:focus-within .slds-combobox_container {
+    width: var(--addon-switcher-focus-width);
+}
+
+.slds-combobox_object-switcher .slds-combobox__input {
+    width: 100% !important;
+}
+
+.read-only-style {
+    cursor: pointer !important;
+}

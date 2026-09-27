@@ -1,0 +1,204 @@
+:host {
+    --tip-width: max-content;
+    --tip-max-width: 20rem;
+
+    --slds-c-tooltip-color-background: var(--vg-tooltip-color-background, var(--slds-g-color-brand-base-20, #032d60));
+    --slds-c-tooltip-text-color: var(--slds-g-color-neutral-base-100, #fff);
+
+    --vg-tooltip-header-color-background: var(--vg-tooltip-color-background, var(--slds-g-color-brand-base-20, #032d60));
+    --vg-tooltip-header-text-color: var(--slds-g-color-neutral-base-100, #fff);
+
+    --tooltip-adjust-x: 0px;
+    --tooltip-adjust-y: 0px;
+    
+    /* bottom variants */
+    --nubbin-bottom_bottom: 135%;
+
+    --nubbin-bottom-center_left: 50%;
+    --nubbin-bottom-center_transform: translateX(-50%);
+
+    --nubbin-bottom-right_left: 96%;
+    --nubbin-bottom-right_transform: translateX(-96%);
+
+    --nubbin-bottom-left_left: 4%;
+    --nubbin-bottom-left_transform: translateX(-4%);
+
+    /* top variants */
+    --nubbin-top_top: 135%;
+
+    --nubbin-top-center_left: 50%;
+    --nubbin-top-center_transform: translateX(-50%);
+
+    --nubbin-top-right_left: 96%;
+    --nubbin-top-right_transform: translateX(-96%);
+
+    --nubbin-top-left_left: 4%;
+    --nubbin-top-left_transform: translateX(-4%);
+
+    --tip-gap: 0.75rem;
+    --tip-edge: .5rem; 
+
+}
+
+:host { display: contents; } /* optional; keep layout clean */
+
+/* This is the important part */
+.trigger-anchor {
+    position: relative;     /* THIS stays, always */
+    display: inline-flex;   /* tight, doesn’t stretch like a div */
+    align-items: center;
+}
+
+.slds-popover__header {
+    background-color: var(--vg-tooltip-header-color-background);
+    color: var(--vg-tooltip-header-text-color);
+}
+.slds-popover__header .slds-media__body h2 {
+    color: var(--vg-tooltip-header-text-color);
+    font-size: var(--slds-g-font-scale-2);
+    font-weight: 600;
+}
+
+.header-section {
+    background-color: var(--vg-tooltip-header-color-background);
+    color: var(--vg-tooltip-header-text-color);
+}
+
+
+.warning-icon {
+    --slds-c-icon-color-foreground: var(--vg-color-base-dark-1, #181818);
+	--slds-c-icon-color-foreground-default: var(--vg-color-base-dark-1, #181818);
+}
+.error-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-100, #fff);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-100, #fff);
+}
+
+/* bottom variants */
+.nubbin-bottom-center {
+    bottom: var(--nubbin-bottom_bottom);
+    left: var(--nubbin-bottom-center_left);
+    transform: var(--nubbin-bottom-center_transform) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+.nubbin-bottom-right {
+    bottom: var(--nubbin-bottom_bottom);
+    left: var(--nubbin-bottom-right_left);
+    transform: var(--nubbin-bottom-right_transform) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+.nubbin-bottom-left {
+    bottom: var(--nubbin-bottom_bottom);
+    left: var(--nubbin-bottom-left_left);
+    transform: var(--nubbin-bottom-left_transform) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+
+/* top variants */
+.nubbin-top-center {
+    top: var(--nubbin-top_top);
+    left: var(--nubbin-top-center_left);
+    transform: var(--nubbin-top-center_transform) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+.nubbin-top-right {
+    top: calc(100% + var(--tip-gap));
+    left: var(--nubbin-top-right_left);
+    transform: var(--nubbin-top-right_transform) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+.nubbin-top-left {
+    top: var(--nubbin-top_top);
+    left: var(--nubbin-top-left_left);
+    transform: var(--nubbin-top-left_transform) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+/* Tooltip to the LEFT of trigger, nubbin on RIGHT edge */
+.nubbin-right-bottom {
+    right: calc(100% + var(--tip-gap));
+    top: var(--tip-edge);
+    left: auto;
+    bottom: auto;
+    transform: translateY(-50%) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+.nubbin-right-center {
+    right: calc(100% + var(--tip-gap));
+    top: 50%;
+    left: auto;
+    bottom: auto;
+    transform: translateY(-50%) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+.nubbin-right-top {
+    right: calc(100% + var(--tip-gap));
+    top: auto;
+    bottom: var(--tip-edge);
+    left: auto;
+    transform: translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+
+
+
+
+/* Tooltip to the RIGHT of trigger, nubbin on LEFT edge */
+.nubbin-left-top {
+  left: calc(100% + var(--tip-gap));
+  top: calc(var(--tip-edge) - 1px);
+  right: auto;
+  bottom: auto;
+  transform: translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+.nubbin-left-center {
+    left: calc(100% + var(--tip-gap));
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translateY(-50%) translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+.nubbin-left-bottom {
+  left: calc(100% + var(--tip-gap));
+  top: auto;
+  bottom: calc(var(--tip-edge) - 1px);
+  right: auto;
+  transform: translate(var(--tooltip-adjust-x), var(--tooltip-adjust-y));
+}
+
+
+.slds-popover_tooltip [class^="slds-text-"],
+.slds-popover_tooltip [class*=" slds-text-"] {
+    color: var(--slds-g-color-neutral-base-100, #181818);
+}
+
+
+
+:host(.shrink-nubbin) [class*="slds-nubbin"]::before,
+:host(.shrink-nubbin) [class*="slds-nubbin"]::after {
+    transform: rotate(45deg);
+}
+
+
+
+.slds-popover.slds-popover_tooltip.popover-neutral[class*="slds-nubbin_bottom"]::before {
+    box-shadow:
+        1px 0 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1)),
+        0 1px 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1));
+}
+.slds-popover.slds-popover_tooltip.popover-neutral[class*="slds-nubbin_top"]::before {
+    box-shadow:
+        -1px 0 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1)),
+        0 -1px 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1));
+}
+.slds-popover.slds-popover_tooltip.popover-neutral[class*="slds-nubbin_left"]::before {
+    box-shadow:
+        -1px 0 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1)),
+        0 1px 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1));
+}
+.slds-popover.slds-popover_tooltip.popover-neutral[class*="slds-nubbin_right"]::before {
+    box-shadow:
+        1px 0 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1)),
+        0 -1px 0 0 var(--vg-popover-nubbin-shadow-color, var(--slds-g-color-border-base-1));
+}

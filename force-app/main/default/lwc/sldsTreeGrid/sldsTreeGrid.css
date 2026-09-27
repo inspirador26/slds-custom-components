@@ -1,0 +1,294 @@
+@import 'c/sharedStylesGlobal';
+@import 'c/sharedStylesSldsTable';
+
+
+:host {
+    --max-height: calc(70vh - 50px);
+    --footer-offset: 0px; /* Offset when footer is visible */
+    --indent-td-width: 3.625rem;
+    --indent-td-width-small: 1.625rem;
+    --indent-td-after: 8px;
+    --level-1-indent: calc(3.625rem + 8px) !important;
+    --vg-table-height: none;
+    display: block;  /* make sure the host can size itself */
+    --c-font-size: 1.0rem;
+    --vg-color-bg-tree-columns: var(--slds-g-color-neutral-base-95, #f3f3f3);
+}
+
+.parent-table thead th {
+    position: sticky; /* Fixes the header at the top */
+    top: 0;
+    z-index: 2;
+    background-color: var(--vg-color-bg-tree-columns, var(--slds-g-color-neutral-base-95, #f3f3f3));
+}
+
+.level-3-cell {
+    min-height: 33px;
+    line-height: normal;
+}
+
+
+
+.slds-table_bordered:not(.slds-no-row-hover) tbody tr:focus>td:not(.slds-has-focus, .slds-is-edited, .nested-th), 
+.slds-table_bordered:not(.slds-no-row-hover) tbody tr:focus>th:not(.slds-has-focus, .slds-is-edited, .nested-th), 
+.slds-table_bordered:not(.slds-no-row-hover) tbody tr:hover>td:not(.slds-has-focus, .slds-is-edited, .nested-th), 
+.slds-table_bordered:not(.slds-no-row-hover) tbody tr:hover>th:not(.slds-has-focus, .slds-is-edited, .nested-th) {
+    /*box-shadow: inset 0 -1px 0 var(--c-slds-neutral-modern-90), inset 0 1px 0 var(--c-slds-neutral-modern-90);*/
+    box-shadow: var(--slds-g-color-border-base-1, var(--lwc-colorBorder, rgb(229, 229, 229))) 0 calc(-1 * var(--lwc-borderWidthThin, 1px)) 0 inset, var(--slds-g-color-border-base-1, var(--lwc-colorBorder, rgb(229, 229, 229))) 0 1px 0 inset;
+}
+
+.slds-table:not(.slds-no-row-hover) tbody tr:focus>td:not(.slds-has-focus, .slds-is-edited, .nested-th),
+.slds-table:not(.slds-no-row-hover) tbody tr:focus>th:not(.slds-has-focus, .slds-is-edited, .nested-th),
+.slds-table:not(.slds-no-row-hover) tbody tr:hover>td:not(.slds-has-focus, .slds-is-edited, .nested-th),
+.slds-table:not(.slds-no-row-hover) tbody tr:hover>th:not(.slds-has-focus, .slds-is-edited, .nested-th) {
+    /*background-color: #f3f2f2;*/
+    background: var(--slds-g-color-neutral-base-95);
+}
+
+/* When a specific cell is hovered, cancel the row-hover styling on that cell */
+.slds-table:not(.slds-no-row-hover) tbody tr:hover > td:not(.indent-td, .slds-is-edited):hover,
+.slds-table:not(.slds-no-row-hover) tbody tr:hover > th:not(.nested-table-td-wrapper, .row-action-col, .slds-is-edited):hover {
+    background-color: transparent !important;
+}
+
+.nested-table-td-wrapper:focus {
+    box-shadow: none;
+}
+
+.slds-table_bordered:not(.slds-no-row-hover) tbody tr.nested-col-tr:focus>td:not(.slds-has-focus, .slds-is-edited, .nested-th), 
+.slds-table_bordered:not(.slds-no-row-hover) tbody tr.nested-col-tr:focus>th:not(.slds-has-focus, .slds-is-edited, .nested-th), 
+.slds-table_bordered:not(.slds-no-row-hover) tbody tr.nested-col-tr:hover>td:not(.slds-has-focus, .slds-is-edited, .nested-th), 
+.slds-table_bordered:not(.slds-no-row-hover) tbody tr.nested-col-tr:hover>th:not(.slds-has-focus, .slds-is-edited, .nested-th) {
+    box-shadow: none;
+    background-color: var(--vg-color-bg-tree-columns, var(--slds-g-color-neutral-base-95, #f3f3f3));
+}
+.parent-table {
+    border-bottom: none;
+}
+
+.col-th {
+    color: var(--slds-g-color-neutral-base-30, #444);
+}
+
+.slds-button .slds-button__icon_edit {
+    fill: var(--slds-g-color-neutral-base-10);
+}
+
+.nested-table-wrapper {
+    background-color: var(--slds-g-color-neutral-base-95);
+}
+
+/* Set tree dropdown to 'display: table-row;' */
+.custom-show {
+    display: table-row;
+}
+
+
+.nested-table-wrapper {
+    white-space: normal; 
+    word-wrap: break-word;
+    height: auto;  /* Let the container's height be determined by its content */
+    overflow-y: hidden;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.nested-table-wrapper thead th.slds-is-resizable,
+.tree-table-container thead th.slds-is-resizable {
+    box-shadow: inset -1px 0 0 var(--slds-g-color-neutral-base-70, rgb(174,174,174));
+}
+.nested-table-wrapper table {
+    border-top: none;
+    border-bottom: none;
+}
+
+
+
+/* ================================ Table/Header Styles =============================== */
+/*.tree-table-container {
+    white-space: normal; 
+    word-wrap: break-word;
+    overflow: hidden;
+    position: relative;
+    height: auto;  
+    overflow-x: auto;
+}*/
+
+.tree-table-container {
+    /*max-height: var(--max-height);*/
+    white-space: normal; 
+    word-wrap: break-word;
+    position: relative;
+    overflow-y: visible;          /* default; JS will toggle to auto */
+    height: auto;  /* Let the container's height be determined by its content */
+    overflow-x: auto;
+    scrollbar-gutter: auto;  /* reserve gutter even when no scrollbar */
+    max-height: var(--max-height);
+    min-height: 0;
+    padding: 0px;
+    background: var(--slds-g-color-neutral-base-95);
+    scrollbar-width: thin;
+    font-size: var(--c-font-size, 1.0rem);
+}
+
+.nested-table-wrapper::-webkit-scrollbar,
+.custom-table-container::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+
+
+
+.slds-resizable__divider::after {
+    max-height: var(--vg-table-height);
+}
+
+.check-th-normal {
+    width: 3.25rem;
+}
+.check-th-small {
+    width: 2.0rem;
+}
+
+
+.indent-td {
+    max-height: 200px;
+    position: relative; 
+    border: none;
+    background: var(--vg-color-bg-tree-columns, var(--slds-g-color-neutral-base-95, #f3f3f3));
+}
+/* icon wrapper sits on top */
+.indent-icon-wrap {
+    position: relative;
+    z-index: 1;
+}
+.indent-highlight-large {
+    background: var(--vg-color-bg-tree-columns, var(--slds-g-color-neutral-base-95, #f3f3f3));
+}
+
+.indent-highlight-large::after {
+    width: calc(100% + var(--indent-td-width) + var(--indent-td-after));
+    background: var(--vg-color-border-tree-indent, rgba(187, 174, 54, 0.993));
+    z-index: 2;
+    pointer-events: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+}
+
+.indent-highlight::after {
+    width: calc(100% + var(--indent-td-width-small) + var(--indent-td-after));
+    background: var(--vg-color-border-tree-indent, rgba(187, 174, 54, 0.993));
+    z-index: 2;
+    pointer-events: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+}
+
+.nested-table-td-wrapper th.slds-has-focus, 
+.nested-table-td-wrapper th:focus {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background: var(--vg-color-bg-tree-columns, var(--slds-g-color-neutral-base-95, #f3f3f3));
+}
+
+
+.nested-table-td-wrapper {
+    padding: 0 !important; 
+    padding-left: calc(var(--indent-td-width-small) + 8px) !important;
+    scrollbar-width: thin;
+    /*padding-left: calc(var(--indent-td-width-small) + var(--indent-td-after)) !important;*/
+}
+tr.nested-table-container {
+    background-color: var(--vg-color-bg-tree-columns, var(--slds-g-color-neutral-base-95, #f3f3f3));
+}
+
+.nested-table {
+    border-left: 2px solid var(--vg-color-border-tree-indent, rgba(187, 174, 54, 0.993));
+}
+.nested-table-active {
+    border-left: 2px solid var(--vg-brand-blue-modern-2, rgb(2, 80, 217)); 
+}
+.indent-td.indent-td-active .indent-highlight::after,
+.indent-td.indent-td-active .indent-highlight-large::after {
+    background: var(--vg-brand-blue-modern-2, rgb(2, 80, 217)) !important;
+    pointer-events: none;
+}
+
+.nested-table thead th {
+    border-top: none !important;
+    background-color: var(--vg-color-bg-tree-columns, var(--slds-g-color-neutral-base-95, #f3f3f3));
+    
+}
+/* ==================================================================================== */
+
+tr[aria-expanded="true"] button.no-flip svg {
+    transform: none !important;
+}
+
+.slds-button.slds-button_icon.slds-cell-edit__button {
+    color: var(--slds-g-color-neutral-base-10, #181818);
+}
+
+.circle-button {
+    border: solid 1px var(--vg-color-border-button-tree-action, #5C5C5C);
+    border-radius: 25px; 
+}
+
+.circle-button:hover {
+    outline: solid 1px var(--slds-g-color-neutral-base-30, #444);
+    transform: scale3d(1.05, 1.1, 2); /* Noticeable Z scaling */
+}
+
+.child-tbody tr:first-child {
+    border-top: none;
+    outline: none;
+}
+.smaller-icon {
+    transform: scale(0.85);
+}
+.tree-icon {
+    fill: var(--vg-brand-blue-modern-2, rgb(2, 80, 217));
+}
+.slds-th__action.slds-text-link_reset.sortable-col span.slds-truncate {
+    --dxp-c-link-text-color: var(--slds-g-color-neutral-base-30, #444);
+    --dxp-s-link-text-color: var(--slds-g-color-neutral-base-30, #444);
+    --dxp-g-brand: var(--slds-g-color-neutral-base-30, #444);
+    color: var(--slds-g-color-neutral-base-30, #444);
+}
+
+
+.check-icon-styled {
+    padding: 0.15rem;
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-100);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-100);
+    --slds-c-icon-color-background: var(--slds-g-color-success-base-70, #45c65a);
+}
+
+.almost-success-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-100);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-100);
+    --slds-c-icon-color-background: var(--slds-g-color-brand-base-60, #1b96ff);
+}
+.almost-success-text {
+    color: var(--slds-g-color-brand-base-40, #0b5cab);
+}
+
+.success-text {
+    color: var(--slds-g-color-success-base-50, #2e844a);
+}
+
+.nested-table-wrapper thead th.slds-is-resizable:last-of-type,
+.tree-table-container thead th.slds-is-resizable:last-of-type {
+    box-shadow: none;
+}
+.nested-table-wrapper thead th:last-of-type .slds-resizable__divider:before,
+.tree-table-container thead th:last-of-type .slds-resizable__divider:before {
+    background-color: transparent;
+}

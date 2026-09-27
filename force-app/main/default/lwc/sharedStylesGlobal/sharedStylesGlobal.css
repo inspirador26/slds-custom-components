@@ -1,0 +1,630 @@
+/*
+    --sf-color-lead: #06A59A;
+    --sf-color-opportunity: #FF8800;
+    --sf-color-contract: rgb(57, 101, 71);
+    --vg-color-ace-recipe: #2F4F8F;
+    --vg-color-prime-supplier: #3A7FB8;
+    --vg-color-service: #B45EFF;
+    --vg-color-spinner-backgroup: rgba(255, 255, 255, 0.35);
+    --vg-color-notes: blue;
+
+*/
+
+
+.modal-shell {
+    border-radius: var(--slds-g-radius-border-4, 1.25rem);
+}
+
+.slds-page-header__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+
+.slds-form-element__legend {
+    --dxp-g-spacing-medium: 0.5rem;
+}
+
+
+.vg-text-color_weak {
+    color: var(--vg-color-weak, #636363);
+}
+.line-item-assigned {
+    background-color: var(--slds-g-color-warning-base-60, #dd7a01); 
+    color: var(--vg-color-base-dark-1, #181818);
+    border-color: var(--vg-color-base-dark-1, #181818);
+}
+
+/* ======================== BACKGROUNDS/THEMES ======================= */
+.slds-theme_shade-light {
+    background-color: var(--vg-color-bg-header-light-1, #f8f8f8);
+}
+/* =================================================================== */
+
+.vg-form-element.slds-form-element {
+    margin-bottom: 0px;
+}
+.vg-form-element .slds-form-element__label {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    display: inline-block;
+    font-size: 0.75rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    margin-bottom: 0.125rem;
+}
+.vg-form-element.vg-form-element_label-large .slds-form-element__label {
+    font-size: 0.9rem;
+    color: var(--vg-color-weak);
+}
+.vg-form-element.vg-form-element_label-large .slds-form-element__static {
+    font-size: 1.0rem;
+}
+
+/* 50% label column for your vg horizontal readonly rows */
+@media (min-width: 48em) {
+
+  /* Label: widen from ~33% → 50% */
+  .vg-form-element:not(.vg-form-element_thin).slds-form-element_horizontal .slds-form-element__label {
+    float: left;                         /* keep SLDS layout model */
+    max-width: calc(50% - 1.25rem);      /* match SLDS gap math */
+    flex-basis: calc(50% - 1.25rem);     /* harmless but keeps parity */
+    margin-bottom: 0;
+    display: block;                      /* avoids inline-block quirks */
+  }
+
+  /* Control: start after the label column */
+  .vg-form-element:not(.vg-form-element_thin).slds-form-element_horizontal .slds-form-element__control {
+    padding-left: 50%;
+    clear: none;
+  }
+}
+
+/* ============================== LISTS ============================== */
+/* Horizontal List */
+/* Example Usage: 
+    <ul class="slds-page-header__detail-row 👉 vg-stacked-list">
+        <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Solicitation">Solicitation</div>
+            <div class="slds-truncate larger-text">{value}</div>
+        </li>
+    </ul>
+*/
+.vg-stacked-list {
+    z-index: auto;
+}
+.vg-stacked-list .slds-text-title {
+    font-size: 1rem;
+    color: var(--vg-color-weak);
+}
+.vg-stacked-list.slds-page-header__detail-row {
+    font-size: 1rem;
+}
+/* =================================================================== */
+
+/* ============================== ICONS ============================== */
+.current-color-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-10, #181818);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-10, #181818);
+}
+.lead-icon {
+    --slds-c-icon-color-foreground: white;
+    --slds-c-icon-color-background: #06A59A;
+}
+.notes-icon {
+    --slds-c-icon-color-foreground: white;
+    --slds-c-icon-color-background: blue;
+}
+.ace-recipe-icon {
+    --slds-c-icon-color-foreground: var(--vg-color-ace-manufacturuer-recipe, #2F4F8F);
+	--slds-c-icon-color-foreground-default: var(--vg-color-ace-manufacturuer-recipe, #2F4F8F);
+}
+
+.capabilities-icon {
+    --slds-c-icon-color-foreground: white;
+    --slds-c-icon-color-background: #06A59A;
+}
+.note-blue-icon, 
+.prime-supplier-icon {
+    --slds-c-icon-color-foreground: var(--vg-color-prime-supplier, #3A7FB8);
+	--slds-c-icon-color-foreground-default: var(--vg-color-prime-supplier, #3A7FB8);
+}
+.opportunity-icon {
+    /*--slds-c-icon-color-foreground-default: #0070d2;*/
+    --slds-c-icon-color-foreground: white;
+    --slds-c-icon-color-background: #FF8800;
+}
+
+.slds-icon-standard-service-request {
+    --slds-c-icon-color-foreground: white;
+    --slds-c-icon-color-background: #B45EFF;
+}
+
+.service-icon {
+    --slds-c-icon-color-foreground: white;
+    --slds-c-icon-color-background: #B45EFF;
+}
+.utility-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-50);
+	--slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-50);
+}
+.neutral-95-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-95, #fcfcfc);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-95, #fcfcfc);
+    --slds-c-icon-color-background: var(--slds-g-color-neutral-base-95, #fcfcfc);
+}
+.summary-icon_contract-award {
+    --slds-c-icon-color-foreground-default: rgb(57, 101, 71);
+    --slds-c-icon-color-background: var(--slds-g-color-neutral-base-100);
+}
+.summary-icon_lead {
+    --slds-c-icon-color-background: var(--slds-g-color-neutral-base-100);
+    --slds-c-icon-color-foreground-default: #06A59A;
+}
+.summary-icon_opportunity {
+    --slds-c-icon-color-background: var(--slds-g-color-neutral-base-100);
+    --slds-c-icon-color-foreground-default: #ff5d2d;
+}
+.status-icon_active {
+    --slds-c-icon-color-foreground: var(--slds-g-color-success-base-60);
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-success-base-60);
+}
+.status-icon_inactive {
+    --slds-c-icon-color-foreground: var(--slds-g-color-error-base-50);
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-error-base-50);
+}
+.status-icon_unknown {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-50, #747474);
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-50, #747474);
+}
+.utility-icon_inverse {
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-100); 
+    fill: var(--slds-g-color-neutral-base-100);
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-100);
+}
+.po-line-item-icon {
+    background: #1b96ff;
+    border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.rfq-line-item-icon {
+    background: rgb(6, 165, 154);
+    border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.custom-24-color {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-100, #fff);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-100, #fff);
+    --slds-c-icon-color-background: #e56798;
+    background: #e56798;
+    border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.brand-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-brand-base-50, #0176D3);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-brand-base-50, #0176D3);
+    --slds-c-icon-color-background: white;   
+}
+.brand-icon_transparent {
+    --slds-c-icon-color-foreground: var(--slds-g-color-brand-base-50, #0176D3);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-brand-base-50, #0176D3);
+    --slds-c-icon-color-background: transparent;   
+}
+.money-icon {
+    --slds-c-icon-color-foreground: var(--vg-color-money-green, #2e844a);; 
+    --slds-c-icon-color-foreground: var(--vg-color-money-green, #2e844a);;
+}
+.green-icon {   
+    --slds-c-icon-color-foreground: var(--slds-g-color-palette-green-65, #41b658);
+    --slds-c-icon-color-foreground: var(--slds-g-color-palette-green-65, #41b658);
+}
+.red-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-error-base-50, #ea001e);
+    --slds-c-icon-color-foreground: var(--slds-g-color-error-base-50, #ea001e);
+}
+
+.standard-icon_current-color {
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-100, #fff);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-100, #fff);
+    --slds-c-icon-color-background: var(--slds-g-color-neutral-base-10, #181818);
+}
+
+/* =================================================================== */
+
+
+/* ============================= HIDDEN ============================== */
+.hidden-footer {
+    height: 1px;
+    width: 1px;
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+.hidden-field {
+    height: 1px;
+    width: 1px;
+    padding: 0px;
+    margin: 0px;
+}
+/* =================================================================== */
+
+
+/* ============================ CHECKBOX ============================= */
+.main-content-checkbox {
+    --slds-c-checkbox-color-border: var(--slds-g-color-neutral-base-50);
+    --slds-c-checkbox-color-border-focus: var(--slds-g-color-neutral-base-50);
+    --slds-c-checkbox-color-background-checked: var(--slds-g-color-brand-base-50);
+    --slds-c-checkbox-mark-color-foreground: var(--slds-g-color-neutal-base-100);
+    --dxp-s-form-checkbox-color-border-checked: var(--slds-g-color-neutal-base-100);
+    --dxp-s-form-checkbox-color-background-checked: var(--slds-g-color-brand-base-50);
+}
+.larger-checkbox {
+    height: var(--c-checkbox-height, 1.25rem);
+    width: var(--c-checkbox-height, 1.25rem);
+}
+/* Bigger checkmark — tuned for 1.25rem checkbox */
+.slds-checkbox.main-content-checkbox [type=checkbox]:checked + .slds-checkbox__label .slds-checkbox_faux:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Checkmark size (proportional to 1.25rem box) */
+    width: calc(var(--c-checkbox-height, 1.25rem)/2);
+    height: calc(var(--c-checkbox-height, 1.25rem)/4);
+    transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+    /* Stroke thickness */
+    border-bottom: 2.5px solid var(--dxp-s-form-checkbox-color-border-checked, var(--slds-g-color-neutral-base-100, #fff));
+    border-left: 2.5px solid var(--dxp-s-form-checkbox-color-border-checked, var(--slds-g-color-neutral-base-100, #fff));
+}
+/* =================================================================== */
+
+/* ========================== BUTTON ICONS =========================== */
+.circle-button svg {
+    fill: var(--vg-brand-blue-modern-2, rgb(2, 80, 217));
+}
+.circle-button {
+    border: solid 1px var(--vg-color-border-button-tree-action, #5C5C5C);
+    border-radius: 25px; 
+}
+.circle-button:hover {
+    outline: solid 1px var(--slds-g-color-neutral-base-10, #181818);    
+    transform: scale3d(1.05, 1.1, 2); /* Noticeable Z scaling */
+}
+.button-wrapper {
+    position: relative; /* still needed, but not on the button */
+}
+.btn-with-corner-icon {
+    position: relative;
+    padding-right: 1.75rem; /* room for the icon */
+}
+.corner-icon {
+    cursor: help;
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+}
+.corner-icon span[role="button"]:focus {
+    outline: solid 2px var(--slds-g-color-neutral-base-100, #fff);
+}
+.larger-icon {
+    transform: scale(1.2);
+}
+.larger-icon-2 {
+    transform: scale(1.35);
+}
+
+.circle-icon {border-radius: var(--slds-g-radius-border-circle);}
+.circle-button-icon {border-radius: var(--slds-g-radius-border-circle);}
+
+.refresh-button,
+.refresh-button:hover,
+.refresh-button:active,
+.refresh-button:focus {
+    color: var(--slds-g-color-brand-base-30);
+}
+.refresh-button svg,
+.refresh-button:hover svg,
+.refresh-button:active svg,
+.refresh-button:focus svg {
+    fill: var(--slds-g-color-brand-base-30);
+}
+
+/* Icon Button w/ dropdown and text instead of icon */
+.text-icon-button { /* For Picklist style buttons w/ save button */
+    border-radius: var(--slds-g-radius-border-3);
+}
+.text-icon-button_bare {
+    border: none;
+}
+.text-icon-button_bare .text-icon-button__text {
+    color: var(--vg-color-weak, var(--slds-g-color-neutral-base-40, #5c5c5c));
+}
+.text-icon-button_brand,
+.text-icon-button_neutral { /* For Action "menu" style buttons (no save button in menu) */
+    border-radius: var(--slds-g-radius-border-2, 0.5rem);
+    border-color: var(--slds-c-button-neutral-color-border, var(--sds-c-button-neutral-color-border, var(--dxp-g-neutral-3, #aeaeae)));
+    height: 34px;
+}
+.slds-button.slds-button_icon.slds-button_icon-more.text-icon-button_neutral {
+    border-radius: var(--slds-g-radius-border-3, 0.75rem);
+    border-color: var(--slds-c-button-neutral-color-border, var(--sds-c-button-neutral-color-border, var(--dxp-g-neutral-3, #aeaeae)));
+    height: 34px;
+}
+.text-icon-button:not(.text-icon-button_bare) .text-icon-button__text {
+    color: var(--slds-g-color-neutral-base-10, #181818);
+}
+.text-icon-button_neutral .text-icon-button__text {
+    color: var(--slds-g-color-brand-base-50, #0176D3);
+}
+.text-icon-button_brand .text-icon-button__text {
+    color: var(--slds-c-button-brand-text-color, var(--slds-g-color-neutral-base-100, #fff));
+}
+.text-icon-button_neutral:hover { 
+    border-color: var(--slds-c-button-neutral-color-border-hover, var(--sds-c-button-neutral-color-border-hover, var(--dxp-g-neutral-contrast-1, #aeaeae)));
+    background-color: var(
+        --slds-c-button-neutral-color-background-hover, 
+        var(--slds-g-color-neutral-base-95, #f3f3f3)
+    );
+}
+.text-icon-button_neutral:hover .text-icon-button__text {
+    color: var(--slds-c-button-text-color-hover, var(--sds-c-button-text-color-hover, var(--dxp-s-tertiary-button-text-color-hover, var(--dxp-g-brand-1, #014486))));
+}
+.text-icon-button_neutral:hover svg {
+    fill: var(--slds-c-button-text-color-hover, var(--sds-c-button-text-color-hover, var(--dxp-s-tertiary-button-text-color-hover, var(--dxp-g-brand-1, #014486))));
+}
+.text-icon-button_brand:hover { 
+    border: solid 1px var(--slds-c-button-brand-color-background-hover, var(--dxp-s-button-color-hover, #014486));
+    background-color: var(
+        --slds-c-button-brand-color-background-hover, 
+        var(--dxp-s-button-color-hover, #014486)
+    );
+}
+.text-icon-button_brand svg { 
+    fill: var(--slds-c-button-brand-text-color, var(--slds-g-color-neutral-base-100, #fff));
+}
+.text-icon-button:hover .text-icon-button__text,
+.text-icon-button:active .text-icon-button__text {
+    color: var(--slds-c-button-neutral-text-color-hover, var(--slds-g-color-brand-base-60, #1b96ff));
+}
+
+
+/* Card Actions buttons (circular) */
+.actions-button {
+    border-radius: var(--slds-g-radius-border-circle);
+}
+.actions-button:hover svg, 
+.actions-button:active svg, 
+.actions-button:focus svg {
+    fill: var(--dxp-s-button-color, var(--lwc-brandAccessible, var(--slds-g-color-brand-base-50)));
+}
+/* BOM button */
+.bom-remove:hover:not([disabled]), 
+.bom-remove:focus:not([disabled]) {
+    background-color: var(--slds-g-color-neutral-base-100,#fff);
+    --slds-c-button-color-background-hover: var(--slds-g-color-neutral-base-100,#fff);
+}
+/* =================================================================== */
+
+
+/* ============================= DISABLED ============================ */
+.slds-dropdown__list .slds-dropdown__item a.slds-is-disabled {
+    color: var(--vg-color-button-icon-disabled, var(--slds-g-color-neutral-base-80, #c9c9c9));
+    cursor: not-allowed;
+}
+.slds-dropdown__list .slds-dropdown__item a.slds-is-disabled:focus,
+.slds-dropdown__list .slds-dropdown__item a.slds-is-disabled:hover,
+.slds-dropdown__list .slds-dropdown__item a.slds-is-disabled.slds-has-focus {
+    box-shadow: none;
+    background: transparent;
+    color: var(--vg-color-button-icon-disabled, var(--slds-g-color-neutral-base-80, #c9c9c9));
+    cursor: not-allowed;
+}
+/* =================================================================== 
+
+.slds-button.slds-section__title-action:hover {
+    border: solid 1px var(--slds-g-color-border-base-3, #8e8e8e);
+    background-color: var(--slds-g-color-neutral-base-90, #e5e5e5);
+    color: var(--slds-g-color-neutral-base-20, #2e2e2e);
+}
+
+.slds-section__title-action:hover {
+    border: solid 1px var(--slds-g-color-border-base-3, #8e8e8e);
+    background-color: var(--slds-g-color-neutral-base-90, #e5e5e5);
+    color: var(--slds-g-color-neutral-base-20, #2e2e2e);
+}
+*/
+/* =============================== TEXT ============================== */
+.overdue-text, 
+.error-text {
+    color: var(--vg-color-error-text, #8e030f);
+}
+/* =================================================================== */
+
+.slds-badge.circle {
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    justify-content: center;
+}
+.slds-badge.small-badge.circle {
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.15rem;
+    border-radius: 999px;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+
+
+.spinner-backdrop__component-root {
+    position: relative; /* establishes containing block */
+}
+.spinner-backdrop__component {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: var(--vg-color-spinner-backdrop, rgba(255, 255, 255, 0.35));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+.spinner-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--vg-color-spinner-backdrop, rgba(255, 255, 255, 0.35));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+}
+/* Align Top Example Usage: 
+    <div class="spinner-backdrop__component-root">
+        <div class="spinner-backdrop spinner-align-top"></div>
+    </div>
+*/
+.spinner-backdrop.spinner-align-top {
+    align-items: flex-start;
+}
+.spinner-align-bottom {
+    align-items: flex-end;
+}
+
+
+/* ============================= HEADERS ============================= */
+.slds-page-header__title {
+    line-height: 1.25;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+}
+.header-text_xx-large {
+    font-size: var(--slds-g-font-scale-8);     /* xx-large (2.625rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_x-large {
+    font-size: var(--slds-g-font-scale-7);     /* x-large (2.0rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_large {
+    font-size: var(--slds-g-font-scale-6);     /* large (1.75rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_medium {
+    font-size: var(--slds-g-font-scale-5);     /* medium (1.5rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_small {
+    font-size: var(--slds-g-font-scale-4);     /* small (1.25rem) */
+    font-weight: 500; /* Adjust to liking */   
+}
+.header-text_x-small {
+    font-size: var(--slds-g-font-scale-3);     /* x-small (1.125rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_xx-small {
+    font-size: var(--slds-g-font-scale-2);     /* xx-small (1.0rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_xxx-small {
+    font-size: var(--slds-g-font-scale-1);     /* xxx-small (0.875rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-weight_normal {
+    font-weight: normal;
+}
+.header-weak {
+    font-weight: normal;
+    color: var(--vg-color-weak, #636363);
+}
+/* =================================================================== */
+
+
+/* ============================== CARDS ============================== */
+.component-card {
+    border: solid 1px var(--slds-g-color-border-1); 
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.10);
+    border-radius: var(--slds-g-radius-border-4, 1.25rem);
+}
+.component-card .slds-card__header {
+    border-radius: var(--slds-g-radius-border-4, 1.25rem) var(--slds-g-radius-border-4, 1.25rem) 0px 0px;
+    padding: var(--slds-g-spacing-4, 1rem);
+}
+.component-card .slds-card__footer {
+    border-radius: 0px 0px var(--slds-g-radius-border-4, 1.25rem) var(--slds-g-radius-border-4, 1.25rem);
+    padding: var(--slds-g-spacing-4, 1rem);
+}
+.table-wrapper {
+    background-color: var(--slds-g-color-neural-base-95);
+    border: solid 1px var(--slds-g-color-border-base-1);
+    border-top: none;
+    border-radius: var(--slds-g-radius-border-1);
+}
+.table-card_small {
+    border-top-left-radius: 6px;   /* round top-left corner */
+    border-top-right-radius: 6px;  /* round top-right corner */
+    background-color: var(--slds-g-color-neutral-base-100);  
+    margin-bottom: 1.5rem;
+    border: solid 1px var(--slds-g-color-border-base-1);
+}
+.table-card_small:last-of-type {
+    border-top-left-radius: 6px;   /* round top-left corner */
+    border-top-right-radius: 6px;  /* round top-right corner */
+    background-color: var(--slds-g-color-neutral-base-100); 
+    border: solid 1px var(--slds-g-color-border-base-1);
+}
+.table-header_small {
+    background-color: var(--slds-g-color-neutral-base-95);
+    padding: 0.75rem;
+    border-top-left-radius: 6px;   /* round top-left corner */
+    border-top-right-radius: 6px;  /* round top-right corner */
+}
+.table-card_no-bottom-border {
+    border-bottom: none;
+}
+.table-card_rounded-bottom {
+    border-bottom-right-radius: 6px; /* keep bottom corners square */
+    border-bottom-left-radius:  6px;
+}
+
+.card-list__container {
+    container-type: inline-size;
+}
+.grid__gap_large {
+    gap: var(--slds-g-spacing-5, 1.5rem);
+}
+.grid__gap_medium {
+    gap: var(--slds-g-spacing-4, 1.0rem);
+}
+.grid__gap_small {
+    gap: var(--slds-g-spacing-3, 0.75rem);
+}
+.grid__gap_x-small {
+    gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.tile-wrapper {
+    max-width: 100%;
+}
+/* =================================================================== */
+
+
+
+
+.vg-important-number-id-color_text {
+    color: var(--slds-g-color-brand-base-30, #014486);
+}
+.vg-currency-color_text {
+    color: var(--slds-g-color-success-base-70, #45c65a);
+}
+.vg-important-date-color_text {
+    color: rgb(251, 146, 60);
+}
+.vg-extra-important-date-color_text {
+    color: rgb(239, 68, 68);
+}
+.vg-progress-metric-color_text {
+    color: #6993e8;
+}

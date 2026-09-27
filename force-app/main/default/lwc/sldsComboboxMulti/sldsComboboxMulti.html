@@ -1,0 +1,236 @@
+<template>
+    <div class="comboRoot" onfocusin={handleRootFocusIn} onfocusout={handleRootFocusOut}>
+        <div class={formElementClass} data-id="formElement">
+            <label class="slds-form-element__label" for="combobox-v2-input">
+                <abbr if:true={isRequired} class="slds-required" title="required">* </abbr>
+                <span if:true={label}>{label}</span>
+            </label>
+
+            <div class="slds-form-element__control">
+                <div class={triggerClass} aria-haspopup="listbox" role="combobox">
+                    <div class={comboFormClass} role="none">
+                        <input
+                            type="text"
+                            class={inputClass}
+                            id="combobox-v2-input"
+                            aria-autocomplete="list"
+                            aria-controls="combobox-v2-listbox"
+                            autocomplete="off"
+                            role="textbox"
+                            placeholder={placeHolder}
+                            data-combobox-group-focus="true"
+                            onfocus={handleInputFocus}
+                            onblur={handleInputBlur}
+                            onclick={handleInputClick}
+                            oninput={handleInput}
+                            onkeydown={handleKeyDown}
+                            value={inputValue}
+                            readonly={isInputReadOnly}
+                            disabled={isDisabled}
+                            lwc:ref="inputEle"
+                        />
+                        <span if:false={isDisabled} class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                            <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                <use xlink:href={inputIconHref}></use>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div id="combobox-v2-listbox" class={dropdownLengthCl} role="listbox">
+                        <template lwc:if={isGrouped}>
+                            <template for:each={displayGroups} for:item="group">
+                                <ul key={group.groupId} class="slds-listbox slds-listbox_vertical" role="group" aria-label={group.label}>
+                                    <li role="presentation" class="slds-listbox__item">
+                                        <div
+                                            id={group.groupId}
+                                            class="slds-media slds-listbox__option slds-listbox__option_plain"
+                                            role="presentation"
+                                            data-element="groupHeader"
+                                        >
+                                            <h3 class="slds-listbox__option-header" role="presentation">{group.label}</h3>
+                                        </div>
+                                    </li>
+
+                                    <template for:each={group.options} for:item="option">
+                                        <li key={option.id} role="presentation" class="slds-listbox__item">
+                                            <div
+                                                id={option.id}
+                                                class={option.className}
+                                                role="option"
+                                                onclick={handleOptionClick}
+                                                onmousedown={deflectFocus}
+                                                onmouseenter={handleHover}
+                                                onmouseleave={handleUnhover}
+                                                data-value={option.value}
+                                                data-stable-id={option.stableId}
+                                                aria-selected={option.ariaSelected}
+                                                aria-checked={option.ariaChecked}
+                                            >
+                                                <span class="slds-media__figure slds-listbox__option-icon">
+                                                    <template if:true={hasIcons}>
+                                                        <span if:true={option.icon} class="slds-m-right_small">
+                                                            <span class={option.icon.container}>
+                                                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                                    <use xlink:href={option.icon.icon}></use>
+                                                                </svg>
+                                                            </span>
+                                                        </span>
+                                                    </template>
+                                                    <template if:false={hasIcons}>
+                                                        <span if:true={option.isSelected} class="slds-icon_container slds-icon-utility-check brand-icon-check">
+                                                            <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.check}></use>
+                                                            </svg>
+                                                        </span>
+                                                    </template>
+                                                </span>
+
+                                                <span class="slds-media__body">
+                                                    <span class="slds-listbox__option-text slds-listbox__option-text_entity">{option.label}</span>
+                                                    <template if:true={option.hasMeta}>
+                                                        <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                                            <span if:true={option.metaOne}>{option.metaOne}</span>
+                                                            <span if:true={option.metaTwo}> • {option.metaTwo}</span>
+                                                            <span if:true={option.metaThree}> • {option.metaThree}</span>
+                                                            <span if:true={option.metaFour}> • {option.metaFour}</span>
+                                                        </span>
+                                                    </template>
+                                                </span>
+
+                                                <template if:true={hasIcons}>
+                                                    <span class="slds-listbox__option-icon slds-text-align_right selected-icon">
+                                                        <span if:true={option.isSelected} class="slds-icon_container slds-icon-utility-check brand-icon-check">
+                                                            <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.check}></use>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </template>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                        </template>
+
+                        <template lwc:else>
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <template for:each={displayOptions} for:item="option">
+                                    <li key={option.id} role="presentation" class="slds-listbox__item">
+                                        <div
+                                            id={option.id}
+                                            class={option.className}
+                                            role="option"
+                                            onclick={handleOptionClick}
+                                            onmousedown={deflectFocus}
+                                            onmouseenter={handleHover}
+                                            onmouseleave={handleUnhover}
+                                            data-value={option.value}
+                                            data-stable-id={option.stableId}
+                                            aria-selected={option.ariaSelected}
+                                            aria-checked={option.ariaChecked}
+                                        >
+                                            <template lwc:if={hasIcons}> 
+                                                <span class="slds-media__figure slds-listbox__option-icon">
+                                                    <span if:true={option.icon} class="slds-m-right_small">
+                                                        <span class={option.icon.container}>
+                                                            <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                                <use xlink:href={option.icon.icon}></use>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                            </template>
+                                            <template lwc:else> 
+                                                <span class="slds-media__figure slds-listbox__option-icon slds-align-middle">
+                                                    <span if:true={option.isSelected} class="slds-icon_container slds-icon-utility-check brand-icon-check">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                            </template>
+
+                                            <span class="slds-media__body">
+                                                <span class="slds-listbox__option-text slds-listbox__option-text_entity">{option.label}</span>
+                                                <template if:true={option.hasMeta}>
+                                                    <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                                        <span if:true={option.metaOne}>{option.metaOne}</span>
+                                                        <span if:true={option.metaTwo}> • {option.metaTwo}</span>
+                                                        <span if:true={option.metaThree}> • {option.metaThree}</span>
+                                                        <span if:true={option.metaFour}> • {option.metaFour}</span>
+                                                    </span>
+                                                </template>
+                                            </span>
+
+                                            <template if:true={hasIcons}>
+                                                <span class="slds-listbox__option-icon slds-text-align_right selected-icon">
+                                                    <span if:true={option.isSelected} class="slds-icon_container slds-icon-utility-check brand-icon-check">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </template>
+                    </div>
+                </div>
+
+                <div if:true={hasVisiblePills} class={selectionGroupClass} onclick={handleSelectionGroupClick}>
+                    <span if:true={hiddenPillCount} class="slds-listbox-toggle" aria-hidden="true">
+                        <button class="slds-button" tabindex="-1" onclick={expandPills}>+{hiddenPillCount} more</button>
+                    </span>
+                    <ul class="slds-listbox slds-listbox_horizontal slds-grid slds-wrap" 
+                        role="listbox" 
+                        aria-label="Selected Options:" 
+                        aria-orientation="horizontal"
+                    >
+                        <template for:each={displayedPills} for:item="pill">
+                            <li key={pill.stableId} class="slds-listbox-item" role="presentation">
+                                <span class="slds-pill"
+                                    data-pill-focus="true"
+                                    data-pill-value={pill.value}
+                                >
+                                    <span if:true={pill.pillIcon} class={pill.pillIcon.container}>
+                                        <svg class="slds-icon" aria-hidden="true">
+                                            <use xlink:href={pill.pillIcon.icon}></use>
+                                        </svg>
+                                        <span class="slds-assistive-text">Account</span>
+                                    </span>
+                                    <span class="slds-pill__label" title={pill.label}>{pill.label}</span>
+                                    <template lwc:if={isDisabled}> 
+                                        <span class="slds-p-horizontal_xxx-small"></span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="slds-icon_container slds-pill__remove" title="Remove">
+                                            <button class="slds-button slds-button_icon slds-button_icon slds-pill__remove" 
+                                                title="Remove"
+                                                onfocus={handlePillRemoveFocus}
+                                                onmousedown={handlePillRemoveMouseDown}
+                                                onclick={handlePillRemove}
+                                                data-pill-value={pill.value}
+                                                data-pill-stable-id={pill.stableId}
+                                                data-pill-remove-focus="true"
+                                            >
+                                                <svg class="slds-button__icon" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.close}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove</span>
+                                            </button>
+                                        </span>
+                                    </template>
+                                </span>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </div>
+
+            <div if:true={selectionsError} class="slds-form-element__help" id="error-message-unique-id">{selectionsError}</div>
+        </div>
+    </div>
+</template>

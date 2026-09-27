@@ -1,0 +1,453 @@
+<template>
+
+    <div data-portal></div>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <template lwc:if={_isLoading}>
+        <div class="spinner-backdrop">
+            <div class="slds-spinner slds-spinner_medium" role="status">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </template>
+
+    <!--New Code-->
+    <div class={panelCl} aria-hidden="false">
+
+        <!--Tooltip style controlled by parent--> 
+        <section 
+            aria-label="Dialog title" 
+            aria-describedby="popover-body-id-3" 
+            class="slds-popover slds-popover_large slds-nubbin_right-bottom slds-hide filter-popover" 
+            role="dialog"
+            lwc:ref="filterPopover"
+        >
+            <div id="popover-body-id-3" class="slds-popover__body">
+
+                <!--Field Options-->
+                <div class="slds-p-around_medium">
+                    <c-slds-combobox
+                        options={displayColumnOptions}
+                        current-value={currentFilter.field.value}
+                        onselected={handleFieldSelection}
+                        label="Field"
+                        data-id="fieldPicklist"
+                    ></c-slds-combobox>
+                </div>
+                <!--End Field Options-->
+
+                <!--Operator Selection-->
+                <div class="slds-p-around_medium">
+                    <c-slds-combobox
+                        options={currentFilter.operator.options}
+                        current-value={currentFilter.operator.value}
+                        onselected={handleOperatorSelection}
+                        label="Operator"
+                    ></c-slds-combobox>
+                </div>
+                <!--End Operator Selection-->
+
+                <!--Value Selection-->
+                <div class="slds-p-around_medium">
+                    <!--Picklist-->
+                    <template lwc:if={currentFilter.ismultipicklist}> 
+                        <c-slds-combobox-multi
+                            place-holder="Select one or more..."
+                            current-value={currentFilter.filterBy.value}
+                            options={currentFilter.filterBy.options}
+                            label="Value"
+                            suppress-overflow="true"
+                            oncombomultiselection={handleFilterByMultiVal}
+                            data-id="sldsComboboxMulti"
+                        ></c-slds-combobox-multi>
+                    </template>
+                    <!--End Picklist-->
+
+                    <!--Boolean-->
+                    <template lwc:elseif={currentFilter.isboolean}> 
+                        <fieldset class="slds-form-element">
+                            <legend class="slds-form-element__legend slds-form-element__label">Value</legend>
+                            <div class="slds-form-element__control">
+                                <div class="slds-checkbox_button-group">
+                                    <!--True Option-->
+                                    <span class="slds-button slds-checkbox_button">
+                                        <input
+                                            type="checkbox"
+                                            id="unique-id-monday-13"
+                                            value="true"
+                                            name="checkbox" 
+                                            data-id="true"
+                                            lwc:ref="boolTrue"
+                                            onchange={handleFilterByBoolean}
+                                        />
+                                        <label class="slds-checkbox_button__label" for="unique-id-monday-13">
+                                            <span class="slds-checkbox_faux">True</span>
+                                        </label>
+                                    </span>
+                                    <!--End True Option-->
+
+                                    <!--False Option-->
+                                    <span class="slds-button slds-checkbox_button">
+                                        <input 
+                                            type="checkbox" 
+                                            id="unique-id-tuesday-13" 
+                                            value="false" 
+                                            lwc:ref="boolFalse"
+                                            name="checkbox" 
+                                            data-id="false"
+                                            onchange={handleFilterByBoolean}
+                                        />
+                                        <label class="slds-checkbox_button__label" for="unique-id-tuesday-13">
+                                            <span class="slds-checkbox_faux">False</span>
+                                        </label>
+                                    </span>
+                                    <!--End False Option-->
+                                </div>
+                            </div>
+                        </fieldset>
+                    </template>
+                    <!--End Boolean-->
+
+                    <!--Date or Datetime-->
+                    <template lwc:elseif={currentFilter.isdate}>
+                        <c-slds-combobox-grouped
+                            label="Value"
+                            place-holder=""
+                            dropdown-length="10"
+                            current-value={currentFilter.filterBy.value}
+                            grouped-options={dateLiteralOptions}
+                            onselection={handleFilterByDateInput}
+                        ></c-slds-combobox-grouped>
+                    </template>
+
+                    <!--All Other Dtypes-->
+                    <template lwc:else> 
+                        <c-slds-input
+                            dtype={currentFilter.localDtype}
+                            current-value={currentFilter.filterBy.value}
+                            label="Value"
+                            onnewinput={handleFilterByInput}
+                            data-id="sldsInput"
+                        ></c-slds-input>
+                    </template>
+                    <!--End All Other Dtypes-->
+
+                </div>
+                <!--End Value Selection-->
+
+                <div class="slds-p-around_medium slds-grid slds-grid_align-end slds-grid_pull-padded-x-small"> 
+                    <div class="slds-p-horizontal_x-small">
+                        <button class="slds-button slds-button_neutral" onclick={closePopover}>Cancel</button>
+                    </div>
+                    <div class="slds-p-horizontal_x-small">
+                        <button class="slds-button slds-button_brand" onclick={saveCurrentFilter}>Save</button>   
+                    </div>
+                </div>
+                
+            </div>
+            
+        </section>
+
+        <div class="slds-panel__header">
+            <template lwc:if={isComplete}>
+                <div class="slds-grid slds-grid_align-spread" style="width:100%;">
+                        <div>
+                            <button class="slds-button slds-button_neutral" 
+                                onclick={cancelNewFilters}
+                            >Cancel</button>
+                        </div>
+                    <div class="slds-col slds-grid">
+                        <div class="slds-col">
+                            <button class="slds-button slds-button_brand" onclick={handleSave}>
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template lwc:else> 
+                <h2 class="slds-panel__header-title slds-text-heading_medium slds-truncate" title="Filters">Filters</h2>
+                
+                <button class="slds-button slds-button_icon slds-panel__close larger" 
+                    title="Collapse Filter"
+                    onclick={cancelFilterPanel}
+                    lwc:ref="closeButton"
+                >
+                    <svg class="slds-button__icon larger" aria-hidden="true">
+                        <use xlink:href={iconMap.utility.close}></use>
+                    </svg>
+                    <span class="slds-assistive-text">Collapse Filter</span>
+                </button>
+            </template>
+        </div>
+
+        <div class="slds-panel__body large-font">
+            
+            <div class="slds-filters">
+
+                <div if:true={_hasErrors} class="slds-text-color_error slds-m-bottom_x-small" role="alert">
+                    Filters could not be applied. Please fix the validation errors below.
+                </div>
+
+                <!--Filter Section 1-->
+                <ol class="slds-list_vertical slds-list_vertical-space">
+                    <li class="slds-item slds-hint-parent">
+                        <div class="slds-filters__item slds-grid slds-grid_vertical-align-center">
+                            <button class="slds-button_reset slds-grow slds-has-blur-focus">
+                                <span class="slds-assistive-text">Edit filter:</span>
+                                <span class="slds-show slds-text-body_medium">Show Me</span>
+                                <span class="slds-show">
+                                    <template lwc:if={_scopeLabel}>{_scopeLabel}</template>
+                                    <template lwc:else>All {pluralLabel}</template>
+                                </span>
+                            </button>
+                        </div>
+                    </li>
+                </ol>
+                
+                <template lwc:if={_storedConditionsArr}>
+                    <template lwc:if={_storedConditionsArr.length}>
+                        <h3 class="slds-text-body_medium slds-m-vertical_medium">Matching all these filters</h3>
+                    </template>
+                </template>
+                <!--End Filter Section 1-->
+
+                
+                <!--Filter Section 2-->
+                <ol class={olClass}>
+                    <template lwc:if={_storedConditionsArr}>
+                        <template lwc:if={_storedConditionsArr.length}>
+                            <template for:each={_storedConditionsArr} for:item="condition"> 
+                                <!--Filter List Item-->
+                                <li class="slds-item slds-hint-parent" key={condition.keyId}>
+
+                                    <!--New Filter Item-->
+                                    <template lwc:if={condition.isNew}> 
+                                        <div class="slds-filters__item slds-grid slds-grid_vertical-align-center slds-is-new" 
+                                            data-filter-item-id={condition.keyId}
+                                        >
+                                            <!--Edit Filter Button-->
+                                            <button class="slds-button_reset slds-grow slds-has-blur-focus"
+                                                data-key-id={condition.keyId}
+                                                onclick={editFilter}
+                                                data-element="edit-filter"
+                                                data-popover-anchor="true"
+                                            >
+                                                <span class="slds-assistive-text">Edit filter:</span>
+                                                <span class="slds-show slds-text-body_medium">New Filter*</span>
+                                            </button>
+                                            <!--End Edit Filter Button-->
+
+                                            <!--Remove Filter Button-->
+                                            <button class="slds-button slds-button_icon slds-button_icon slds-button_icon-small" 
+                                                title="Remove New Filter"
+                                                data-key-id={condition.keyId}
+                                                data-element="remove-filter"
+                                                onclick={removeFilter}
+                                            >
+                                                <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.delete}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove filter: New Filter</span>
+                                            </button>
+                                            <!--End Remove Filter Button-->
+                                        </div>
+                                        <p if:true={condition.errorMessage} 
+                                            id={condition.errorId} 
+                                            class="slds-text-color_error slds-m-top_xx-small"
+                                        >{condition.errorMessage}</p>
+                                    </template>
+                                    <!--End New Filter Item-->
+
+                                    <!--Stored Condition-->
+                                    <template lwc:elseif={condition.isSaved}>
+                                        <div class="slds-filters__item slds-grid slds-grid_vertical-align-center">
+                                            <!--Edit Filter Button-->
+                                            <button class="slds-button_reset slds-grow slds-has-blur-focus"
+                                                data-key-id={condition.keyId}
+                                                onclick={editFilter}
+                                                data-element="edit-filter"
+                                                data-popover-anchor="true"
+                                            >
+                                                <span class="slds-assistive-text">Edit filter:</span>
+                                                <span class="slds-show slds-text-body_medium">{condition.field.label}</span>
+                                                <span class="slds-show">
+                                                    {condition.operator.label}
+                                                    <template lwc:if={condition.ismultipicklist}>
+                                                        <template iterator:it={condition.filterBy.value}>
+                                                            <template lwc:if={it.first}>&nbsp;{it.value}</template>
+                                                            <template lwc:elseif={it.last}>,&nbsp;{it.value}</template>
+                                                            <template lwc:else>,&nbsp;{it.value}</template>
+                                                        </template>
+                                                    </template>
+                                                    <template lwc:else>&nbsp;{condition.filterBy.label}</template>
+                                                </span>
+                                            </button>
+                                            <!--End Edit Filter Button-->
+
+                                            <!--Remove Filter Button-->
+                                            <button class="slds-button slds-button_icon slds-button_icon slds-button_icon-small" 
+                                                title={condition.title}
+                                                data-key-id={condition.keyId}
+                                                data-element="remove-filter"
+                                                onclick={removeFilter}
+                                            >
+                                                <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.delete}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove filter: {condition.title}</span>
+                                            </button>
+                                            <!--End Remove Filter Button-->
+                                        </div>
+                                        <p if:true={condition.errorMessage} 
+                                            id={condition.errorId} 
+                                            class="slds-text-color_error slds-m-top_xx-small"
+                                        >{condition.errorMessage}</p>
+                                    </template>
+                                    <!--End Stored Condition-->
+
+                                    <!--New But Valid Item-->
+                                    <template lwc:else>
+                                        <div class="slds-filters__item slds-grid slds-grid_vertical-align-center slds-is-new">
+                                            <!--Edit Filter Button-->
+                                            <button class="slds-button_reset slds-grow slds-has-blur-focus"
+                                                data-key-id={condition.keyId}
+                                                onclick={editFilter}
+                                                data-element="edit-filter"
+                                                data-popover-anchor="true"
+                                            >
+                                                <span class="slds-assistive-text">Edit filter:</span>
+                                                <span class="slds-show slds-text-body_medium">{condition.field.label}*</span>
+                                                <span class="slds-show">
+                                                    {condition.operator.label} 
+                                                    <template lwc:if={condition.ismultipicklist}>
+                                                        <template iterator:it={condition.filterBy.value}>
+                                                            <template lwc:if={it.first}>&nbsp;{it.value}</template>
+                                                            <template lwc:elseif={it.last}>,&nbsp;{it.value}</template>
+                                                            <template lwc:else>,&nbsp;{it.value}</template>
+                                                        </template>
+                                                    </template>
+                                                    <template lwc:else>&nbsp;{condition.filterBy.label}</template>
+                                                </span>
+                                            </button>
+                                            <!--End Edit Filter Button-->
+
+                                            <!--Remove Filter Button-->
+                                            <button class="slds-button slds-button_icon slds-button_icon slds-button_icon-small" 
+                                                title={condition.title}
+                                                data-key-id={condition.keyId}
+                                                data-element="remove-filter"
+                                                onclick={removeFilter}
+                                            >
+                                                <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.delete}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove filter: {condition.title}</span>
+                                            </button>
+                                            <!--End Remove Filter Button-->
+                                        </div>
+                                        <p if:true={condition.errorMessage} 
+                                            id={condition.errorId} 
+                                            class="slds-text-color_error slds-m-top_xx-small"
+                                        >{condition.errorMessage}</p>
+                                    </template>
+                                    <!--End New But Valid Item-->
+
+                                </li>
+                                <!--End Filter List Item-->
+                            </template>
+                        </template>
+                    </template>
+                </ol>
+                <!--End Filter Section 2-->
+
+                <div class="slds-grid slds-shrink-none slds-m-top_small">
+                    <button class="slds-button slds-button slds-text-link" 
+                        onclick={addFilter} 
+                        data-id="addFilter"
+                    >
+                        <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.add}></use>
+                        </svg>
+                        Add Filter
+                    </button>
+                    <button class="slds-button_reset slds-text-link slds-col_bump-left" onclick={removeAllFilters}>Remove All</button>
+                </div>
+            </div>
+        </div>
+        
+        <!--Custom Filter Logic-->
+        <div class="slds-p-around_small filter-bottom-section large-font" style="height: 100%;">
+            <div class="showHideContainer slds-p-bottom--x-small">
+                <template lwc:if={_storedConditionsArr}>
+                    <template lwc:if={_storedConditionsArr.length}>
+
+                        <!--Display Current Filter Logic-->
+                        <template lwc:if={isShowLogic}>
+
+                            <!--Filter Logic Header-->
+                            <div class="slds-grid slds-p-around_x-small">
+                                <div class="slds-grid slds-grid_vertical-align-center">
+                                    <span class="slds-m-right_xx-small">Filter Logic</span> 
+                                    
+                                    <span class="slds-icon_container slds-icon-utility-info">
+                                        <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                            <use xlink:href={iconMap.utility.info}></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <button class="slds-button_reset slds-text-link slds-col_bump-left" onclick={handleEscapeMessage}>Remove</button>
+                            </div>
+                            <!--End Filter Logic Header-->
+
+                            <!--Custom Logic Text Area-->
+                            <div class="slds-m-top_x-small">
+                                <c-slds-input
+                                    dtype="textarea"
+                                    current-value={customLogic}
+                                    onnewinput={handleNewCustomLogic}
+                                    onescape={handleEscapeMessage}
+                                    error-message={conditionReferenceWarning}
+                                    data-id="customLogic"
+                                ></c-slds-input>
+                            </div>
+                            <!--End Custom Logic Text Area-->
+
+                        </template>
+                        <!--Display Current Filter Logic-->
+
+                        <!--Display custom Logic Button-->
+                        <template lwc:else>
+                            <button class="slds-button" 
+                                aria-disabled="false" 
+                                title="Add Filter Logic" 
+                                type="button" 
+                                part="button"
+                                onclick={showCustomLogic}
+                            >Add Filter Logic</button>
+                        </template>
+                        <!--End Display custom Logic Button-->
+
+                    </template>
+                </template>
+            </div>
+        </div>
+        <!--End Custom Filter Logic-->
+
+    </div>
+    <!--End New Code-->
+
+</template>

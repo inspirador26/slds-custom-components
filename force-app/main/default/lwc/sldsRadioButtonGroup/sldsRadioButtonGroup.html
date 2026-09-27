@@ -1,0 +1,75 @@
+<template>
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <fieldset class="slds-form-element" role="radiogroup" lwc:ref="formElement">
+        <template lwc:if={label}>
+            <legend class="slds-form-element__legend slds-form-element__label">
+                <template if:false={suppressRequiredError}>
+                    <abbr if:true={required} class="slds-required" title="required" aria-hidden="true">*</abbr>
+                </template>
+                {label}
+            </legend>
+        </template>
+        <template lwc:elseif={required}> 
+            <template if:false={suppressRequiredError}>
+                <legend class="slds-form-element__legend slds-form-element__label">
+                    <abbr if:true={required} class="slds-required" title="required" aria-hidden="true">*</abbr>
+                </legend>
+            </template>
+        </template>
+        <div class={_formControlCl}>
+            <div class={_radioGroupCl}>
+                <template lwc:if={_options.length}>
+                    <template for:each={_options} for:item="option">
+                        <span class="slds-button slds-radio_button" key={option.keyId}>
+                            <input
+                                type="radio"
+                                id={option.keyId}
+                                value={option.value}
+                                name={_groupName} 
+                                data-key-id={option.keyId}
+                                checked={option.isSelected}
+                                onchange={handleChange}
+                            />
+
+                            <template lwc:if={addonRight}> 
+                                <template lwc:if={option.isSelected}> 
+                                    <label class="slds-radio_button__label slds-clearfix" for={option.keyId}>
+                                        <span class="slds-radio_faux">{option.label}</span>
+                                        <svg class="slds-float_right slds-button__icon slds-button__icon_right" aria-hidden="true">
+                                            <use xlink:href={iconMap.utility.right}></use>
+                                        </svg>
+                                    </label>
+                                </template>
+                                <template lwc:else> 
+                                    <label class="slds-radio_button__label" for={option.keyId}>
+                                        <span class="slds-radio_faux">{option.label}</span>
+                                    </label>
+                                </template>
+                            </template>
+                            <template lwc:else> 
+                                <label class="slds-radio_button__label" for={option.keyId}>
+                                    <span class="slds-radio_faux">{option.label}</span>
+                                </label>
+                            </template>
+                        </span>
+                    </template>
+                </template>
+            </div>
+
+            <div if:true={requiredError} id="error-unique-id-219" class="slds-form-element__help">
+                This field is required
+            </div>
+        </div>
+    </fieldset>
+</template>

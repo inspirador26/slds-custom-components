@@ -1,0 +1,129 @@
+:host {
+    --slds-g-shadow-inset-focus-1: 
+        var(--slds-g-color-neutral-base-100, #fff) 0px 0px 0px 2px inset, 
+        var(--slds-g-color-brand-base-40, #0b5cab) 0px 0px 0px 4px inset;
+}
+
+
+.slds-listbox__option {
+    border-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+
+.slds-dropdown {
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;  
+    border-radius: var(--slds-g-radius-border-2, 0.5rem) var(--slds-g-radius-border-2, 0.5rem) var(--slds-g-radius-border-3, 0.75rem) var(--slds-g-radius-border-3, 0.75rem);
+}
+.slds-dropdown::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.slds-input:disabled,
+.slds-input:disabled.slds-combobox__input {
+    opacity: 0.6;
+}
+
+.slds-combobox.slds-dropdown-trigger.slds-dropdown-trigger_click:not(.slds-is-disabled, .trigger-search) {
+    cursor: pointer !important;
+    user-select: none;
+    caret-color: transparent !important;
+    color: inherit;
+}
+
+.slds-combobox__form-element:not(.searchable) > input:not(.slds-is-disabled, .switcher-input):read-only {
+    cursor: pointer !important;
+    user-select: none;
+    caret-color: transparent !important;
+    color: inherit;
+}
+
+
+
+.slds-combobox__form-element > input:read-only::selection { 
+    background: transparent; 
+    color: var(--slds-g-color-neutral-base-10);
+}
+.slds-combobox__form-element > input:read-only::-moz-selection { 
+    background: transparent; 
+    color: var(--slds-g-color-neutral-base-10);
+}
+
+
+.slds-combobox.slds-dropdown-trigger.slds-dropdown-trigger_click.slds-is-disabled, 
+.slds-combobox.slds-dropdown-trigger.slds-dropdown-trigger_click.slds-is-disabled > input {
+    cursor: not-allowed !important;
+}
+
+.slds-dropdown_fluid.dropdown-up {
+    top: 0 !important;
+    left: 0 !important;
+    transform: translateY(calc(-100% - 5px)) !important;
+}
+.dropdown-up {
+    top: 0;
+    left: 0;
+    transform: translateY(calc(-100% - 36.5px));
+}
+
+.slds-has-selection::selection { background: transparent; }
+.slds-has-selection::-moz-selection { background: transparent; }
+
+.brand-icon-check {
+    --slds-c-icon-color-foreground: var(--slds-g-color-brand-base-50, #0176d3);
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-brand-base-50, #0176d3);
+}
+
+
+.slds-listbox_vertical .slds-listbox__option.slds-is-disabled:focus,
+.slds-listbox_vertical .slds-listbox__option.slds-is-disabled:hover,
+.slds-listbox_vertical .slds-listbox__option.slds-is-disabled.slds-has-focus {
+    box-shadow: none;
+    background: transparent;
+    color: var(--slds-g-color-neutral-base-60);
+}
+
+
+.slds-listbox_vertical .slds-listbox__option.slds-is-disabled {
+    cursor: not-allowed;
+}
+.slds-listbox_vertical {
+    background: var(--slds-g-color-neutral-base-100);
+}
+
+
+.slds-pill.slds-is-disabled {
+    box-shadow: none;
+    pointer-events: none;
+    background-color: var(--slds-g-color-neutral-base-95);
+    color: var(--slds-g-color-neutral-base-50, #444);
+}
+.slds-pill.slds-is-disabled:hover,
+.slds-pill.slds-is-disabled:focus,
+.slds-pill.slds-is-disabled:active {
+    box-shadow: none;
+    background-color: var(--slds-g-color-neutral-base-95);
+}
+.slds-combobox.slds-dropdown-trigger.slds-dropdown-trigger_click.slds-is-disabled {
+    cursor: not-allowed !important;
+}
+.slds-combobox__form-element > input.slds-is-disabled {
+    cursor: not-allowed !important;
+}
+
+
+.slds-listbox_vertical .slds-listbox_option[data-element="groupHeader"]:focus, 
+.slds-listbox_vertical .slds-listbox_option[data-element="groupHeader"]:hover, 
+.slds-listbox_vertical .slds-listbox_option[data-element="groupHeader"].slds-has-focus, 
+.slds-listbox--vertical .slds-listbox_option[data-element="groupHeader"]:focus, 
+.slds-listbox--vertical .slds-listbox_option[data-element="groupHeader"]:hover, 
+.slds-listbox--vertical .slds-listbox_option[data-element="groupHeader"].slds-has-focus {
+    --webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.slds-listbox_selection-group.slds-is-disabled {
+    border-color: var(--slds-g-color-border-base-1, #c9c7c5);
+    background: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    opacity: 0.6;
+}

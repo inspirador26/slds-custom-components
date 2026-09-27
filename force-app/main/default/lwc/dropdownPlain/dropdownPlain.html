@@ -1,0 +1,368 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <template lwc:if={localOptions}>
+        <template lwc:if={localOptions.length}> 
+
+            <div class={formElementClass}>
+
+                <template lwc:if={label}>
+                    <label class="slds-form-element__label" for="combobox-id-1">
+                        <!--Required--><abbr if:true={isRequired} class="slds-required" title="required">* </abbr><!--End Required-->
+                        {label}
+                    </label>
+                </template>
+                
+                <div class="slds-form-element__control">
+                    <div class="slds-combobox_container">
+
+                        <!--add class "slds-is-open" and set "aria-expanded" to "false" to open-->
+                        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" 
+                            aria-expanded="false" 
+                            data-id="combobox"
+                            aria-haspopup="listbox" 
+                            role="combobox"
+                            onclick={toggleCombobox}  
+                            onkeydown={toggleCombobox}
+                        >
+                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                <input 
+                                    type="text" 
+                                    class="slds-input slds-combobox__input"
+                                    id="combobox-id-1" 
+                                    aria-controls="listbox-id-1" 
+                                    aria-autocomplete="off" 
+                                    autocomplete="off" 
+                                    role="textbox" 
+                                    value={valueLabel}
+                                    aria-invalid={hasError}
+                                    placeholder={placeHolder} 
+                                    data-id="popoverInput"
+                                    onblur={handleBlur}
+                                    onkeydown={handleInputKeyDown}
+                                    onchange={showInputChange}
+                                    aria-activedescendant={highlightedOptionId} 
+                                    readonly
+                                />
+                                <span class="slds-icon_container 
+                                    slds-icon-utility-down 
+                                    slds-input__icon 
+                                    slds-input__icon_right" 
+                                >
+                                    <svg class="slds-icon slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.down}></use>
+                                    </svg>
+                                </span>
+                            </div>
+        
+                            <!--List of Options-->
+                            <div id="listbox-id-1" 
+                                class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" 
+                                role="listbox"
+                                data-id="dropdown"
+                                style="overflow-x: visible;"
+                            >
+                                <ul class="slds-listbox slds-listbox_vertical" role="presentation" data-id="comboboxListOptions" style="overflow-x: visible;">
+                                    <template lwc:if={localOptions}> 
+                                        <template for:each={localOptions} for:item="option"> 
+                                            
+                                            <!--Picklist Option w/ keyId-->
+                                            <template lwc:if={isKeyIds}> 
+                                                <li role="presentation" 
+                                                    key={option.keyId} 
+                                                    class="slds-listbox__item" 
+                                                    title={option.label}
+                                                    style="overflow-x: visible;"
+                                                >   
+
+                                                    <template lwc:if={option.isConvert}> 
+                                                        <template lwc:if={option.isSelected}> 
+                                                            
+                                                            <div class="slds-media slds-listbox__option slds-listbox__option_entity slds-media_small slds-is-selected slds-is-disabled" 
+                                                                aria-disabled="true"
+                                                                aria-selected="true" 
+                                                                aria-checked="true"
+                                                                role="option" 
+                                                                data-id="comboboxOption" 
+                                                                data-value={option.value} 
+                                                                data-label={option.label}
+                                                                title={option.label}
+                                                                onclick={handleDisabledClick}
+                                                                onmousedown={handleDisabledClick}
+                                                            >
+                                                                <!--Option Details-->
+                                                                <span class="slds-media__body">
+                                                                    <!--Icon (optional)-->
+                                                                    <span class="slds-media__figure slds-listbox__option-icon slds-align-middle">
+                                                                        <svg class="slds-icon brand-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                                        </svg>
+                                                                    </span>
+                                                                    <!--End Icon (optional)-->
+                    
+                                                                    <!--Option Label-->
+                                                                    <span class="slds-media__body">
+                                                                        <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                                    </span>
+                                                                    <!--End Option Label-->
+                                                                </span>
+                                                                <span class="slds-media__figure slds-float-right"> 
+                                                                    <c-tooltip-button nubbin="right" tip-width="14rem">
+                                                                        <lightning-icon slot="tipTrigger" icon-name="utility:info" size="x-small"></lightning-icon> 
+                                                                        <div slot="simpleBody" class="slds-text-align_left">
+                                                                            <p class="slds-p-left_small">{option.disabledMessage}</p>
+                                                                        </div>
+                                                                    </c-tooltip-button>
+                                                                </span>
+                                                            </div>
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            <div class="slds-media slds-listbox__option slds-listbox__option_entity slds-media_small slds-is-disabled" 
+                                                                role="option" 
+                                                                aria-disabled="true"
+                                                                data-id="comboboxOption" 
+                                                                data-value={option.value} 
+                                                                data-label={option.label}
+                                                                onmousedown={handleDisabledClick}
+                                                                onclick={handleDisabledClick}
+                                                            >
+                                                                <!--Option Details-->
+                                                                <span class="slds-media__body">
+                                                                    <span class="slds-media__figure">
+                                                                        <div style="height: 20px; width: 24px;"></div>
+                                                                    </span>
+                                                                    <span class="slds-media__body">
+                                                                        <!--Option Label-->
+                                                                        <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                                        <!--End Option Label-->
+                                                                    </span>
+                                                                </span>
+                                                                <span class="slds-media__figure slds-float-right"> 
+                                                                    <c-tooltip-button nubbin="right" tip-width="14rem">
+                                                                        <lightning-icon slot="tipTrigger" icon-name="utility:info" size="x-small"></lightning-icon> 
+                                                                        <div slot="simpleBody" class="slds-p-around_small slds-text-align_left">
+                                                                            <p class="slds-p-left_small">{option.disabledMessage}</p>
+                                                                        </div>
+                                                                    </c-tooltip-button>
+                                                                </span>
+                
+                                                            </div>
+                                                        </template>
+                                                    </template>
+        
+                                                    <!--To focus/Select: aria-selected="true" aria-checked="true" class="slds-is-selected slds-has-focus"-->
+                                                    <!--Selected Option-->
+                                                    <template lwc:elseif={option.isSelected}>
+                                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-has-focus slds-is-selected" 
+                                                            aria-selected="true" aria-checked="true"
+                                                            role="option" 
+                                                            data-id="comboboxOption" 
+                                                            data-value={option.value} 
+                                                            data-label={option.label}
+                                                            title={option.label}
+                                                            onclick={handleOptionClick}
+                                                            onmousedown={deflectFocus}
+                                                        >
+                                                            <!--Icon (optional)-->
+                                                            <span class="slds-media__figure slds-listbox__option-icon slds-align-middle">
+                                                                <svg class="slds-icon brand-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.check}></use>
+                                                                </svg>
+                                                            </span>
+                                                            <!--End Icon (optional)-->
+            
+                                                            <!--Option Label-->
+                                                            <span class="slds-media__body">
+                                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                            </span>
+                                                            <!--End Option Label-->
+                                                        </div>
+                                                    </template>
+                                                    <!--End Selected Option-->
+            
+                                                    <!--Unselected Options-->
+                                                    <template lwc:else> 
+                                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                                            role="option" 
+                                                            data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                                            onclick={handleOptionClick}
+                                                            onmousedown={deflectFocus}
+                                                        >
+                                                            <!--Icon (optional)-->
+                                                            <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                                            <!--End Icon (optional)-->
+            
+                                                            <!--Option Label-->
+                                                            <span class="slds-media__body">
+                                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                            </span>
+                                                            <!--End Option Label-->
+            
+                                                        </div>
+                                                    </template>
+                                                    <!--End Unselected Options-->
+            
+                                                </li>
+
+                                            </template>
+                                            <!--End Picklist Option w/ keyId-->
+                                            
+                                            <!--Picklist Option without keyId-->
+                                            <template lwc:else> 
+                                                <li role="presentation" key={option.value} class="slds-listbox__item" title={option.label}>
+
+                                                    <template lwc:if={option.isConvert}> 
+                                                        <template lwc:if={option.isSelected}> 
+                                                            <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-has-focus slds-is-selected slds-is-disabled" 
+                                                                aria-disabled="true"
+                                                                aria-selected="true" aria-checked="true"
+                                                                role="option" 
+                                                                data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                                                title={option.label}
+                                                                onmouseover={handleHover}
+                                                                onmousemove={enableHover}
+                                                                onmousedown={deflectFocus}
+                                                            >
+                                                                <!--Option Details-->
+                                                                <span class="slds-media__body">
+                                                                    <!--Icon (optional)-->
+                                                                    <span class="slds-media__figure slds-listbox__option-icon slds-align-middle">
+                                                                        <svg class="slds-icon brand-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                                        </svg>
+                                                                    </span>
+                                                                    <!--End Icon (optional)-->
+                    
+                                                                    <!--Option Label-->
+                                                                    <span class="slds-media__body">
+                                                                        <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                                    </span>
+                                                                    <!--End Option Label-->
+                                                                </span>
+                                                                <span class="slds-media__figure slds-float-right"> 
+                                                                    <c-tooltip-button nubbin="right" tip-width="14rem">
+                                                                        <lightning-icon slot="tipTrigger" icon-name="utility:info" size="x-small"></lightning-icon> 
+                                                                        <div slot="simpleBody" class="slds-text-align_left">
+                                                                            <p class="slds-p-left_small">{option.disabledMessage}</p>
+                                                                        </div>
+                                                                    </c-tooltip-button>
+                                                                </span>
+                                                            </div>
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-disabled" 
+                                                                role="option" 
+                                                                aria-disabled="true"
+                                                                data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                                                onmouseover={handleHover}
+                                                                onmousemove={enableHover}
+                                                                onmousedown={deflectFocus}
+                                                            >
+                                                                <!--Option Details-->
+                                                                <span class="slds-media__body">
+                                                                    <span class="slds-media__figure">
+                                                                        <div style="height: 20px; width: 24px;"></div>
+                                                                    </span>
+                                                                    <span class="slds-media__body">
+                                                                        <!--Option Label-->
+                                                                        <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                                        <!--End Option Label-->
+                                                                    </span>
+                                                                </span>
+                                                                <span class="slds-media__figure slds-float-right"> 
+                                                                    <c-tooltip-button nubbin="right" tip-width="14rem">
+                                                                        <lightning-icon slot="tipTrigger" icon-name="utility:info" size="x-small"></lightning-icon> 
+                                                                        <div slot="simpleBody" class="slds-text-align_left">
+                                                                            <p class="slds-p-left_small">{option.disabledMessage}</p>
+                                                                        </div>
+                                                                    </c-tooltip-button>
+                                                                </span>
+                                                            </div>
+                                                        </template>
+                                                    </template>
+        
+                                                    <!--To focus/Select: aria-selected="true" aria-checked="true" class="slds-is-selected slds-has-focus"-->
+                                                    <!--Selected Option-->
+                                                    <template lwc:elseif={option.isSelected}>
+                                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-has-focus slds-is-selected" 
+                                                            aria-selected="true" aria-checked="true"
+                                                            role="option" 
+                                                            data-id="comboboxOption" 
+                                                            data-value={option.value} 
+                                                            data-label={option.label}
+                                                            title={option.label}
+                                                            onclick={handleOptionClick}
+                                                            onmouseover={handleHover}
+                                                            onmousemove={enableHover}
+                                                            onmousedown={deflectFocus}
+                                                        >
+                                                            <!--Icon (optional)-->
+                                                            <span class="slds-media__figure slds-listbox__option-icon slds-align-middle">
+                                                                <svg class="slds-icon brand-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.check}></use>
+                                                                </svg>
+                                                            </span>
+                                                            <!--End Icon (optional)-->
+            
+                                                            <!--Option Label-->
+                                                            <span class="slds-media__body">
+                                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                            </span>
+                                                            <!--End Option Label-->
+                                                        </div>
+                                                    </template>
+                                                    <!--End Selected Option-->
+            
+                                                    <!--Unselected Options-->
+                                                    <template lwc:else> 
+                                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                                            role="option" 
+                                                            data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                                            onclick={handleOptionClick}
+                                                            onmouseover={handleHover}
+                                                            onmousemove={enableHover}
+                                                            onmousedown={deflectFocus}
+                                                        >
+                                                            <!--Icon (optional)-->
+                                                            <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                                            <!--End Icon (optional)-->
+            
+                                                            <!--Option Label-->
+                                                            <span class="slds-media__body">
+                                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                            </span>
+                                                            <!--End Option Label-->
+            
+                                                        </div>
+                                                    </template>
+                                                    <!--End Unselected Options-->
+            
+                                                </li>
+                                            </template>
+                                            <!--End Picklist Option without keyId-->
+                                        </template>
+                                    </template>
+                                </ul>
+                            </div>
+                            <!--End List of Options-->
+        
+                        </div>
+                    </div>
+                </div>
+                <div if:true={hasError} class="slds-form-element__help" id="error-message-unique-id">This field is required</div>  
+            </div>
+            
+        </template>
+    </template>
+</template>

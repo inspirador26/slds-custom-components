@@ -1,0 +1,251 @@
+@import 'c/sharedStylesSldsCombobox';
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --c-caret-color: transparent;
+    --c-border-radius: var(--slds-g-radius-border-1, 0.25rem);
+    --c-input-height: 1.875rem; 
+    --c-font-size: inherit;
+    --c-selected-switcher-scale: 1.2;
+    --c-pill-box-min-height: 2.0rem;
+
+    --c-switcher-width-blurred: 7.5rem; 
+    --c-switcher-width-focused: 10rem;
+
+    --c-meta-font-size: calc(var(--c-font-size, inherit) - 0.1rem);
+    --c-switcher-meta-font-size: calc(var(--c-font-size, 1rem) - 0.25rem);
+
+    --slds-g-shadow-inset-inverse-focus-1: 
+        var(--slds-g-color-brand-base-40, #0b5cab) 0px 0px 0px 2px inset, 
+        var(--slds-g-color-neutral-base-100, #fff) 0px 0px 0px 4px inset;
+}
+
+.slds-listbox__option-meta.slds-listbox__option-meta_entity:not(.switcher-meta) {
+    font-size: var(--c-meta-font-size, calc(var(--c-font-size, inherit) - 0.1rem));
+}
+.switcher-dropdown .slds-listbox__option-meta.slds-listbox__option-meta_entity.switcher-meta {
+    font-size: var(--c-switcher-meta-font-size, calc(var(--c-font-size, 1rem) - 0.25rem));
+}
+
+
+.slds-form-element {
+    margin-bottom: 0px;
+}
+
+.slds-combobox_object-switcher .slds-combobox_container:not(.slds-has-icon-only) .slds-combobox__input {
+    width: var(--c-switcher-width-blurred, 7.5rem);
+    -webkit-transition: width 80ms linear;
+    transition: width 80ms linear;
+    font-size: var(--c-font-size, inherit);
+    color: var(--slds-g-color-neutral-base-50,#747474);
+}
+
+.slds-combobox_object-switcher .slds-combobox_container:not(.slds-has-icon-only) .slds-combobox__input.slds-has-focus, 
+.slds-combobox_object-switcher .slds-combobox_container:not(.slds-has-icon-only) .slds-combobox__input:focus {
+    width: var(--c-switcher-width-focused, 10rem);
+}
+
+.slds-input_faux, 
+.slds-input.slds-combobox__input {
+    min-height: calc(var(--c-input-height) + (1px * 2));
+    line-height: var(--c-input-height);
+    font-size: var(--c-font-size, inherit);
+}
+
+
+.slds-combobox-group:not(.slds-has-selection) .slds-combobox-addon_start .slds-combobox__input {
+    border-top-left-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-left-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-right-radius: 0px;
+    border-top-right-radius: 0px;
+}
+.slds-combobox-group:not(.slds-has-selection) .slds-combobox-addon_end .slds-combobox__input {
+    border-top-right-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-right-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+.slds-combobox-addon_start .slds-combobox__input {
+    border-top-left-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem)) 
+        0px 0px 0px;
+}
+.slds-combobox-group:not(.slds-has-selection) .slds-input.slds-combobox__input.addon-input {
+    border-top-right-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-right-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+
+.slds-combobox-group.slds-has-selection~.slds-listbox_selection-group {
+    border-bottom-left-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-right-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+.slds-input.slds-combobox__input.addon-input {
+    border-top-right-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+/*
+.slds-input_faux.slds-combobox__input {
+    border-top-left-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+    border-bottom-left-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+*/
+
+.slds-combobox-group .slds-combobox-addon_start .slds-combobox__input.slds-has-focus {
+    border-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem)) 0px 0px var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+.slds-combobox-group .slds-combobox-addon_end .slds-combobox__input.slds-has-focus {
+    border-radius: 0px var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem)) var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem)) 0px;
+}
+
+/*
+.slds-combobox-group .slds-combobox-addon_start .slds-combobox__input.slds-has-focus .slds-combobox-group.slds-has-selection~.slds-listbox_selection-group {
+    border-top-left-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+.slds-combobox-group .slds-combobox-addon_end .slds-combobox__input.slds-has-focus .slds-combobox-group.slds-has-selection~.slds-listbox_selection-group {
+    border-top-right-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+
+
+.slds-listbox__option.slds-listbox__option_entity.slds-listbox__option_has-meta {
+    padding: 0.3rem .75rem;
+}
+*/
+
+.slds-listbox__option .slds-media__figure.slds-listbox__option-icon.slds-listbox__option_has-meta:not(.selected-icon) {
+    margin-top: 0.25rem;
+}
+
+.slds-listbox__option-icon.slds-text-align_right.selected-icon {
+    margin-top: 0.35rem;
+    padding-left: var(--slds-g-spacing-1, 0.25rem);
+}
+
+
+.comboRoot {
+    min-width: 0;
+}
+
+.comboRoot .slds-combobox-group {
+    display: flex;
+    align-items: flex-start;
+}
+
+.switcher-pane {
+    flex: 0 0 auto;
+    min-width: 0;
+}
+
+.switcher-pane .slds-combobox_container.slds-has-icon-only {
+    min-width: 0;
+}
+
+.switcher-pane .slds-input__icon_left {
+    left: 0.75rem;
+}
+
+.addon-end-pane {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.addon-end-pane .slds-combobox,
+.addon-end-pane .slds-combobox__form-element,
+.addon-end-pane .slds-combobox__input {
+    width: 100%;
+    min-width: 0;
+}
+
+.slds-form-element__label {
+    font-size: var(--c-font-size, inherit);
+}
+
+.switcher-dropdown .switcher-option {
+    cursor: pointer;
+}
+
+.switcher-dropdown .switcher-option.slds-has-focus {
+    background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);
+}
+
+.slds-listbox_selection-group {
+    position: relative;
+    padding: 0;
+    padding-right: 1.75rem;
+    height: var(--c-input-height, 1.875rem);
+    min-height: var(--c-pill-box-min-height, 2.0rem);
+    overflow: hidden;
+}
+
+.slds-pill {
+    padding-left: 0.25rem;
+    border-radius: var(--c-border-radius, var(--slds-g-radius-border-1, 0.25rem));
+}
+
+.slds-listbox_selection-group.slds-is-expanded {
+    overflow: visible;
+    height: auto;
+    min-height: var(--c-pill-box-min-height, 2.0rem);
+}
+
+.slds-listbox_selection-group .slds-listbox {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    width: 100%;
+    min-width: 0;
+}
+
+.slds-listbox_selection-group.slds-is-expanded .slds-listbox {
+    flex-wrap: wrap;
+}
+
+.slds-listbox_selection-group .slds-listbox-item {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.slds-pill {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.pill-button {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    min-width: 0;
+    text-align: left;
+}
+
+.pill-button:focus {
+    outline: none;
+}
+
+.addon-option-plain.slds-listbox__option_plain {
+    padding-top: var(--slds-g-spacing-3, 0.75rem);
+    padding-bottom: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.addon-option.slds-is-selected .slds-media__figure.slds-listbox__option-icon .slds-current-color {
+    color: var(--slds-g-color-brand-base-50);
+}
+
+.slds-pill__label {
+    min-width: 0;
+    max-width: 14rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.slds-combobox-addon_start .slds-input.slds-combobox__input,
+.slds-combobox-addon_start .slds-input_faux.slds-combobox__input,
+.slds-combobox-addon_end .slds-input.slds-combobox__input {
+    height: calc(var(--c-input-height) + 2px);
+    min-height: calc(var(--c-input-height) + 2px);
+    line-height: var(--c-input-height);
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+}
+

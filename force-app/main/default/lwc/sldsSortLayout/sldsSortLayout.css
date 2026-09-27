@@ -1,0 +1,25 @@
+.slds-box {
+    padding: 1.0rem 0.5rem;
+    margin-bottom: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.box-label {
+    font-weight: 700;
+    padding-left: 0.125rem;
+    padding-top: 0.5rem;
+}
+.box-label__first {
+    font-weight: 700;
+    padding-left: 0.125rem;
+}
+
+.sort-wrapper .box-label {
+    font-weight: 700;
+    padding-left: 0.125rem;
+    padding-top: 0.5rem;
+}
+.sort-wrapper .box-label:first-of-type {
+    font-weight: 700;
+    padding-left: 0.125rem;
+}

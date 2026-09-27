@@ -1,0 +1,149 @@
+<template>
+
+    <div class="slds-form-element">
+
+        <label if:true={label} class="slds-form-element__label" for={_labelFor}>{label}</label>
+
+        <!--Field Level Help (w/ tooltip)-->
+        <div if:true={fieldHelp} class="slds-form-element__icon">
+            <button class="slds-button slds-button_icon" aria-describedby="help">
+                <svg class="slds-button__icon" aria-hidden="true">
+                    <use xlink:href={iconMap.utility.info}></use>
+                </svg>
+                <span class="slds-assistive-text">Help</span>
+            </button>
+            <!--Tooltip of help info-->
+            <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" 
+                role="tooltip" 
+                id="help" 
+                style="position:absolute;top:-45px;left:-15px;width:170px"
+            >
+                <div class="slds-popover__body">Some helpful information.</div>
+            </div>
+            <!--Tooltip of help info-->
+        </div>
+        <!--End Field Level Help (w/ tooltip)-->
+
+        <template lwc:if={focusHelp}> 
+            <c-tooltip-button
+                suppress-tooltip={_suppressFocusHelp}
+                show-always="true"
+                tip-width="15rem"
+                nubbin="top-left"
+            >
+                <div slot="simpleBody" class="slds-text-align_left"> 
+                    <template lwc:if={_isFocusHelpArr}> 
+                        <ul class="slds-list_dotted"> 
+                            <template iterator:it={focusHelp}> 
+                                <template lwc:if={it.first}> 
+                                    <li key={it.value.keyId}>{it.value.text}</li>
+                                </template>
+                                <template lwc:else> 
+                                    <li class="slds-p-top_medium" key={it.value.keyId}>{it.value.text}</li>
+                                </template>
+                            </template>
+                        </ul>
+                    </template>
+                    <template lwc:else> 
+                        <p>{focusHelp}</p>
+                    </template>
+                </div>
+                <div slot="tipTrigger" 
+                    class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right"
+                > 
+                    <!--Left Icon-->
+                    <svg class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" 
+                        aria-hidden="true"
+                    > <use xlink:href={iconMap.utility.search}></use> </svg>
+                    <!--Left Icon-->    
+
+                    <!--Input-->
+                    <input 
+                        type="text" 
+                        id="text-input-id-48" 
+                        placeholder={placeHolder} 
+                        class="slds-input" 
+                        onfocus={handleHelpVariantFocus}
+                        onkeydown={handleKeyDown}
+                        onchange={handleChange}
+                        oninput={handleInput}
+                        onblur={handleBlur}
+                        autocomplete="off"
+                    />
+                    <!--End Input--> <!--👉 Temporarily removed onchange={handleChange} -->
+
+                    <!--Right Button Icon-->
+                    <button if:true={value} 
+                        class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" 
+                        title="Clear"
+                        onclick={clearValue}
+                    >
+                        <svg class="slds-button__icon slds-icon-text-light" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.clear}></use>
+                        </svg>
+                        <span class="slds-assistive-text">Clear</span>
+                    </button>
+                    <!--End Right Button Icon-->
+                </div>
+            </c-tooltip-button>
+        </template>
+
+        <template lwc:else>
+            <!--Main-->
+            <div class={_formEleCl}>
+
+                <!--Left Icon-->
+                <template if:false={isIconRight}>
+                    <svg class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" aria-hidden="true">
+                        <use xlink:href={icon}></use>
+                    </svg>
+                </template>
+                <!--Left Icon-->    
+
+                <!--Input-->
+                <input 
+                    type="text" 
+                    id="text-input-id-47" 
+                    placeholder={placeHolder} 
+                    class="slds-input" 
+                    onkeydown={handleKeyDown}
+                    onchange={handleChange}
+                    oninput={handleInput}
+                    onblur={handleBlur}
+                    autocomplete="off"
+                />
+                <!--End Input--> <!--👉 Temporarily removed onchange={handleChange} -->
+
+                <template lwc:if={suppressButton}> 
+                    <template lwc:if={isIconRight}> 
+                        <svg class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" aria-hidden="true">
+                            <use xlink:href={icon}></use>
+                        </svg>
+                    </template>
+                </template>
+                <template lwc:else>
+                    <!--Right Button Icon-->
+                    <button if:true={value} 
+                        class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" 
+                        title="Clear"
+                        onclick={clearValue}
+                    >
+                        <svg class="slds-button__icon slds-icon-text-light" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.clear}></use>
+                        </svg>
+                        <span class="slds-assistive-text">Clear</span>
+                    </button>
+                    <!--End Right Button Icon-->
+                </template>
+
+            </div>
+            <!--End Main-->
+        </template>
+
+        <!--Component Usage Help-->
+        <div if:true={localComponentHelp} class="slds-form-element__help" id="error-message-id-53">{localComponentHelp}</div>
+        <!--End Component Usage Help-->
+
+    </div>
+    
+</template>

@@ -1,0 +1,336 @@
+<template>
+    <div class="slds-form-element comboRoot" onfocusin={handleRootFocusIn} onfocusout={handleRootFocusOut}>
+        <template lwc:if={label}>
+            <label class="slds-form-element__label" for="addon-input">{label}</label>
+        </template>
+        <div class="slds-form-element__control">
+            <div class={comboboxGroupClass}>
+                <div class="slds-combobox_object-switcher slds-combobox-addon_start switcher-pane">
+                    <div class="slds-form-element">
+
+                        <label 
+                            class="slds-form-element__label slds-assistive-text" 
+                            for={_switcherId}
+                            id="switcher-label"
+                        >{switcherLabel}</label>
+
+                        <div class="slds-form-element__control">
+                            <div class={switcherComboboxContainerClass}>
+                                <div class={switcherTriggerClass}>
+                                    <div class={switcherFormElementClass} 
+                                        role="none"
+                                    >
+                                        <template if:true={shouldShowSwitcherIconOnly}>
+                                            <span if:true={selectedSwitcherOption.icon} class="slds-input__icon slds-input__icon_left" title={switcherInputValue}>
+                                                <span class={selectedSwitcherOption.icon.container} style="transform: scale(var(--c-selected-switcher-scale, 1.2));">
+                                                    <svg class={selectedSwitcherOptionIconCl} aria-hidden="true">
+                                                        <use xlink:href={selectedSwitcherOption.icon.icon}></use>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                            <input
+                                                type="text"
+                                                class={switcherInputClass}
+                                                aria-labelledby="switcher-label"
+                                                id={_switcherId}
+                                                aria-controls="addon-input"
+                                                aria-expanded={isSwitcherOpen}
+                                                aria-haspopup="listbox"
+                                                data-combobox-group-focus="true"
+                                                onclick={handleSwitcherTriggerClick}
+                                                onkeydown={handleSwitcherTriggerKeyDown}
+                                                onfocus={handleSwitcherFocus}
+                                                onblur={handleSwitcherBlur}
+                                                autocomplete="off"
+                                                role="combobox"
+                                                placeholder=" "
+                                                value={switcherInputValue}
+                                                readonly
+                                            />
+                                        </template>
+                                        <template if:true={shouldShowSwitcherIconAndText}>
+                                            <span if:true={selectedSwitcherOption.icon} class="slds-input__icon slds-input__icon_left" title={switcherInputValue}>
+                                                <span class={selectedSwitcherOption.icon.container}>
+                                                    <svg class={selectedSwitcherOptionIconCl} aria-hidden="true">
+                                                        <use xlink:href={selectedSwitcherOption.icon.icon}></use>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                            <div
+                                                role="combobox"
+                                                tabindex="0"
+                                                class={switcherInputClass}
+                                                aria-labelledby="switcher-label"
+                                                id={_switcherId}
+                                                aria-controls="addon-input"
+                                                aria-expanded={isSwitcherOpen}
+                                                aria-haspopup="listbox"
+                                                data-combobox-group-focus="true"
+                                                onclick={handleSwitcherTriggerClick}
+                                                onkeydown={handleSwitcherTriggerKeyDown}
+                                                onfocus={handleSwitcherFocus}
+                                                onblur={handleSwitcherBlur}
+                                            >
+                                                <span class="slds-truncate">{switcherInputValue}</span>
+                                            </div>
+                                        </template>
+                                        <template if:true={shouldShowSwitcherTextOnly}>
+                                            <div
+                                                role="combobox"
+                                                tabindex="0"
+                                                class={switcherInputClass}
+                                                aria-labelledby="switcher-label"
+                                                id={_switcherId}
+                                                aria-controls="addon-input"
+                                                aria-expanded={isSwitcherOpen}
+                                                aria-haspopup="listbox"
+                                                data-combobox-group-focus="true"
+                                                onclick={handleSwitcherTriggerClick}
+                                                onkeydown={handleSwitcherTriggerKeyDown}
+                                                onfocus={handleSwitcherFocus}
+                                                onblur={handleSwitcherBlur}
+                                            >
+                                                <span class="slds-truncate">{switcherDisplayLabel}</span>
+                                            </div>
+                                        </template>
+                                        <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                            <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                                <use xlink:href={iconMap.utility.down}></use>
+                                            </svg>
+                                        </span>
+                                    </div>
+
+                                    <div
+                                        id="switcher-listbox"
+                                        class={_switcherDropdownCl}
+                                        role="listbox"
+                                        tabindex="0"
+                                    >
+                                        <ul class="slds-listbox slds-listbox_vertical" role="group" aria-label="Switcher Options">
+                                            <li if:true={switcherMenuTitle} role="presentation" class="slds-listbox__item switcher-item">
+                                                <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                                    role="presentation"
+                                                    data-element="groupHeader"
+                                                    style="box-shadow: none"
+                                                >
+                                                    <h3 class="slds-listbox__option-header" role="presentation">{switcherMenuTitle}</h3>
+                                                </div>
+                                            </li>
+                                            <template for:each={normalizedSwitcherOptions} for:item="option">
+                                                <li key={option.id} role="presentation" class="slds-listbox__item switcher-item">
+                                                    <div
+                                                        id={option.id}
+                                                        class={option.className}
+                                                        role="option"
+                                                        aria-checked={option.ariaChecked}
+                                                        aria-selected={option.ariaChecked}
+                                                        onclick={handleSwitcherOptionClick}
+                                                        onmousedown={deflectFocus}
+                                                        onmousemove={handleSwitcherOptionMouseMove}
+                                                        onmouseleave={handleSwitcherOptionMouseLeave}
+                                                        data-value={option.value}
+                                                    >
+                                                        <span class="slds-media__figure slds-listbox__option-icon switcher-option">
+                                                            <template if:true={switcherHasIcons}>
+                                                                <span class={option.icon.container}>
+                                                                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                                        <use xlink:href={option.icon.icon}></use>
+                                                                    </svg>
+                                                                </span>
+                                                            </template>
+                                                        </span>
+                                                        <span class={switcherMediaBodyCl}>
+                                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" title={option.label}>{option.label}</span>
+
+                                                            <span if:true={option.isMeta} class="slds-listbox__option-meta slds-listbox__option-meta_entity switcher-meta">
+                                                                <span if:true={option.metaOne}>{option.metaOne}</span>
+                                                                <span if:true={option.metaTwo}>{option.metaTwoPrefix}{option.metaTwo}</span>
+                                                                <span if:true={option.metaThree}>{option.metaThreePrefix}{option.metaThree}</span>
+                                                                <span if:true={option.metaFour}>{option.metaFourPrefix}{option.metaFour}</span>
+                                                            </span>
+                                                        </span>
+                                                        <span class="slds-media__figure slds-listbox__option-icon slds-text-align_right selected-icon">
+                                                            <template lwc:if={option.isSelected}>
+                                                                <span class="slds-icon_container slds-icon-utility-check brand-icon-check">
+                                                                    <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                                        <use xlink:href={iconMap.utility.check}></use>
+                                                                    </svg>
+                                                                </span>
+                                                            </template>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-combobox_container slds-combobox-addon_end addon-end-pane">
+                    <div class={addonTriggerClass} aria-haspopup="listbox" role="combobox">
+                        <div class={comboFormCl} role="none">
+                            <input
+                                type="text"
+                                class={addonInputClass}
+                                id="addon-input"
+                                style="caret-color: var(--c-caret-color, transparent);"
+                                aria-autocomplete="list"
+                                aria-controls="addon-listbox"
+                                autocomplete="off"
+                                role="textbox"
+                                placeholder={activePlaceholder}
+                                data-combobox-group-focus="true"
+                                onfocus={handleAddonInputFocus}
+                                onblur={handleAddonInputBlur}
+                                onclick={handleAddonInputClick}
+                                oninput={handleAddonInput}
+                                onkeydown={handleAddonKeyDown}
+                                value={inputValue}
+                                readonly={isAddonReadOnly}
+                            />
+                            <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                    <use xlink:href={addonInputIconHref}></use>
+                                </svg>
+                            </span>
+                        </div>
+
+                        <div id="addon-listbox" 
+                            class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid addon-dropdown" 
+                            role="listbox"
+                        >
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <template for:each={addonTemplateOptions} for:item="option">
+                                    <li key={option.id} role="presentation" class="slds-listbox__item">
+                                        <div
+                                            id={option.id}
+                                            class={option.className}
+                                            role="option"
+                                            onclick={handleAddonOptionClick}
+                                            onmousedown={deflectFocus}
+                                            onmouseenter={handleHover}
+                                            onmouseleave={handleUnhover}
+                                            data-value={option.value}
+                                            data-stable-id={option.stableId}
+                                            aria-selected={option.ariaSelected}
+                                            aria-checked={option.ariaChecked}
+                                        >
+                                            <span class="slds-media__figure slds-listbox__option-icon">
+                                                <template if:true={addonHasIcons}>
+                                                    <span class={option.icon.container}>
+                                                        <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                            <use xlink:href={option.icon.icon}></use>
+                                                        </svg>
+                                                    </span>
+                                                </template>
+                                                <template if:false={addonHasIcons}>
+                                                    <span if:true={option.isSelected} class="slds-icon_container slds-icon-utility-check brand-icon-check">
+                                                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.check}></use>
+                                                        </svg>
+                                                    </span>
+                                                </template>
+                                            </span>
+
+                                            <span class={addOnMediaBodyCl}>
+                                                <span class="slds-listbox__option-text slds-listbox__option-text_entity"
+                                                >{option.label}</span>
+                                                
+                                                <span if:true={option.isMeta} class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                                    <span if:true={option.metaOne}>{option.metaOne}</span>
+                                                    <span if:true={option.metaTwo}> • {option.metaTwo}</span>
+                                                    <span if:true={option.metaThree}> • {option.metaThree}</span>
+                                                    <span if:true={option.metaFour}> • {option.metaFour}</span>
+                                                </span>
+                                            </span>
+
+                                            <span if:true={addonHasIcons} 
+                                                class="slds-listbox__option-icon slds-text-align_right selected-icon"
+                                            >
+                                                <span if:true={option.isSelected} 
+                                                    class="slds-icon_container slds-icon-utility-check brand-icon-check"
+                                                >
+                                                    <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                        <use xlink:href={iconMap.utility.check}></use>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div if:true={pills.length} class={selectionGroupClass} onclick={handleSelectionGroupClick}>
+                <span if:true={hiddenPillCount} 
+                    class="slds-listbox-toggle" 
+                    aria-hidden="true"
+                >
+                    <button class="slds-button" 
+                        tabindex="-1" 
+                        onclick={expandPills}
+                    >+{hiddenPillCount} more</button>
+                </span>
+                <ul class="slds-listbox slds-listbox_horizontal" 
+                    role="listbox" 
+                    aria-label="Selected Options:" 
+                    aria-orientation="horizontal"
+                >
+                    <template for:each={displayedPills} for:item="pill">
+                        <li key={pill.stableId} class="slds-listbox-item" role="presentation">
+                            <span class="slds-pill" 
+                                role="option" 
+                                aria-selected="true" 
+                                data-pill-focus="true" 
+                                data-pill-value={pill.value}
+                                data-pill-scope-key={pill.scopeKey}
+                            >
+                                <span if:true={pill.pillIcon} class={pill.pillIcon.container}>
+                                    <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                        <use xlink:href={pill.pillIcon.icon}></use>
+                                    </svg>
+                                </span>
+                                <button 
+                                    class="pill-button" 
+                                    type="button" 
+                                    tabindex="-1"
+                                    title={pill.label} 
+                                    onclick={handlePillClick}
+                                    data-pill-value={pill.value}
+                                    data-pill-stable-id={pill.stableId}
+                                >
+                                    <span class="slds-pill__label" 
+                                        title={pill.label}
+                                    >{pill.label}</span>
+                                </button>
+                                <button
+                                    class="slds-button slds-button_icon slds-pill__remove"
+                                    type="button"
+                                    title="Remove"
+                                    onfocus={handlePillRemoveFocus}
+                                    onmousedown={handlePillRemoveMouseDown}
+                                    onclick={handlePillRemove}
+                                    data-pill-value={pill.value}
+                                    data-pill-scope-key={pill.scopeKey}
+                                    data-pill-stable-id={pill.stableId}
+                                    data-pill-remove-focus="true"
+                                >
+                                    <svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.close}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Press delete or backspace to remove</span>
+                                </button>
+                            </span>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </div>
+</template>

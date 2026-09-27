@@ -1,0 +1,1635 @@
+<template>
+    
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <template lwc:if={modalConfig}> 
+        <c-slds-modal-slot
+            modal-title={modalConfig.modalTitle}
+            ok-label={modalConfig.okLabel}
+            onclosemodal={closeModal}
+            onmodalok={handleDeleteRecordModal}
+            render-focus="true"
+        > 
+            <div slot="modalBody" class="slds-p-around_medium"> 
+                <div class="slds-align_absolute-center">
+                    <p style="font-size: 1rem;">Are you sure you want to delete this record?</p>
+                </div>
+            </div>
+        </c-slds-modal-slot>
+    </template>
+
+
+    <c-wired-picklist-values-lwc></c-wired-picklist-values-lwc>
+
+    <div class="slds-table_edit_container slds-is-relative">
+
+        <template lwc:if={isLoading}> 
+            <lightning-spinner variant="brand"></lightning-spinner>
+        </template>
+
+
+        <!--Edit Popover-->
+        <section aria-describedby="dialog-body-id-14" 
+            class="slds-popover slds-popover slds-popover_edit slds-hide" 
+            role="dialog" 
+            style="position:absolute;top:0;left:0.0625rem"
+            data-id="popoverEdit"    
+        >
+            <div class="slds-popover__body" id="dialog-body-id-14">
+                <div class="slds-form-element slds-grid slds-wrap">
+                    <label class="slds-form-element__label slds-form-element__label_edit slds-no-flex" for="company-01">
+                        <span class="slds-assistive-text">Company</span>
+                    </label>
+
+                    <div class="slds-form-element__control slds-grow">
+                        <!--Rich Text-->
+                        <template lwc:if={_popoverEdit.isrichtext}> 
+                            <p>rich text</p>
+                        </template>
+                        <!--End Rich Text-->
+
+                        <!--Picklist-->
+                        <template lwc:elseif={_popoverEdit.ispicklist}> 
+                            <c-dropdown-plain 
+                                place-holder="Make a Selection..." 
+                                current-value={_popoverEdit.value}
+                                options={_picklistOptions}
+                                is-popover="true"
+                                onselection={handleInputMessage}
+                                onescape={inputEleBlur}
+                                data-id="picklistEdit">
+                            </c-dropdown-plain>
+                        </template>
+                        <!--End Picklist-->
+
+                        <!--MultiPicklist-->
+                        <template lwc:elseif={_popoverEdit.ismultipicklist}> 
+                            <c-custom-slds-combobox-multi-select-practice 
+                                place-holder="Make a Selection..." 
+                                value={_popoverEdit.value}
+                                parent-combobox-options={picklistOptions}
+                                is-popover="true"
+                                onmutlipicklistselected={handleInputMessage}
+                                onescape={inputEleBlur}
+                                data-id="multiPicklistEdit">
+                            </c-custom-slds-combobox-multi-select-practice>
+                        </template>
+                        <!--End MultiPicklist-->
+
+                        <!--Regular Input Element-->
+                        <template lwc:else> 
+                            <!--Text-->
+                            <template lwc:if={_popoverEdit.istext}>
+                                <c-slds-input 
+                                    dtype="text" 
+                                    label="" 
+                                    place-holder=""
+                                    is-required="false"
+                                    current-value={_popoverEdit.displayValue}
+                                    is-popover="true"
+                                    onescape={inputEleBlur}
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Text-->
+
+                            <!--Text Area-->
+                            <template lwc:if={_popoverEdit.istextarea}>
+                                <c-slds-input 
+                                    dtype="textarea" 
+                                    label="" 
+                                    place-holder=""
+                                    is-required="false"
+                                    current-value={_popoverEdit.displayValue}
+                                    onescape={inputEleBlur}
+                                    is-popover="true"
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Text Area-->
+
+                            <!--Reference-->
+                            <template lwc:if={_popoverEdit.isreference}>
+                                <c-slds-input
+                                    current-value={_popoverEdit.value}
+                                    object-name={_popoverEdit.referenceObject}
+                                    label={_popoverEdit.fieldLabel}
+                                    dtype="reference"
+                                    name-field="Name"
+                                    onescape={inputEleBlur}
+                                    onnewinput={handleInputMessage}
+                                    focus-on-ready="true"
+                                    data-id="recordPicker"
+                                ></c-slds-input>
+                            </template>
+                            <!--End Reference-->
+
+                            <!--Whole Number-->
+                            <template lwc:elseif={_popoverEdit.isnumber}> 
+                                <c-slds-input 
+                                    dtype="number" 
+                                    label="" 
+                                    place-holder=""
+                                    is-required="false"
+                                    onescape={inputEleBlur}
+                                    is-popover="true"
+                                    current-value={_popoverEdit.value}
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Whole Number-->
+
+                            <!--Decimal-->
+                            <template lwc:elseif={_popoverEdit.isdecimal}> 
+                                <c-slds-input 
+                                    dtype="decimal" 
+                                    label="" 
+                                    place-holder=""
+                                    is-required="false"
+                                    onescape={inputEleBlur}
+                                    is-popover="true"
+                                    current-value={_popoverEdit.value}
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Decimal-->
+
+                            <!--Currency-->
+                            <template lwc:elseif={_popoverEdit.iscurrency}>
+                                <c-slds-input 
+                                    dtype="currency" 
+                                    label="" 
+                                    place-holder=""
+                                    is-required="false"
+                                    onescape={inputEleBlur}
+                                    current-value={_popoverEdit.value}
+                                    is-popover="true"
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Currency-->
+
+                            <!--Percent-->
+                            <template lwc:elseif={_popoverEdit.ispercent}>
+                                <c-slds-input 
+                                    dtype="percent" 
+                                    label="" 
+                                    place-holder=""
+                                    is-required="false"
+                                    current-value={_popoverEdit.value}
+                                    onescape={inputEleBlur}
+                                    is-popover="true"
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Percent-->
+
+                            <!--Date-->
+                            <template lwc:elseif={_popoverEdit.isdate}> 
+                                <c-slds-input 
+                                    dtype="date" 
+                                    label="" 
+                                    place-holder=""
+                                    is-required="false"
+                                    current-value={_popoverEdit.value}
+                                    onescape={inputEleBlur}
+                                    is-popover="true"
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Date-->
+
+                            <!--Datetime-->
+                            <template lwc:elseif={_popoverEdit.isdatetime}> 
+                                <c-slds-input 
+                                    dtype="datetime" 
+                                    label="" 
+                                    place-holder=""
+                                    is-required="false"
+                                    current-value={_popoverEdit.value}
+                                    onescape={inputEleBlur}
+                                    is-popover="true"
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Datetime-->
+
+                            <!--Boolean-->
+                            <template lwc:elseif={_popoverEdit.isboolean}> 
+                                <c-slds-input 
+                                    dtype="boolean" 
+                                    label={_popoverEdit.fieldName} 
+                                    place-holder=""
+                                    is-required="false"
+                                    current-value={_popoverEdit.value}
+                                    onescape={inputEleBlur}
+                                    is-popover="true"
+                                    onnewinput={handleInputMessage}
+                                ></c-slds-input>
+                            </template>
+                            <!--End Boolean-->
+
+                        </template>                            
+                        <!--End Regular Input Element-->
+
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--End Edit Popover-->
+
+        <template lwc:if={isDataLoaded}>
+            <!--Tree Grid-->
+            <div class="tree-table-container" onmousemove={handlemousemove} onmouseup={handlemouseup}> 
+                <!--Tree Grid Table-->
+                <div data-id="loaded-content">
+                    <table class={tableCls.parent}
+                        aria-multiselectable="true" aria-label="Example default tree grid" role="treegrid"
+                        data-table-type="parent"
+                        data-parent-id="parent"
+                    >
+                        <!--Header-->
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                
+                                <!--Level 1 Row Count-->
+                                <th if:false={suppressRowCount} class="" scope="col" style="width:2.0rem" data-is-fixed-width="true">
+                                    <div class="slds-truncate slds-assistive-text" title="Errors">Errors</div>
+                                </th>
+                                <!--End Level 1 Row Count-->
+
+                                <!--Level 1 Checkbox-->
+                                <th class={checkThCl} scope="col" data-is-fixed-width="true">
+                                    <template if:false={suppressCheckboxes}>
+                                        <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
+                                        <div class="slds-th__action slds-th__action_form">
+                                            <div class="slds-checkbox">
+                                                <input type="checkbox"
+                                                    name="options"
+                                                    id="checkbox-unique-id-2957"
+                                                    value="checkbox-unique-id-2957"
+                                                    tabindex="-1"
+                                                    aria-labelledby="check-select-all-label column-group-header" 
+                                                    onchange={handleLevelOneSelectAll}
+                                                    data-is-select-all="true"
+                                                    data-level="parent"
+                                                    data-parent-id="parent"
+                                                />
+                                                <label class="slds-checkbox__label" for="checkbox-unique-id-2957" id="check-select-all-label">
+                                                    <span class="slds-checkbox_faux"></span>
+                                                    <span class="slds-form-element__label slds-assistive-text">Select All</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </th>
+                                <!--End Level 1 Checkbox-->
+                                
+                                <!--Level 1 Columns-->
+                                <template for:each={levelOneColumns} for:item="column"> 
+                                    <template if:false={column.isReference}>  <!--Hide isReference Columns-->
+                                        <th key={column.keyId} 
+                                            aria-sort="none" 
+                                            width={column.width}
+                                            class="slds-has-button-menu slds-is-sortable slds-is-resizable dv-dynamic-width" 
+                                            data-col-type="parent" 
+                                            data-col-id={column.colId} 
+                                            data-col-level="levelOne" 
+                                            data-field-name={column.fieldName}
+                                            scope="col" 
+                                            data-id="headerTh"
+                                        >
+
+                                            <!--Level 1 Column Label (No Sorting)-->
+                                            <template lwc:if={suppressSort}> 
+                                                <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                    <template lwc:if={column.colIcon}>
+                                                        <template lwc:if={column.colIcon.icon}>
+                                                            <span class={column.colIcon.container} title={column.colIcon.title}> 
+                                                                <svg class={column.colIcon.svg} aria-hidden="true">
+                                                                    <use xlink:href={column.colIcon.icon}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Icon</span>
+                                                            </span>
+                                                        </template>
+                                                    </template>
+                                                    <span class="slds-truncate" >{column.label}</span>
+                                                </div>
+                                            </template>
+                                            <!--End Level 1 Column Label (No Sorting)-->
+
+                                            <!--Level 1 Sortable Columns Variant-->
+                                            <template lwc:else> 
+                                                <a class="slds-th__action slds-text-link_reset sortable-col" 
+                                                    href="#" 
+                                                    role="button" tabindex="-1" 
+                                                    onclick={utility.sortCol} 
+                                                    data-col-id={column.colId}
+                                                    data-col-field-name={column.fieldName}
+                                                >
+                                                    <span class="slds-assistive-text">Sort by: </span>
+                                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                        <template lwc:if={column.colIcon}>
+                                                            <template lwc:if={column.colIcon.icon}>
+                                                                <span class={column.colIcon.container}> 
+                                                                    <svg class={column.colIcon.svg} aria-hidden="true">
+                                                                        <use xlink:href={column.colIcon.icon}></use>
+                                                                    </svg>
+                                                                    <span class="slds-assistive-text">Icon</span>
+                                                                </span>
+                                                            </template>
+                                                        </template>
+
+                                                        <!--Level 1 Sortable Column Label-->
+                                                        <span class="slds-truncate" 
+                                                            title={column.fieldName} 
+                                                        >{column.label}</span>
+                                                        <!--End Level 1 Sortable Column Label-->
+
+                                                        <!--Level 1 Sort Icon-->
+                                                        <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                                            <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.arrowdown}></use>
+                                                            </svg>
+                                                        </span>
+                                                        <!--End Level 1 Sort Icon-->
+                                                    </div>
+                                                </a>
+                                            </template>
+                                            <!--End Level 1 Sortable Columns Variant-->
+                                            
+                                            <!--Level 1 Col Actions Button-->
+                                            <template if:false={suppressColActions}>
+                                                <c-slds-menu-popover-button 
+                                                    options={utility.colTextOptions}
+                                                    value={column.textStyle} 
+                                                    is-left="false"
+                                                    is-check="true"
+                                                    data-level="1"
+                                                    menu-id={column.colId}
+                                                    onselection={handleColAction}
+                                                >
+                                                    <button class="slds-button slds-button_icon slds-th__action-button slds-button_icon-x-small" 
+                                                        aria-haspopup="true" 
+                                                        tabindex="-1" 
+                                                        title="Show Account Name column actions"
+                                                    >
+                                                        <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small tree-icon" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Show Account Name column actions</span>
+                                                    </button>
+                                                </c-slds-menu-popover-button>
+                                            </template>
+                                            <!--End Level 1 Col Actions Button-->
+                                            
+                                            <!--Level 1 Resizer-->
+                                            <div class="slds-resizable">
+                                                <input type="range" aria-label="Account Name column width" class="slds-resizable__input slds-assistive-text" id={column.label} max="1000" min="20" tabindex="-1" />
+                                                <span class="slds-resizable__handle" onmousedown={handlemousedown} onmouseenter={handleMouseEnter}>
+                                                    <span class="slds-resizable__divider"></span>
+                                                </span>
+                                            </div>
+                                            <!--End Level 1 Resizer-->
+                                        </th>
+                                    </template>
+                                    <!--End Hide isReference Columns-->
+                                </template>
+                                <!--End Level 1 Columns-->
+            
+                                <!--Level 1 Row Actions Actions Column-->
+                                <th scope="col" class="slds-cell-fixed action-col" data-id="actionTh" style="width: 3.25rem;">
+                                    <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                </th>
+                                <!--End Level 1 Row Actions Actions Column-->
+
+                            </tr>
+                        </thead>
+                        <!--End Header-->
+            
+                        <tbody>
+                            <template for:each={localRows} for:item="row" for:index="index"> 
+                                <!--Level 1 Row-->
+                                <tr 
+                                    key={row.kParent} 
+                                    tabindex="-1" 
+                                    class="slds-hint-parent" 
+                                    aria-level="1" 
+                                    aria-expanded="false" 
+                                    aria-posinset="1" 
+                                    aria-selected="false" 
+                                    aria-setsize="1" 
+                                    data-element="fieldRow" 
+                                    data-row-id={row.Id} 
+                                    data-parent-id={row.Id}
+                                >
+                                    <!--Level 1 Row Count-->
+                                    <td if:false={suppressRowCount} class="slds-cell-edit slds-cell-error" role="gridcell" data-is-fixed-width="true">
+                                        <button class="slds-button slds-button_icon slds-button_icon-error slds-m-horizontal_xxx-small slds-hidden" 
+                                            aria-hidden="true" tabindex="-1" title="Item 1 has errors"
+                                        >
+                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                <use xlink:href={iconMap.utility.error}></use>
+                                            </svg>
+                                            <span class="slds-assistive-text">Item 1 has errors</span>
+                                        </button>
+                                        <span class="slds-text-body_small slds-text-color_weak">{index}</span>
+                                    </td>
+                                    <!--End Level 1 Row Count-->
+
+                                    <!--Level 1 Row Checkbox-->
+                                    <td class={checkThCl} role="gridcell" data-is-fixed-width="true">
+                                        <template if:false={suppressCheckboxes}>
+                                            <c-tree-checkbox 
+                                                level="parent" 
+                                                value={row.Id} 
+                                                is-select-all="false"
+                                                onchecked={handleChecked}
+                                                onunchecked={handleUnChecked}
+                                                data-record-id={row.Id}
+                                                data-is-select-all="false"
+                                                data-parent-id="parent"
+                                                data-level="parent"
+                                            ></c-tree-checkbox>
+                                        </template>
+                                    </td>
+                                    <!--End Level 1 Row Checkbox-->
+                                    
+                                    <!--Level 1 Fields-->
+                                    <template iterator:it={row.fields}>
+                                        <!--First Field in Row-->
+                                        <template lwc:if={it.first}> 
+
+                                            <th key={it.value.keyId} 
+                                                scope="row"
+                                                data-id={it.value.fieldId}
+                                                class={_levelOneTreeThCl}
+                                                data-label={it.value.label} 
+                                                data-field-name={it.value.fieldName} 
+                                                data-table-level="levelOne"
+                                                data-record-id={row.Id}
+                                            >
+                                                <!--Edit Popover Anchor-->
+                                                <span class="popover-anchor" data-row-id={row.Id}></span>
+
+                                                <span class="slds-grid slds-grid_vertical-align-center">
+
+                                                    <!--Collapse Row Button-->
+                                                    <span if:false={_isFlatTable} class="slds-no-flex"> 
+                                                        <!--Enabled-->
+                                                        <button if:true={row.children} 
+                                                            class="slds-button collapse-toggle-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small" 
+                                                            data-row-id={row.Id} 
+                                                            onclick={toggleExpandRow} 
+                                                            tabindex="0" 
+                                                            title="Collapse"
+                                                        >
+                                                            <svg class="slds-button__icon slds-button__icon_small tree-icon" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.chevronright}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Expand/Collapse {it.value.label}</span>
+                                                        </button>
+                                                        <!--Disabled-->
+                                                        <button if:false={row.children} 
+                                                            class="slds-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small slds-is-disabled" 
+                                                            aria-hidden="true" 
+                                                            tabindex="-1" 
+                                                            title="Expand/Collapse"
+                                                        >
+                                                            <svg class="slds-button__icon slds-button__icon_small tree-icon" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.chevronright}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Expand/Collapse {it.value.label}</span>
+                                                        </button>
+                                                    </span>
+                                                    <!--End Collapse Row Button-->
+
+                                                    <!--Field Value-->
+                                                    <template lwc:if={it.value.url}> 
+                                                        <a 
+                                                            href={it.value.url} 
+                                                            class="slds-text-link slds-truncate"
+                                                            data-cell-field-name={it.value.fieldName}
+                                                            data-table-level="levelOne" 
+                                                            title={it.value.displayValue}
+                                                        >
+                                                            <span class="slds-truncate"
+                                                                data-cell-field-name={it.value.fieldName}
+                                                                data-table-level="levelOne" 
+                                                                title={it.value.displayValue}
+                                                            >{it.value.displayValue}</span>
+                                                        </a>
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        <span class="slds-truncate"
+                                                            data-cell-field-name={it.value.fieldName}
+                                                            data-table-level="levelOne" 
+                                                            title={it.value.displayValue}
+                                                        >{it.value.displayValue}</span>
+                                                    </template>
+                                                    <!--End Field Value-->
+
+                                                    <!--Edit/Locked Icons-->
+                                                    <span class="slds-col_bump-left slds-no-flex"> 
+                                                        <!--Edit Button-->
+                                                        <template lwc:if={it.value.isEditable}>
+                                                            <button class="slds-button slds-button_icon slds-cell-edit__button 
+                                                                slds-m-left_xx-small no-flip" 
+                                                                tabindex="0" 
+                                                                onclick={handleEditClick}
+                                                                onfocus={focusEditButton}
+                                                                onblur={blurEditButton}
+                                                                data-id={row.Id}
+                                                                data-field-id={it.value.fieldId}
+                                                                data-level="1"
+                                                            >
+                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit current-color-icon" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.edit}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Edit {it.value.fieldName} of {it.value.displayValue}</span>
+                                                            </button>
+                                                        </template>
+                                                        <!--End Edit Button-->
+                                                        <!--Locked Field Icon-->
+                                                        <template lwc:else> 
+                                                            <button class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small no-flip"
+                                                                disabled=""
+                                                                tabindex="0"
+                                                                title="Edit"
+                                                            >
+                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock 
+                                                                    slds-button__icon_small current-color-icon"
+                                                                    aria-hidden="true"  
+                                                                >
+                                                                    <use xlink:href={iconMap.utility.lock}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Edit</span>
+                                                            </button>
+                                                        </template>
+                                                        <!--End Locked Field Icon-->
+                                                    </span>
+                                                    <!--End Edit/Locked Icons-->
+                                                </span>
+                                            </th>
+                                        </template>
+                                        <!--End First Field in Row-->
+            
+                                        <!--Field Cell-->
+                                        <template lwc:else> 
+                                            <template if:false={it.value.isReference}> 
+                                                <td key={it.value.keyId} 
+                                                    role="gridcell" 
+                                                    class="slds-cell-edit slds-cell-wrap"
+                                                    data-label={it.value.displayValue} 
+                                                    data-field-name={it.value.fieldName} 
+                                                    data-record-id={row.Id} 
+                                                    data-id={it.value.fieldId}
+                                                    data-table-level="levelOne"
+                                                    onblur={blurCell} 
+                                                    onclick={focusCell}
+                                                >       
+                                                    <span class="popover-anchor" data-row-id={row.Id}></span>
+                                                    <span class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                                                        <!--Field Value-->
+                                                        <template lwc:if={it.value.url}> 
+                                                            <a 
+                                                                href={it.value.url} 
+                                                                class="slds-text-link slds-truncate"
+                                                                data-cell-field-name={it.value.fieldName}
+                                                                data-table-level="levelOne" 
+                                                                title={it.value.displayValue}
+                                                            >
+                                                                <span class="slds-truncate"
+                                                                    data-cell-field-name={it.value.fieldName}
+                                                                    data-table-level="levelOne" 
+                                                                    title={it.value.displayValue}
+                                                                >{it.value.displayValue}</span>
+                                                            </a>
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            <span class="slds-truncate"
+                                                                data-cell-field-name={it.value.fieldName}
+                                                                data-table-level="levelOne" 
+                                                                title={it.value.displayValue}
+                                                            >{it.value.displayValue}</span>
+                                                        </template>
+                                                        <!--End Field Value-->
+
+                                                        <!--Locked/Edit Icon-->
+                                                        <span class="slds-no-flex">
+                                                            <template lwc:if={it.value.isEditable}>
+                                                                <button 
+                                                                    class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_xx-small" 
+                                                                    tabindex="0" 
+                                                                    data-id={row.Id} 
+                                                                    data-field-id={it.value.fieldId}
+                                                                    data-level="1"
+                                                                    onclick={handleEditClick}
+                                                                    onfocus={focusEditButton}
+                                                                    onblur={blurEditButton}
+                                                                >
+                                                                    <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit current-color-icon" aria-hidden="true">
+                                                                        <use xlink:href={iconMap.utility.edit}></use>
+                                                                    </svg>
+                                                                    <span class="slds-assistive-text">Edit {it.value.fieldName} of {it.value.displayValue}</span>
+                                                                </button>
+                                                            </template>
+                                                            <!--Locked Field Icon-->
+                                                            <template lwc:else> 
+                                                                <button 
+                                                                    class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_xx-small no-flip"
+                                                                    disabled=""
+                                                                    tabindex="0"
+                                                                    title="Edit"
+                                                                >
+                                                                    <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock current-color-icon slds-button__icon_small" aria-hidden="true">
+                                                                        <use xlink:href={iconMap.utility.lock}></use>
+                                                                    </svg>
+                                                                    <span class="slds-assistive-text">Edit</span>
+                                                                </button>
+                                                            </template>
+                                                            <!--End Locked Field Icon-->
+                                                        </span>
+                                                        <!--End Locked/Edit Icon-->
+                                                    </span>
+                                                </td>
+                                            </template>
+                                        </template>
+                                        <!--End Field Cell-->
+
+                                        <!--Actions Button-->
+                                        <template if:false={suppressColActions}>
+                                            <template lwc:if={it.last}> 
+                                                <td key={it.last} role="gridcell" style="width:3.25rem" data-record-id={row.Id} data-is-child="false" data-is-parent="true">
+                                                    
+                                                    <c-slds-menu-popover-button 
+                                                        options={rowActions1}
+                                                        is-left="false"
+                                                        menu-id={row.Id}
+                                                        onselection={_handleRowAction}
+                                                    >
+                                                        <button 
+                                                            class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small circle-button" 
+                                                            aria-haspopup="true" 
+                                                            tabindex="-1" 
+                                                            title="Row Actions"
+                                                        >
+                                                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small slds-button__icon_stateful tree-icon" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Show Account Name column actions</span>
+                                                        </button>
+                                                    </c-slds-menu-popover-button>
+                                                </td>
+                                            </template>
+                                        </template>
+                                    </template>
+                                    <!--End Level 1 Fields-->
+                                </tr>
+                                <!--End Level 1 Row-->
+            
+                                <!--Level 2 Table-->
+                                <template lwc:if={row.children}> 
+                                    <!--Level 2 tr Wrapper-->
+                                    <tr class="slds-hide nested-table-container slds-line-height_reset" key={row.keyId} 
+                                        tabindex="-1" style="border-top: none; border-bottom: none;"
+                                        aria-level="2" aria-posinset="0" aria-selected="false" aria-setsize="0" 
+                                        data-parent-id={row.Id} data-element="childRowControl" data-is-nested-row="true"
+                                    >   
+                                        <!--Level 2 td indent-->
+                                        <td colspan="1" 
+                                            aria-level="0" 
+                                            aria-posinset="0" 
+                                            class="indent-td" 
+                                            data-indent-id={row.Id} 
+                                            data-style="treeHighlight"
+                                        > 
+                                            <span class="indent-highlight-large"></span>    
+                                            <template lwc:if={iconLevel2}> 
+                                                <div class="indent-icon-wrap slds-grid slds-grid_vertical"> 
+                                                    <div class="slds-p-left_x-small slds-grid slds-grid_align-center">   
+                                                        <lightning-icon 
+                                                            icon-name={iconLevel2.icon}
+                                                            size={iconLevel2.size}
+                                                            class={iconLevel2.cl}
+                                                            title={iconLevel2.iconTitle}
+                                                        ></lightning-icon>
+                                                    </div>
+                                                    <span if:true={iconTextLevel2} class="slds-p-top_xx-small slds-text-align_center" style="font-size: 0.85rem;"> 
+                                                        <span class={iconTextLevel2Cl}>{iconTextLevel2}</span>
+                                                    </span>
+                                                </div> 
+                                            </template>
+                                        </td>
+
+                                        <!--Level 2 th Wrapper-->
+                                        <th colspan={colAmount}
+                                            tabindex="-1"
+                                            class="nested-table-td-wrapper" 
+                                            style="padding-left: calc(var(--indent-td-width) + 8px) !important;"
+                                            aria-level="2"
+                                            aria-posinset="0"
+                                            data-td-wrapper-parent={row.Id}
+                                            onmouseenter={handleMouseEnter}
+                                            onmouseleave={handleMouseLeave}
+                                        >
+                                            <div class="nested-table-wrapper" data-parent-id={row.Id} data-element="nestedTableWrapper" data-level="2">
+
+                                                <!--Level 2 Table-->
+                                                <table class={tableCls.child}
+                                                    aria-multiselectable="true"
+                                                    tabindex="-1"
+                                                    aria-label="Example default tree grid"
+                                                    data-table-type="child"
+                                                    data-indent-id={row.Id}
+                                                    data-style="treeHighlight"
+                                                    data-parent-id={row.Id}  
+                                                >   
+                                                    <!--Level 2 Header Row-->
+                                                    <thead> 
+                                                        <tr class="slds-line-height_reset nested-col-tr">
+
+                                                            <!--Level 2 Checkbox-->
+                                                            <th if:false={suppressCheckboxes2}
+                                                                class={checkThCl}
+                                                                scope="col"
+                                                                data-id="actionTh"
+                                                            >
+                                                                <div class="slds-th__action slds-th__action_form">
+                                                                    <c-tree-checkbox 
+                                                                        level="child" 
+                                                                        value="select all children" 
+                                                                        is-select-all="true"
+                                                                        onchecked={handleChecked}
+                                                                        onunchecked={handleUnChecked}
+                                                                        data-is-select-all="true"
+                                                                        data-level="child" 
+                                                                        data-parent-id={row.Id}
+                                                                    ></c-tree-checkbox>
+                                                                </div>
+                                                            </th>
+                                                            <!--End Level 2 Checkbox-->
+
+                                                            <!--Level 2 Columns-->
+                                                            <template iterator:it={levelTwoColumns}>    
+                                                                <!--Hide Level 2 Reference Columns-->
+                                                                <template if:false={it.value.isReference}> 
+                                                                    <th key={it.value.keyId} 
+                                                                        aria-sort="none" 
+                                                                        width={it.value.width}
+                                                                        class="nested-th slds-has-button-menu slds-is-sortable slds-is-resizable dv-dynamic-width col-th" 
+                                                                        scope="col" 
+                                                                        data-col-type="child" 
+                                                                        data-id="headerTh"
+                                                                    >
+                                                                        <!--Level 2 Sorting Suppressed-->
+                                                                        <template lwc:if={suppressSort2}> 
+                                                                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                                <template lwc:if={it.value.colIcon}>
+                                                                                    <template lwc:if={it.value.colIcon.icon}>
+                                                                                        <span class={it.value.colIcon.container} title={it.value.colIcon.title}> 
+                                                                                            <svg class={it.value.colIcon.svg} aria-hidden="true">
+                                                                                                <use xlink:href={it.value.colIcon.icon}></use>
+                                                                                            </svg>
+                                                                                            <span class="slds-assistive-text">Icon</span>
+                                                                                        </span>
+                                                                                    </template>
+                                                                                </template>
+                                                                                <span class="slds-truncate" >{it.value.displayValue}</span>
+                                                                                <!--Min-Width: 120/80px-->
+                                                                                <div if:false={suppressResizer2} class="slds-resizable">
+                                                                                    <input if:true={it.first} type="range" aria-label="column width" class="slds-resizable__input slds-assistive-text" id={it.value.label} max="1000" min="120" tabindex="0" />
+                                                                                    <input if:false={it.first} type="range" aria-label="column width" class="slds-resizable__input slds-assistive-text" id={it.value.label} max="1000" min="80" tabindex="0" />
+                                                                                    <span class="slds-resizable__handle" onmousedown={handlemousedown} onmouseenter={handleMouseEnter}>
+                                                                                        <span class="slds-resizable__divider"></span>
+                                                                                    </span>
+                                                                                </div>
+                                                                                <!--End Min-Width: 120/80px-->
+                                                                            </div>
+                                                                            
+                                                                        </template>
+                                                                        <!--End Level 2 Sorting Suppressed-->
+
+                                                                        <!--Level 2 Sorting Enabled-->
+                                                                        <template lwc:else>
+                                                                            <a class="slds-th__action slds-text-link_reset child-columns sortable-col" href="#" role="button" tabindex="-1">
+                                                                                <span class="slds-assistive-text">Sort by: </span>
+                                                                                <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                                    <template lwc:if={it.value.colIcon}>
+                                                                                        <span class={it.value.colIcon.container}> 
+                                                                                            <svg class={it.value.colIcon.svg} aria-hidden="true">
+                                                                                                <use xlink:href={it.value.colIcon.icon}></use>
+                                                                                            </svg>
+                                                                                            <span class="slds-assistive-text">Icon</span>
+                                                                                        </span>
+                                                                                    </template>
+                                                                                    <span class="slds-truncate" title={it.value.label}>{it.value.label}</span>
+                                                                                </div>
+                                                                            </a>
+
+                                                                            <!--Level 2 Col Actions Button-->
+                                                                            <template if:false={suppressColActions2}>
+                                                                                <c-slds-menu-popover-button 
+                                                                                    options={utility.colTextOptions}
+                                                                                    value={it.value.textStyle} 
+                                                                                    is-left="false"
+                                                                                    is-check="true"
+                                                                                    data-level="2"
+                                                                                    menu-id={it.value.colId}
+                                                                                    onselection={handleColAction}
+                                                                                >
+                                                                                    <button class="slds-button slds-button_icon slds-th__action-button slds-button_icon-x-small" 
+                                                                                        aria-haspopup="true" 
+                                                                                        tabindex="-1" 
+                                                                                        title="Show column actions"
+                                                                                    >
+                                                                                        <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small tree-icon" aria-hidden="true">
+                                                                                            <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                                                        </svg>
+                                                                                        <span class="slds-assistive-text">Show column actions</span>
+                                                                                    </button>
+                                                                                </c-slds-menu-popover-button>
+                                                                            </template>
+                                                                            <!--End Level 2 Col Actions Button-->
+
+                                                                            <!--Min-Width: 120/80px-->
+                                                                            <div if:false={suppressResizer} class="slds-resizable">
+                                                                                <input if:true={it.first} type="range" aria-label="column width" class="slds-resizable__input slds-assistive-text" id={it.value.label} max="1000" min="120" tabindex="0" />
+                                                                                <input if:false={it.first} type="range" aria-label="column width" class="slds-resizable__input slds-assistive-text" id={it.value.label} max="1000" min="80" tabindex="0" />
+                                                                                <span class="slds-resizable__handle" onmousedown={handlemousedown} onmouseenter={handleMouseEnter}>
+                                                                                    <span class="slds-resizable__divider"></span>
+                                                                                </span>
+                                                                            </div>
+                                                                            <!--End Min-Width: 120/80px-->
+                                                                        </template>
+                                                                        <!--End Level 2 Sorting Enabled-->
+                                                                    </th>
+                                                                </template>
+                                                                <!--End Hide Level 2 Reference Columns-->
+                                                            </template>
+                                                            
+                                                            <!--Level 2 Row Actions Blank Columns-->
+                                                            <th if:false={suppressRowActions2} class="child-columns slds-cell-fixed action-col row-action-col" scope="col" data-id="actionTh" style="width: 3.25rem;">
+                                                                <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                                            </th>
+                                                            <!--End Level 2 Row Actions Blank Columns-->
+                                                        </tr>
+                                                    </thead>
+                                                    <!--End Level 2 Header Row-->
+
+                                                    <!--Level 2 Body-->
+                                                    <tbody class="child-tbody">
+                                                        <template lwc:if={row.children.length}>
+                                                            <template iterator:childit={row.children}>
+                                                                <!--Level 2 Fields-->
+                                                                <tr class="slds-hint-parent" 
+                                                                    key={childit.value.keyId} 
+                                                                    tabindex="-1" 
+                                                                    aria-level="1" 
+                                                                    aria-expanded="false" 
+                                                                    aria-posinset="1" 
+                                                                    aria-selected="false" 
+                                                                    aria-setsize="1"  
+                                                                    data-element="fieldRow" 
+                                                                    data-row-id={childit.value.Id}
+                                                                >   
+                                                                    <!--Level 2 Field Checkbox-->
+                                                                    <td if:false={suppressCheckboxes2} class={checkThCl} role="gridcell">
+                                                                        <c-tree-checkbox 
+                                                                            level="child"
+                                                                            value={childit.value.Id}
+                                                                            is-select-all="false"
+                                                                            onchecked={handleChecked}
+                                                                            onunchecked={handleUnChecked}
+                                                                            data-is-select-all="false"
+                                                                            data-level="child" 
+                                                                            data-parent-id={row.Id}
+                                                                            data-record-id={childit.value.Id}
+                                                                        ></c-tree-checkbox>
+                                                                    </td>
+                                                                    <!--End Level 2 Field Checkbox-->
+                                            
+                                                                    <template iterator:it={childit.value.fields}>
+
+                                                                        <!--Level 2 First Field in Row-->
+                                                                        <template lwc:if={it.first}> 
+                                                                            <th key={it.value.keyId} scope="row"
+                                                                                data-id={it.value.fieldId}
+                                                                                class="slds-tree__item slds-cell-edit slds-cell-wrap" 
+                                                                                data-label={it.value.displayValue} 
+                                                                                data-table-level="levelTwo"
+                                                                                data-field-name={it.value.fieldName} 
+                                                                                data-record-id={childit.value.Id}
+                                                                            >   
+                                                                                <!--Edit Popover Anchor-->
+                                                                                <span class="popover-anchor" data-row-id={childit.value.Id}></span>
+
+                                                                                <span class="slds-grid slds-grid_vertical-align-center">
+                                                                                    <!--Collapse Row Button-->
+                                                                                    <span if:true={levelThreeColumns.length} class="slds-no-flex">
+                                                                                        <!--Enabled-->
+                                                                                        <button if:true={childit.value.children} class="slds-button collapse-toggle-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small" data-row-id={childit.value.Id} onclick={toggleExpandRow} tabindex="0" title="Collapse Acme Corporation">
+                                                                                            <svg class="slds-button__icon slds-button__icon_small tree-icon"><use xlink:href={iconMap.utility.chevronright}></use></svg>
+                                                                                            <span class="slds-assistive-text">Expand Acme Corporation</span>
+                                                                                        </button>
+                                                                                        <!--Disabled-->
+                                                                                        <button if:false={childit.value.children} class="slds-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small slds-is-disabled" aria-hidden="true" tabindex="-1" title="Collapse Acme Corporation">
+                                                                                            <svg class="slds-button__icon slds-button__icon_small tree-icon" aria-hidden="true"><use xlink:href={iconMap.utility.chevronright}></use></svg>
+                                                                                            <span class="slds-assistive-text">Expand Acme Corporation</span>
+                                                                                        </button>
+                                                                                    </span>
+                                                                                    <!--End Collapse Row Button-->
+                                                                                    
+                                                                                    <!--Field Value-->
+                                                                                    <template lwc:if={it.value.url}> 
+                                                                                        <a 
+                                                                                            href={it.value.url} 
+                                                                                            class="slds-text-link slds-truncate"
+                                                                                            data-cell-field-name={it.value.fieldName}
+                                                                                            data-table-level="levelTwo" 
+                                                                                            title={it.value.displayValue}
+                                                                                        >
+                                                                                            <span class="slds-truncate"
+                                                                                                data-cell-field-name={it.value.fieldName}
+                                                                                                data-table-level="levelTwo" 
+                                                                                                title={it.value.displayValue}
+                                                                                            >{it.value.displayValue}</span>
+                                                                                        </a>
+                                                                                    </template>
+                                                                                    <template lwc:else> 
+                                                                                        <span class="slds-truncate"
+                                                                                            data-cell-field-name={it.value.fieldName}
+                                                                                            data-table-level="levelTwo" 
+                                                                                            title={it.value.displayValue}
+                                                                                        >{it.value.displayValue}</span>
+                                                                                    </template>
+                                                                                    <!--End Field Value-->
+
+                                                                                    <!--Edit/Locked Icons-->
+                                                                                    <span class="slds-no-flex slds-col_bump-left"> 
+                                                                                        <template lwc:if={it.value.isEditable}> 
+                                                                                            <button 
+                                                                                                class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small no-flip" 
+                                                                                                tabindex="0" 
+                                                                                                onclick={handleEditClick}
+                                                                                                onfocus={focusEditButton}
+                                                                                                onblur={blurEditButton}
+                                                                                                data-id={childit.value.Id}
+                                                                                                data-field-id={it.value.fieldId}
+                                                                                                data-child-accessor={childit.value.childAccessor}
+                                                                                                data-level="2"
+                                                                                            >
+                                                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit" aria-hidden="true">
+                                                                                                    <use xlink:href={iconMap.utility.edit}></use>
+                                                                                                    </svg>
+                                                                                                <span class="slds-assistive-text">Edit {it.value.fieldName} of {it.value.label}</span>
+                                                                                            </button>
+                                                                                        </template>
+                                                                                        <!--Locked Field Icon-->
+                                                                                        <template lwc:else> 
+                                                                                            <button
+                                                                                                class="slds-button
+                                                                                                    slds-button_icon
+                                                                                                    slds-cell-edit__button
+                                                                                                    slds-m-left_x-small
+                                                                                                    no-flip"
+                                                                                                disabled=""
+                                                                                                tabindex="0" 
+                                                                                                title="Edit"
+                                                                                            >
+                                                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small" 
+                                                                                                    aria-hidden="true"
+                                                                                                >
+                                                                                                    <use xlink:href={iconMap.utility.lock}></use>
+                                                                                                </svg>
+                                                                                                <span class="slds-assistive-text">Edit</span>
+                                                                                            </button>
+                                                                                        </template>
+                                                                                        <!--End Locked Field Icon-->
+                                                                                    </span>
+                                                                                    <!--End Edit/Locked Icons-->
+                                                                                </span>
+                                                                            </th>
+                                                                        </template>
+                                                                        <!--End Not Row With Children-->
+                                            
+                                                                        <!--Level 2 Field Cell-->
+                                                                        <template lwc:else> 
+                                                                            <!--Level 2 Field Cell-->
+                                                                            <template if:false={it.value.isReference}>
+
+                                                                                <td class="slds-cell-edit slds-cell-wrap"
+                                                                                    key={it.value.keyId} 
+                                                                                    role="gridcell"  
+                                                                                    data-label={it.value.displayValue} 
+                                                                                    data-field-name={it.value.fieldName} 
+                                                                                    data-record-id={it.value.Id} 
+                                                                                    data-id={it.value.fieldId}
+                                                                                    data-table-level="levelTwo"
+                                                                                    onblur={blurCell} 
+                                                                                    onclick={focusCell}
+                                                                                >
+                                                                                    <span class="popover-anchor" data-row-id={row.Id}></span>
+                                                                                    <!--Level 2 Field Value / Edit Icon-->
+                                                                                    <span class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                                                                        <!--Field Value-->
+                                                                                        <span class="slds-truncate"
+                                                                                            data-cell-field-name={it.value.fieldName}
+                                                                                            data-table-level="levelTwo"
+                                                                                        >
+                                                                                            <template lwc:if={it.value.url}> 
+                                                                                                <a class="slds-text-link slds-truncate"
+                                                                                                    title={it.value.displayValue}
+                                                                                                    href={it.value.url}
+                                                                                                    data-cell-field-name={it.value.fieldName}
+                                                                                                    data-table-level="levelTwo"
+                                                                                                > 
+                                                                                                    <template lwc:if={it.value.textClass}>
+                                                                                                        <span class={it.value.textClass}
+                                                                                                            data-cell-field-name={it.value.fieldName}
+                                                                                                            data-table-level="levelTwo"
+                                                                                                        >{it.value.displayValue}</span>
+                                                                                                    </template>
+                                                                                                    <template lwc:else>
+                                                                                                        <span class="slds-truncate"
+                                                                                                            data-cell-field-name={it.value.fieldName}
+                                                                                                            data-table-level="levelTwo"
+                                                                                                        >{it.value.displayValue}</span>
+                                                                                                    </template>
+                                                                                                </a>
+                                                                                            </template>
+                                                                                            <template lwc:else> 
+                                                                                                <span class="slds-truncate"
+                                                                                                    data-cell-field-name={it.value.fieldName}
+                                                                                                    data-table-level="levelTwo"
+                                                                                                    title={it.value.displayValue}
+                                                                                                >{it.value.displayValue}</span>
+                                                                                            </template>
+                                                                                        </span>
+                                                                                        <!--End Field Value-->
+                                                                                        <!--Locked/Edit Icon-->
+                                                                                        <span class="slds-no-flex"> 
+                                                                                            <template lwc:if={it.value.isEditable}>
+                                                                                                <button 
+                                                                                                    class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" 
+                                                                                                    tabindex="0" 
+                                                                                                    data-id={childit.value.Id} 
+                                                                                                    data-field-id={it.value.fieldId}
+                                                                                                    data-level="2"
+                                                                                                    data-child-accessor={childit.value.childAccessor}
+                                                                                                    onclick={handleEditClick}
+                                                                                                    onfocus={focusEditButton}
+                                                                                                    onblur={blurEditButton}
+                                                                                                >
+                                                                                                    <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit" aria-hidden="true">
+                                                                                                        <use xlink:href={iconMap.utility.edit}></use>
+                                                                                                    </svg>
+                                                                                                    <span class="slds-assistive-text">Edit {it.value.fieldName} of {it.value.displayValue}</span>
+                                                                                                </button>
+                                                                                            </template>
+                                                                                            <!--Locked Field Icon-->
+                                                                                            <template lwc:else> 
+                                                                                                <button class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small no-flip" disabled="" tabindex="0" title="Edit">
+                                                                                                    <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small" aria-hidden="true">
+                                                                                                        <use xlink:href={iconMap.utility.lock}></use>
+                                                                                                    </svg>
+                                                                                                    <span class="slds-assistive-text">Edit</span>
+                                                                                                </button>
+                                                                                            </template>
+                                                                                            <!--End Locked Field Icon-->
+                                                                                        </span>
+                                                                                        <!--End Locked/Edit Icon-->
+                                                                                    </span>
+                                                                                    <!--End Level 2 Field Value / Edit Icon-->
+
+                                                                                </td>
+                                                                            </template>
+                                                                        </template>
+                                                                        <!--End Level 2 Field Celll-->
+
+                                                                        <!--Level 2 Actions Button-->
+                                                                        <template if:false={suppressRowActions2}>
+                                                                            <template lwc:if={it.last}> 
+                                                                                <td
+                                                                                    key={it.last}
+                                                                                    role="gridcell"
+                                                                                    style="width:3.25rem"
+                                                                                    data-record-id={childit.value.Id}
+                                                                                    data-is-child="true" 
+                                                                                    data-is-parent="false"
+                                                                                >
+                                                                                    
+                                                                                    <c-slds-menu-popover-button 
+                                                                                        options={rowActions2}
+                                                                                        is-left="false"
+                                                                                        menu-id={childit.value.Id}
+                                                                                        onselection={_handleRowAction}
+                                                                                    >
+                                                                                        <button 
+                                                                                            class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small circle-button" 
+                                                                                            aria-haspopup="true" 
+                                                                                            tabindex="-1" 
+                                                                                            title=""
+                                                                                        >
+                                                                                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small slds-button__icon_stateful tree-icon" aria-hidden="true">
+                                                                                                <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                                                            </svg>
+                                                                                            <span class="slds-assistive-text">Show Account Name column actions</span>
+                                                                                        </button>
+                                                                                    </c-slds-menu-popover-button>
+                                                                                </td>
+                                                                            </template>
+                                                                        </template>
+                                                                        
+                                                                    </template>
+                                                                </tr>
+                                                                <!--End Level 2 Fields-->
+
+                                                                <!--Level 3 Table-->
+                                                                <template lwc:if={childit.value.children}>
+                                                                    
+                                                                    <tr class="slds-hide nested-table-container" 
+                                                                        key={childit.value.keyId} tabindex="-1" style="border-top: none; border-bottom: none;"
+                                                                        aria-level="3" aria-posinset="2" aria-selected="false" aria-setsize="0"  
+                                                                        data-parent-id={childit.value.Id} data-element="childRowControl"
+                                                                    >
+                                                                        <!--Level 3 td indent-->
+                                                                        <td
+                                                                            colspan="1"
+                                                                            class="indent-td"
+                                                                            data-indent-id={childit.value.Id}
+                                                                            data-style="treeHighlight"
+                                                                        >
+                                                                            <span class="indent-highlight"></span>
+                                                                            <template lwc:if={iconLevel3}> 
+                                                                                <div class="slds-p-left_x-small indent-icon-wrap"> 
+                                                                                    <lightning-icon 
+                                                                                        icon-name={iconLevel3.icon}
+                                                                                        size={iconLevel3.size}
+                                                                                        class={iconLevel3.cl}
+                                                                                        title={iconLevel3.iconTitle}
+                                                                                    ></lightning-icon>
+                                                                                </div> 
+                                                                            </template>
+                                                                        </td>
+
+                                                                        <!--Level 3 td Wrapper-->
+                                                                        <th
+                                                                            colspan={childColAmount}
+                                                                            tabindex="-1"
+                                                                            class="nested-table-td-wrapper"
+                                                                            data-parent={row.Id}
+                                                                            data-td-wrapper-parent={childit.value.Id}
+                                                                            onmouseenter={handleMouseEnter}
+                                                                            onmouseleave={handleMouseLeave}
+                                                                        >
+                                                                            <div class="nested-table-wrapper" data-parent-wrapper={row.Id} data-parent-id={childit.value.Id} data-element="nestedTableWrapper" data-level="3">
+                                                                                <!--Level 3 Table-->
+                                                                                <table  class={tableCls.child}
+                                                                                    aria-multiselectable="true" aria-label="Example default tree grid"
+                                                                                    data-table-type="grandchild" 
+                                                                                    data-indent-id={childit.value.Id} 
+                                                                                    data-style="treeHighlight" 
+                                                                                    data-parent-id={childit.value.Id}  
+                                                                                >   
+                                                                                    <!--Level 3 Header-->
+                                                                                    <thead> 
+                                                                                        <tr class="slds-line-height_reset nested-col-tr">
+                                                                                            <!--Level 3 Checkbox-->
+                                                                                            <th if:false={suppressCheckboxes3}
+                                                                                                class="slds-cell_action-mode
+                                                                                                slds-text-align_right
+                                                                                                action-col
+                                                                                                check-th-normal"
+                                                                                                scope="col"
+                                                                                                data-id="actionTh"
+                                                                                            >
+                                                                                                <div class="slds-th__action slds-th__action_form">
+                                                                                                    <c-tree-checkbox 
+                                                                                                        level="grandchild" 
+                                                                                                        value="select all grandchildren" 
+                                                                                                        is-select-all="true"
+                                                                                                        onchecked={handleChecked}
+                                                                                                        onunchecked={handleUnChecked}
+                                                                                                        data-is-select-all="true"
+                                                                                                        data-level="grandchild"
+                                                                                                        data-parent-id={childit.value.Id}
+                                                                                                    ></c-tree-checkbox>
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <!--End Level 3 Checkbox-->
+                                                                        
+                                                                                            <!--Level 3 Columns-->
+                                                                                            <template iterator:grandchildit={levelThreeColumns}>
+                                                                                                <template if:false={grandchildit.value.isReference}> 
+                                                                                                    <th key={grandchildit.value.keyId}
+                                                                                                        aria-sort="none"
+                                                                                                        class="nested-th slds-has-button-menu slds-is-sortable slds-is-resizable dv-dynamic-width col-th"
+                                                                                                        scope="col"
+                                                                                                        width={grandchildit.value.width}
+                                                                                                        data-col-type="grandchild"
+                                                                                                        data-id="headerTh"
+                                                                                                    >
+                                                                                                        
+                                                                                                        <a class="slds-th__action slds-text-link_reset child-columns sortable-col" href="#" role="button" tabindex="-1">
+                                                                                                            <span class="slds-assistive-text">Sort by: </span>
+                                                                                                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                                                                <span class="slds-truncate" title={grandchildit.value.displayValue}>{grandchildit.value.displayValue}</span>
+                                                                                                            </div>
+                                                                                                        </a>
+
+                                                                                                        <!--Level 3 Col Actions Button-->
+                                                                                                        <template if:false={suppressColActions}>
+                                                                                                            <c-slds-menu-popover-button 
+                                                                                                                options={utility.colTextOptions}
+                                                                                                                value={grandchildit.value.textStyle} 
+                                                                                                                is-left="false"
+                                                                                                                is-check="true"
+                                                                                                                data-level="3"
+                                                                                                                menu-id={grandchildit.value.colId}
+                                                                                                                onselection={handleColAction}
+                                                                                                            >
+                                                                                                                <button class="slds-button slds-button_icon slds-th__action-button slds-button_icon-x-small" 
+                                                                                                                    aria-haspopup="true" 
+                                                                                                                    tabindex="-1" 
+                                                                                                                    title="Show column actions"
+                                                                                                                >
+                                                                                                                    <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small tree-icon" aria-hidden="true">
+                                                                                                                        <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                                                                                    </svg>
+                                                                                                                    <span class="slds-assistive-text">Show column actions</span>
+                                                                                                                </button>
+                                                                                                            </c-slds-menu-popover-button>
+                                                                                                        </template>
+                                                                                                        <!--End Level 3 Col Actions Button-->
+
+                                                                                                        <!--Min-Width: 120px-->
+                                                                                                        <div class="slds-resizable">
+                                                                                                            <input if:true={grandchildit.first} type="range" aria-label="Account Name column width" class="slds-resizable__input slds-assistive-text" id={grandchildit.value.label} max="1000" min="120" tabindex="0" />
+                                                                                                            <input if:false={grandchildit.first} type="range" aria-label="Account Name column width" class="slds-resizable__input slds-assistive-text" id={grandchildit.value.label} max="1000" min="80" tabindex="0" />
+                                                                                                            <span class="slds-resizable__handle" onmousedown={handlemousedown} onmouseenter={handleMouseEnter}>
+                                                                                                                <span class="slds-resizable__divider"></span>
+                                                                                                            </span>
+                                                                                                        </div>
+                                                                                                        <!--End Min-Width: 120px-->
+                                                                                                    </th>
+                                                                                                </template>
+                                                                                            </template>
+                                                                                            <!--End Loop Level 3 Columns-->
+                                                                                            
+                                                                                            <!--Level 3 Actions Button-->
+                                                                                            <th class="nested-th child-columns slds-cell-fixed action-col" scope="col" data-id="actionTh" style="width: 3.25rem;">
+                                                                                                <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                                                                            </th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <!--End Level 3 Header Row-->
+
+                                                                                    <!--Level 3 Body-->
+                                                                                    <tbody class="child-tbody">
+                                                                                        <template lwc:if={childit.value.children.length}>
+                                                                                        <!--Level 3 Fields-->
+                                                                                        <template iterator:gchildit={childit.value.children}>
+                                                                                            <tr class="slds-hint-parent"
+                                                                                                key={gchildit.value.kParent}
+                                                                                                tabindex="-1"
+                                                                                                aria-level="1"
+                                                                                                aria-expanded="false"
+                                                                                                aria-posinset="1"
+                                                                                                aria-selected="false" 
+                                                                                                aria-setsize="1" 
+                                                                                                data-row-id={gchildit.value.Id} 
+                                                                                            >   
+                                                                                                <!--Level 3 Field Checkbox-->
+                                                                                                <td class="slds-text-align_right" role="gridcell" style="width:3.25rem">
+                                                                                                    <c-tree-checkbox 
+                                                                                                        level="grandchild" 
+                                                                                                        value={gchildit.value.Id} 
+                                                                                                        is-select-all="false"
+                                                                                                        onchecked={handleChecked}
+                                                                                                        onunchecked={handleUnChecked}
+                                                                                                        data-is-select-all="false"
+                                                                                                        data-level="grandchild"
+                                                                                                        data-parent-id={childit.value.Id}
+                                                                                                        data-record-id={gchildit.value.Id}
+                                                                                                    ></c-tree-checkbox>
+                                                                                                </td>
+                                                                                                <!--End Level 3 Field Checkbox-->
+
+                                                                                                <!--Level 3 Fields-->
+                                                                                                <template iterator:it={gchildit.value.fields}>
+                                                                                                    <!--Level 3 First Field in Row-->
+                                                                                                    <template lwc:if={it.first}> 
+                                                                                                        <th key={it.value.keyId}
+                                                                                                            scope="row"
+                                                                                                            data-id={it.value.fieldId}                
+                                                                                                            class="slds-tree__item slds-cell-edit slds-cell-wrap level-3-cell"
+                                                                                                            data-label={it.value.displayValue} 
+                                                                                                            data-field-name={it.value.fieldName} 
+                                                                                                            data-record-id={gchildit.value.Id}
+                                                                                                            data-table-level="levelThree"
+                                                                                                        >   
+                                                                                                            <!--Edit Popover Anchor-->
+                                                                                                            <span class="popover-anchor" data-row-id={gchildit.value.Id}></span>
+
+                                                                                                            <span class="slds-grid slds-grid_vertical-align-center">
+                                                                                                                <!--Level 3 Collapse Row Button-->
+                                                                                                                <span class="slds-no-flex"> 
+                                                                                                                    <!--Enabled-->
+                                                                                                                    <button if:true={gchildit.value.children} class="slds-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small" tabindex="0" title="Collapse">
+                                                                                                                        <svg class="slds-button__icon slds-button__icon_small tree-icon">
+                                                                                                                            <use xlink:href={iconMap.utility.chevronright}></use>
+                                                                                                                        </svg>
+                                                                                                                        <span class="slds-assistive-text">Expand</span>
+                                                                                                                    </button>
+                                                                                                                    <!--Disabled-->
+                                                                                                                    <button if:false={gchildit.value.children} class="slds-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small slds-is-disabled" aria-hidden="true" tabindex="-1" title="Collapse">
+                                                                                                                        <svg class="slds-button__icon slds-button__icon_small tree-icon">
+                                                                                                                            <use xlink:href={iconMap.utility.chevronright}></use>
+                                                                                                                        </svg>
+                                                                                                                        <span class="slds-assistive-text">Expand</span>
+                                                                                                                    </button>
+                                                                                                                </span>
+                                                                                                                <!--Level 3 Collapse Row Button-->
+
+                                                                                                                <!--Level 3 Field Value-->
+                                                                                                                <span class="slds-truncate"
+                                                                                                                    data-cell-field-name={it.value.fieldName}
+                                                                                                                    data-table-level="levelThree" 
+                                                                                                                    title={it.value.displayValue}
+                                                                                                                >{it.value.displayValue}</span>
+                                                                                                                <!--End Level 3 Field Value-->
+                                                                                                                
+                                                                                                                <!--Level 3 Edit/Locked Icons-->
+                                                                                                                <span class="slds-col_bump-left slds-no-flex"> 
+                                                                                                                    <!--Edit Field Icon-->
+                                                                                                                    <template lwc:if={it.value.isEditable}>
+                                                                                                                        <button 
+                                                                                                                            class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" 
+                                                                                                                            tabindex="0" 
+                                                                                                                            data-id={gchildit.value.Id} 
+                                                                                                                            data-field-id={it.value.fieldId}
+                                                                                                                            data-child-accessor={gchildit.value.childAccessor}
+                                                                                                                            data-level="3"
+                                                                                                                            onclick={handleEditClick}
+                                                                                                                            onfocus={focusEditButton} 
+                                                                                                                            onblur={blurEditButton}
+                                                                                                                        >
+                                                                                                                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit" aria-hidden="true">
+                                                                                                                                <use xlink:href={iconMap.utility.edit}></use>
+                                                                                                                            </svg>
+                                                                                                                            <span class="slds-assistive-text">Edit {it.value.fieldName} of {it.value.displayValue}</span>
+                                                                                                                        </button>
+                                                                                                                    </template>
+                                                                                                                    <!--End Edit Field Icon-->
+                                                                                                                    <!--Locked Field Icon-->
+                                                                                                                    <template lwc:else> 
+                                                                                                                        <button class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small no-flip" disabled="" tabindex="0" title="Edit">
+                                                                                                                            <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small" aria-hidden="true">
+                                                                                                                                <use xlink:href={iconMap.utility.lock}></use>
+                                                                                                                            </svg>
+                                                                                                                            <span class="slds-assistive-text">Edit</span>
+                                                                                                                        </button>
+                                                                                                                    </template>
+                                                                                                                    <!--End Locked Field Icon-->
+                                                                                                                </span>
+                                                                                                                <!--End Level 3 Edit/Locked Icons-->
+                                                                                                            </span>
+                                                                                                        </th>
+                                                                                                    </template>
+                                                                                                    <!--End Level 3 First Field in Row-->
+
+                                                                                                    <!--Level 3 Field Cell-->
+                                                                                                    <template lwc:else> 
+                                                                                                        <!--Hide Level 3 Reference Fields-->
+                                                                                                        <template if:false={it.value.isReference}>
+                                                                                                            <td class="slds-cell-edit slds-cell-wrap level-3-cell"
+                                                                                                                key={it.value.keyId} 
+                                                                                                                role="gridcell" 
+                                                                                                                data-field-name={it.value.fieldName} 
+                                                                                                                data-record-id={gchildit.value.Id} 
+                                                                                                                data-label={it.value.displayValue} 
+                                                                                                                data-id={it.value.fieldId}
+                                                                                                                data-table-level="levelThree"
+                                                                                                                onblur={blurCell} 
+                                                                                                                onclick={focusCell}
+                                                                                                            >
+                                                                                                                <span class="popover-anchor" data-row-id={row.Id}></span>
+
+                                                                                                                <!--Level 3 Field Value / Edit Icon-->
+                                                                                                                <span class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                                                                                                                    <!--Field Value-->
+                                                                                                                    <span class="slds-truncate"
+                                                                                                                        data-cell-field-name={it.value.fieldName}
+                                                                                                                        data-table-level="levelThree"
+                                                                                                                    >
+                                                                                                                        <template lwc:if={it.value.url}> 
+                                                                                                                            <a class="slds-text-link slds-truncate"
+                                                                                                                                title={it.value.displayValue}
+                                                                                                                                href={it.value.url}
+                                                                                                                                data-cell-field-name={it.value.fieldName}
+                                                                                                                                data-table-level="levelThree"
+                                                                                                                            > 
+                                                                                                                                <template lwc:if={it.value.textClass}>
+                                                                                                                                    <span class={it.value.textClass}
+                                                                                                                                        data-cell-field-name={it.value.fieldName}
+                                                                                                                                        data-table-level="levelThree"
+                                                                                                                                    >{it.value.displayValue}</span>
+                                                                                                                                </template>
+                                                                                                                                <template lwc:else>
+                                                                                                                                    <span class="slds-truncate"
+                                                                                                                                        data-cell-field-name={it.value.fieldName}
+                                                                                                                                        data-table-level="levelThree"
+                                                                                                                                    >{it.value.displayValue}</span>
+                                                                                                                                </template>
+                                                                                                                            </a>
+                                                                                                                        </template>
+                                                                                                                        <template lwc:else> 
+                                                                                                                            <span class="slds-truncate"
+                                                                                                                                data-cell-field-name={it.value.fieldName}
+                                                                                                                                data-table-level="levelThree"
+                                                                                                                                title={it.value.displayValue}
+                                                                                                                            >{it.value.displayValue}</span>
+                                                                                                                        </template>
+                                                                                                                    </span>
+                                                                                                                    <!--End Field Value-->
+
+                                                                                                                    <!--Locked/Edit Icon-->
+                                                                                                                    <span class="slds-no-flex">
+                                                                                                                        <template lwc:if={it.value.isEditable}>
+                                                                                                                            <button 
+                                                                                                                                class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_xx-small" 
+                                                                                                                                tabindex="0" 
+                                                                                                                                data-id={row.Id} 
+                                                                                                                                data-field-id={it.value.fieldId}
+                                                                                                                                data-level="1"
+                                                                                                                                onclick={handleEditClick}
+                                                                                                                                onfocus={focusEditButton}
+                                                                                                                                onblur={blurEditButton}
+                                                                                                                            >
+                                                                                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_edit current-color-icon" aria-hidden="true">
+                                                                                                                                    <use xlink:href={iconMap.utility.edit}></use>
+                                                                                                                                </svg>
+                                                                                                                                <span class="slds-assistive-text">Edit {it.value.fieldName} of {it.value.displayValue}</span>
+                                                                                                                            </button>
+                                                                                                                        </template>
+                                                                                                                        <!--Locked Field Icon-->
+                                                                                                                        <template lwc:else> 
+                                                                                                                            <button 
+                                                                                                                                class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_xx-small no-flip"
+                                                                                                                                disabled=""
+                                                                                                                                tabindex="0"
+                                                                                                                                title="Edit"
+                                                                                                                            >
+                                                                                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock current-color-icon slds-button__icon_small" aria-hidden="true">
+                                                                                                                                    <use xlink:href={iconMap.utility.lock}></use>
+                                                                                                                                </svg>
+                                                                                                                                <span class="slds-assistive-text">Edit</span>
+                                                                                                                            </button>
+                                                                                                                        </template>
+                                                                                                                        <!--End Locked Field Icon-->
+                                                                                                                    </span>
+                                                                                                                    <!--End Locked/Edit Icon-->
+                                                                                                                </span>
+                                                                                                                <!--End Level 3 Field Value / Edit Icon-->
+                                                                                                            </td>
+                                                                                                        </template>
+                                                                                                        <!--End Hide Level 3 Reference Fields-->
+                                                                                                    </template>
+                                                                                                    <!--End Level 3 Field Cell-->
+
+                                                                                                    <!--Level 3 Actions Button-->
+                                                                                                    <template if:false={suppressColActions}>
+                                                                                                        <template lwc:if={it.last}> 
+                                                                                                            <td key={it.last} role="gridcell" style="width:3.25rem" data-record-id={gchildit.value.Id} data-is-child="false" data-is-grandparent="true" data-is-parent="false">
+                                                                                                                
+                                                                                                                <c-slds-menu-popover-button 
+                                                                                                                    options={rowActions3}
+                                                                                                                    is-left="false"
+                                                                                                                    menu-id={gchildit.value.Id}
+                                                                                                                    onselection={_handleRowAction}
+                                                                                                                >
+                                                                                                                    <button 
+                                                                                                                        class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small circle-button" 
+                                                                                                                        aria-haspopup="true" 
+                                                                                                                        tabindex="-1" 
+                                                                                                                        title=""
+                                                                                                                    >
+                                                                                                                        <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small slds-button__icon_stateful tree-icon" aria-hidden="true">
+                                                                                                                            <use xlink:href={iconMap.utility.chevrondown}></use>
+                                                                                                                        </svg>
+                                                                                                                        <span class="slds-assistive-text">Show Account Name column actions</span>
+                                                                                                                    </button>
+                                                                                                                </c-slds-menu-popover-button>
+                                                                                                            </td>
+                                                                                                        </template>
+                                                                                                    </template>
+                                                                                                    <!--End Level 3 Actions Button-->
+                                                                                                    
+                                                                                                </template>
+                                                                                            </tr>
+                                                                                            
+                                                                                        </template>
+                                                                                        <!--End Level 3 childit.values-->
+                                                                                        </template>
+                                                                                        <template lwc:else> 
+                                                                                            <tr>
+                                                                                                <td colspan={levelThreeColumns.length}> 
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </template>
+                                                                                    </tbody>
+                                                                                    <!--End Level 3 Body-->
+                                                                                    
+                                                                                </table>
+                                                                                <!--End Level 3 Table-->
+                                                                            </div>
+                                                                        </th>
+                                                                        <!--End Level 3 td Wrapper-->
+
+                                                                    </tr>
+                                                                </template>
+                                                                <!--End Level 3 tr Wrapper-->
+
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            <tr 
+                                                                tabindex="-1" 
+                                                                aria-level="1" 
+                                                                aria-expanded="false" 
+                                                                aria-posinset="1" 
+                                                                aria-selected="false" 
+                                                                aria-setsize="1"  
+                                                                data-element="fieldRow" 
+                                                            >
+                                                                <td colspan={levelTwoColumns.length}> 
+                                                                    <div class="slds-grid_align-absolute-center slds-p-around_small"> 
+                                                                        <c-slds-illustration 
+                                                                            help-text={noDataMessageLevel2}
+                                                                        ></c-slds-illustration>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </template>
+                                                        <!--End Level 2 Rows-->
+                                                    </tbody>
+                                                    <!--End Level 2 Body-->
+                                                    
+                                                </table>
+                                                <!--End Level 2 Table-->
+                                            </div>
+                                        </th>
+                                        <!--End Level 2 td Wrapper-->
+                                    </tr>
+                                    <!--End Level 2 tr Wrapper-->
+                                </template>
+                                <!--End Level 2 Table-->
+
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <!--End Tree Grid Table-->
+            </div>
+        </template>
+        <!--End Tree Grid-->
+
+        <template lwc:if={isTableEdited}>
+            <footer class={footerBgClass} style="position: sticky; bottom: 0;">
+                <div class="slds-grid slds-grid_align-center slds-gutters_xx-small"> 
+                    <div class="slds-col"> 
+                        <button class="slds-button slds-button_neutral" onclick={cancelEdits}>Cancel</button>
+                    </div>
+                    <div class="slds-col"> 
+                        <button class="slds-button slds-button_brand" onclick={saveEdits}>Save</button>
+                    </div>
+                </div>
+            </footer>
+        </template>
+
+        <!--template lwc:if={isPaginator}> 
+            <template lwc:if={paginatedRowsMeta}>
+                <c-slds-footer color="medium" is-slot="true" size="small">
+                    <c-slds-table-paginator
+                        active-page={pageInfo.activePage}
+                        page-details={pageInfo}
+                        page-meta={paginatedRowsMeta}
+                        oncombometaselection={handlePageChange}
+                    ></c-slds-table-paginator>
+                </c-slds-footer>
+            </template>
+        </template-->
+
+    </div>
+</template>

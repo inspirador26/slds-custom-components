@@ -1,0 +1,50 @@
+<template>
+    <div
+        id={listboxId}
+        class={dropdownClass}
+        role="listbox"
+        data-element="dropdown"
+    >
+        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+            <template for:each={normalizedOptions} for:item="option">
+                <li role="presentation" key={option.key} class="slds-listbox__item">
+                    <div
+                        id={option.id}
+                        class={option.optionClass}
+                        role="option"
+                        aria-selected={option.ariaSelected}
+                        aria-checked={option.ariaChecked}
+                        data-index={option.index}
+                        data-value={option.value}
+                        data-label={option.label}
+                        onpointerdown={handleOptionPointerDown}
+                        onmousedown={handleOptionMouseDown}
+                        onmouseenter={handleOptionMouseEnter}
+                        onmouseleave={handleOptionMouseLeave}
+                        onclick={handleOptionClick}
+                    >
+                        <span class="slds-media__figure slds-listbox__option-icon">
+                            <template lwc:if={option.isSelected}>
+                                <lightning-icon icon-name="utility:check" class="brand-icon-check" size="x-small"></lightning-icon>
+                            </template>
+                        </span>
+
+                        <span class="slds-media__body">
+                            <template lwc:if={option.showMeta}>
+                                <span class="slds-listbox__option-text slds-listbox__option-text_entity slds-truncate" title={option.label}>
+                                    {option.label}
+                                </span>
+                                <span class="slds-listbox__option-meta slds-listbox__option-meta_entity" title={option.metaText}>
+                                    {option.metaText}
+                                </span>
+                            </template>
+                            <template lwc:else>
+                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                            </template>
+                        </span>
+                    </div>
+                </li>
+            </template>
+        </ul>
+    </div>
+</template>

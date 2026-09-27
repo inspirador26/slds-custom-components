@@ -1,0 +1,84 @@
+<template>
+
+
+    <section role="dialog" 
+        tabindex="-1" 
+        class={_modalCl}
+        aria-labelledby="modal-heading-01" 
+        aria-modal="true" 
+        aria-describedby="modal-content-id-1"
+        onkeydown={handleKeyDown}
+    >
+
+        <div class="slds-modal__container">
+
+            <div class="modal-shell">
+                <!--HEADER-->
+                <header class="slds-modal__header">
+                    <!--Close Button-->
+                    <button 
+                        class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse " 
+                        title="Close" 
+                        onclick={handleCancel} 
+                        data-is-focusable="true"
+                        tabindex="0"
+                    >
+                        <svg class="slds-button__icon slds-button__icon_large modal-icon" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.close}></use>
+                        </svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <!--End Close Button-->
+                    <template lwc:if={_iconConfig}> 
+                        <div class="slds-grid slds-grid_align-center">
+                            <div class="slds-media slds-media_center"> 
+                                <div class="slds-media__figure"> 
+                                    <lightning-icon icon-name={_iconConfig.iconName} class={_iconConfig.iconClass}></lightning-icon>
+                                </div>
+                                <div class="slds-media__body"> 
+                                    <h2 id="modal-heading-02" class="slds-modal__title slds-hyphenate">{modalTitle}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{modalTitle}</h2>
+                    </template>
+                </header>
+                <!--END HEADER-->
+
+                <!--BODY-->
+                <div class={modalContentCl} id="modal-content-id-1">
+                    <div class={modalScrollCl}>
+                        <slot name="modalBody"> 
+                        </slot>
+                    </div>
+                </div>
+                <!--END BODY-->
+
+                <!--FOOTER-->
+                <footer class="slds-modal__footer" style="z-index: 0.9;">
+                    <template lwc:if={footerSlot}> 
+                        <slot name="modalFooter"></slot>
+                    </template>
+                    <template lwc:else>
+                        <div class={_footerCl}>
+                            <template lwc:if={cancelLabel}> 
+                                <button tabindex="0" class="slds-button slds-button_neutral" data-is-focusable="true" onclick={handleCancel}>{cancelLabel}</button>
+                            </template>
+                            <template if:false={suppressOkButton}>
+                                <template lwc:if={okLabel}> 
+                                    <button tabindex="0" class="slds-button slds-button_brand" data-is-focusable="true" onclick={handleOkay}>{okLabel}</button>   
+                                </template>
+                            </template>
+                        </div>
+                    </template>
+                </footer>
+                <!--END FOOTER-->
+            </div>
+                
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    
+</template>

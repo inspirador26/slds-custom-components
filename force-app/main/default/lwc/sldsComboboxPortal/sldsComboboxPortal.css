@@ -1,0 +1,30 @@
+@import "c/sharedStylesSldsCombobox";
+
+:host {
+  --c-margin-bottom: var(--dxp-g-spacing-medium, 0px);
+  --input-height: 1.875rem;
+  --c-font-size: inherit;
+}
+
+.slds-form-element {
+  margin-bottom: var(--c-margin-bottom, 0px);
+}
+
+.slds-combobox__input {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  padding-right: 2rem !important;
+}
+
+.slds-input.slds-combobox__input {
+  min-height: calc(var(--input-height) + (1px * 2));
+  line-height: var(--input-height);
+  border-radius: var(--slds-c-input-radius-border, 0.25rem);
+  font-size: var(--c-font-size, inherit);
+}
+
+.slds-combobox-portal__dropdown_hidden {
+    display: none;
+}

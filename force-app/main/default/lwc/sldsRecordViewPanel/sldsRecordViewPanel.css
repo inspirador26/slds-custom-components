@@ -1,0 +1,135 @@
+/*
+.scroll-section {
+    max-height: 230px;    
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+.scroll-section-large {
+    max-height: 260px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+.scroll-section::-webkit-scrollbar,
+.scroll-section-large::-webkit-scrollbar{
+    width: 4px;
+    height: 4px;
+}
+*/
+
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --vg-shadow-record-preview: 0 2px 6px rgba(0,0,0,.12);
+}
+
+.slds-text-heading_medium {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.popover-wrapper {
+    max-height: 60vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    position: relative;
+    /* close bar is always 32px per you */
+    --toolbar-h: 0px;
+    /* updated live from JS */
+    --parent-h: 0px;
+    --parent-gap: 8px;      /* space between parent headers */
+    
+}
+/* PARENT (gray) — sticks at very top and is replaced by next parent */
+.parent-header {
+    position: sticky;
+    top: var(--toolbar-h);
+    z-index: 20;
+    background: var(--slds-g-color-neutral-base-95);
+}
+
+/* CHILD (white) */
+.child-header {
+    display: block; /* important if it's a <dt> */
+    position: sticky;
+    top: calc(var(--toolbar-h) + var(--parent-h));
+    z-index: 10;
+    background: var(--slds-g-color-neutral-base-100, #fff);
+    margin-top: 0;            /* avoid margin-collapsing weirdness */
+    padding-top: .25rem;      /* use padding instead of top margins */
+    padding-bottom: .75rem;
+}
+
+
+/* nice touch: shadow only while stuck (class toggled by JS below) */
+.parent-header.is-stuck,
+.child-header.is-stuck {
+    box-shadow: var(--vg-shadow-record-preview, 0 2px 6px rgba(0,0,0,.12));
+}
+
+.parent-header, .child-header { background-clip: padding-box; }
+
+
+.popover-top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: transparent; /* so it doesn’t overlay a background stripe */
+}
+
+/* make the button behave like float:right */
+.popover-top-bar .slds-popover__close {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.5rem;
+    float: none;
+}
+
+.popover-wrapper::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+.sticky-button {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+.slds-popover__header {
+    border-bottom: none;
+}
+
+/* Make the header stick */
+.sticky-header {
+    position: sticky;
+    top: 159px;
+    background: var(--slds-g-color-neutral-base-100, #fff);        /* keeps text legible while scrolling */
+    z-index: 1;              /* so it stays above content */
+    padding-top: 4px;
+    padding-bottom: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.sticky-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--slds-g-color-neutral-base-100, #fff);      /* keep footer legible */
+    z-index: 1;
+    padding: 4px 3px;
+}
+
+.record-fields { 
+  display: flex; 
+  flex-wrap: wrap; 
+  width: 100%;
+}
+.record-fields dt { 
+    flex: 0 0 40%;   /* label takes 40% */
+}
+.record-fields dd { 
+    flex: 0 0 60%;   /* value takes 60% */
+}
+
+.large-body {
+    word-wrap: break-word;      /* Ensures long words break */
+    overflow-wrap: break-word;  /* Ensures text wraps correctly */
+    white-space: normal;        /* Allows text to wrap */
+}

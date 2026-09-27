@@ -1,0 +1,60 @@
+:host {
+    --vg-font-size: 1rem;
+    --button-min-width: 100%;
+    --border-radius-left: 0.5rem;
+    --border-radius-right: 0.5rem;
+
+    --c-label-margin-bottom: var(--dxp-g-spacing-medium, var(--slds-g-spacing-1, 0.25rem));
+    --c-label-font-weight: 700;
+}
+
+.slds-button {
+    font-size: var(--vg-font-size);
+}
+
+.slds-form-element {
+    margin-bottom: 0px;
+}
+
+.slds-form-element__legend {
+    margin-bottom: var(--c-label-margin-bottom, var(--dxp-g-spacing-medium, var(--slds-g-spacing-1, 0.25rem)));
+    font-weight: var(--c-label-font-weight, 700);
+}
+
+
+.vertical-group.slds-radio_button-group {
+    display: flex;
+    flex-direction: column;   /* vertical */
+    align-items: stretch;
+    width: 100%;
+    border-radius: 0.5rem;
+    border-top-left-radius: var(--border-radius-left);
+    border-bottom-left-radius: var(--border-radius-left);
+    border-top-right-radius: var(--border-radius-right);
+    border-bottom-right-radius: var(--border-radius-right);
+    overflow: hidden;
+}
+
+.vertical-group .slds-button.slds-radio_button,
+.vertical-group .slds-radio_button {
+    display: block;
+    width: var(--button-min-width);
+    flex: 1 1 100%;
+    border-left: none;
+}
+
+
+.vertical-group .slds-radio_button__label {
+    display: flex;
+    justify-content: center;   /* horizontal center */
+    align-items: center;       /* vertical center */
+    width: 100%;
+    border-radius: 0;
+    padding: 0.5rem 1rem;
+    line-height: 1.2;
+}
+
+.vertical-group .slds-radio_button:not(:last-child) {
+    border-bottom: 1px solid var(--slds-g-color-border-base-4, #e5e5e5);
+    border-radius: 0px;
+}

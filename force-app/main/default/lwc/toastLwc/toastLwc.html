@@ -1,0 +1,52 @@
+<!-- toastLwc.html -->
+<template>
+    <template if:false={isClose}>
+        <div class="toast-anchor" role="region" aria-live="assertive">
+
+            <div class="slds-notify_container">
+                <div class={notifyCl.toastCl}
+                    role="status"
+                    onmouseenter={_pauseTimer}
+                    onmouseleave={_resumeTimer}
+                >
+                    <span class="slds-assistive-text">{variant}</span>
+                    <span class="slds-icon_container slds-m-right_small slds-align-top slds-m-top_xx-small">
+                        <lightning-icon
+                            class="white-icon"
+                            icon-name={notifyCl.iconName}
+                            size="small"
+                            variant="inverse"
+                        ></lightning-icon>
+                    </span>
+                    
+                    <div if:true={header} class="slds-notify__content">
+                        <h2 class="slds-text-heading_small">
+
+                            <template lwc:if={header.recordId}>
+                                <template lwc:if={header.linkPrefix}>{header.linkPrefix}&nbsp;</template>
+                                <template lwc:if={hasLink}> 
+                                    <a href={_headerUrl}>{header.recordName}&nbsp;</a>
+                                </template>
+                                <template lwc:else> 
+                                    <span>{header.recordName}&nbsp;</span>
+                                </template>
+                            </template>
+                            <template lwc:if={header.text}>{header.text}</template>
+                        </h2>
+                        <template lwc:if={message}><p style="font-size: 0.8125rem;">{message}</p></template>
+                    </div>
+
+                    <div class="slds-notify__close">
+                        <button class="slds-button slds-button_icon slds-button_icon-inverse"
+                            title="Close" 
+                            onclick={handleClose}
+                        >
+                            <lightning-icon icon-name="utility:close" title="close" size="x-small" class="close-icon"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

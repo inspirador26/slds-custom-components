@@ -1,0 +1,416 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <div class={containerCl}>
+        <div class={pageHeaderCl}>
+            <!--Title / Top Actions-->
+            
+            <div class="slds-page-header__row">
+                    
+                <!--Title/Icon-->
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure slds-align-middle">
+                            <span class={iconTitleContainer}>
+                                <svg class={iconSvgCl} aria-hidden="true">
+                                    <use xlink:href={iconConfig}></use>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="slds-media__body slds-align-middle">
+                            <div class={headerCl}>
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <template lwc:if={listViewTitle}>
+                                            <span>{pageLabel}</span>
+                                            <span class="slds-page-header__title slds-truncate" 
+                                                title={listViewTitle}
+                                                lwc:ref="listViewTitle"
+                                                onclick={handleLinkClick}
+                                            >{listViewTitle}</span>
+                                        </template>
+                                        <template lwc:else> 
+                                            <span class="slds-page-header__title slds-truncate" 
+                                                title={pageLabel}
+                                            >{pageLabel}</span>
+                                        </template>
+                                    </h1>
+                                    <!--ListView Picklist Popover-->
+                                    <section aria-describedby="dialog-body-id-14" 
+                                        class="slds-popover slds-hide" 
+                                        role="dialog" 
+                                        style="position:absolute;top:60px;left:100;width:40rem;"
+                                        data-id="popoverEdit"   
+                                        lwc:ref="popoverEdit" 
+                                    >
+                                        <div class="slds-popover__body" id="dialog-body-id-14">
+                                            <div class="slds-form-element slds-grid slds-wrap">
+                                                <label class="slds-form-element__label slds-form-element__label_edit slds-no-flex" for="company-01">
+                                                    <span class="slds-assistive-text">Company</span>
+                                                </label>
+
+                                                <div class="slds-form-element__control slds-grow">
+                                                    <!--Picklist-->
+                                                    <c-slds-combobox-grouped 
+                                                        place-holder="Make a Selection..." 
+                                                        is-popover="true"
+                                                        current-value={_currentListView}
+                                                        grouped-options={groupedOptions}
+                                                        data-id="picklistEdit"
+                                                        dropdown-length="10"
+                                                        ongroupcomboblur={closeListViewOptions}
+                                                        onselection={handleNewListViewP}
+                                                    ></c-slds-combobox-grouped>
+                                                    <!--End Picklist-->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </section>
+                                    <!--End ListView Picklist Popover-->
+                                </div>
+                                <!--Change List View Trigger Button-->
+                                <template lwc:if={groupedOptions.length}>
+                                    <div class="slds-page-header__name-switcher slds-m-left_x-small">
+                                        <div class="slds-dropdown-trigger slds-dropdown-trigger_click" 
+                                            data-id="listViewTrigger"
+                                            lwc:ref="listViewTrigger"
+                                        > <!--slds-is-open here-->
+                                            <button class="slds-button slds-button_icon slds-button_icon" 
+                                                aria-haspopup="true" 
+                                                title="Switch list view" 
+                                                data-id="listViewButton" 
+                                                onclick={toggleListViewOptions}
+                                                style="background-color: transparent;"
+                                                lwc:ref="listViewsButton"
+                                            >
+                                                <svg class="slds-button__icon" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.down}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Switch list view</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                                <!--End Change List View Trigger Button-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End Title/Icon-->
+
+                <!--Top Section Actions-->
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+
+                        <div if:true={suppresBottomRow} class="slds-page-header__control slds-m-right_xx-small">
+                            <c-slds-input-filter-search
+                                focus-help={searchFocusHelp}
+                            ></c-slds-input-filter-search>
+                        </div>
+                        
+                        <div class="slds-page-header__control">
+                            <template lwc:if={isButtonGroup}>
+                                <ul class="slds-button-group-list">
+                                    <!--New Record Button-->
+                                    <li if:false={suppressNewRecord}>
+                                        <button class="slds-button slds-button_neutral" onclick={handleNew}>{newButtonLabel}</button>
+                                    </li>
+                                    <!--End New Record Button-->
+
+                                    <!--Send Checked Record Ids-->
+                                    <li if:true={sendCheckedLabel}>
+                                        <button class="slds-button slds-button_neutral" onclick={handleSendCheckedRows}>{sendCheckedLabel}</button>
+                                    </li>
+                                    <!--End Send Checked Record Ids-->
+
+                                    <!--Reset Column Widths-->
+                                    <li> 
+                                        <button class="slds-button slds-button_neutral" onclick={resetColumnWidths}>Reset Column Widths</button>
+                                    </li>
+                                    <!--End Reset Column Widths-->
+
+                                    <!--Overflow Of Button Group Button-->
+                                    <li if:false={suppressOverflowMenu}>
+                                        <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-haspopup="true" title="More Actions">
+                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                <use xlink:href={iconMap.utility.down}></use>
+                                            </svg>
+                                            <span class="slds-assistive-text">More Actions</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </template>
+                            <template lwc:else> 
+                                <button class="slds-button slds-button_neutral" onclick={resetColumnWidths}>Reset Column Widths</button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <!--End Top Section Actions-->
+
+            </div>
+            <!--End Title / Top Actions-->
+
+            <!--Bottom List Description/Actions-->
+            <div class="slds-page-header__row">
+
+                <!--Last Updated, etc. info-->
+                <div class="slds-page-header__col-meta slds-align-bottom">
+                    <p class="slds-page-header__meta-text">
+                        {listLength} items • 
+                        Updated {lastRefreshedTimeAgo} 
+                        <span if:true={_filteredBy}> • Filtered by {_filteredBy}</span>
+                        {sortedBy}
+                    </p>
+                </div>
+                <!--End Last Updated, etc. info-->
+
+                <!--Bottom List View Control Actions-->
+                <div class="slds-page-header__col-controls slds-align-middle">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control slds-m-right_xx-small">
+                            <c-slds-input-filter-search
+                                focus-help={searchFocusHelp}
+                            ></c-slds-input-filter-search>
+                        </div>
+
+                        <!--Settings Control-->
+                        <div if:false={suppressSettings} class="slds-page-header__control">                            
+                            <c-slds-menu-popover-button  
+                                options={_settingsOptions} 
+                                onselection={handleSettingsSelection}
+                                menu-id="Settings"
+                            >
+                                <button class="slds-button slds-button_icon slds-button_icon-more"
+                                    aria-haspopup="true" 
+                                    title="List View Controls"
+                                    lwc:ref="settingsSelection"
+                                >
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.settings}></use>
+                                    </svg>
+                                    <svg class="slds-button__icon slds-button__icon_x-small" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.down}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">List View Controls</span>
+                                </button>
+                            </c-slds-menu-popover-button>
+                            <!--End x-slds-menu-popover-button-->
+                        </div>
+                        <!--End Settings Control-->
+
+                        <!--Change To Table/Kanban/Tree-->
+                        <div if:false={suppressViewOptions} class="slds-page-header__control">
+                            <!--x-slds-menu-popover-button-->
+                            <c-slds-menu-popover-button
+                                options={displayTypeOptions} 
+                                id="layoutSettings"
+                            >
+                                <button class="slds-button slds-button_icon slds-button_icon-more" 
+                                    aria-haspopup="true" 
+                                    title="Change view"
+                                >
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.table}></use>
+                                    </svg>
+                                    <svg class="slds-button__icon slds-button__icon_x-small" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.down}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Change view</span>
+                                </button>
+                            </c-slds-menu-popover-button>
+                            <!--End x-slds-menu-popover-button-->
+                        </div>
+                        <!--End Change To Table/Kanban/Tree-->
+
+                        <!--Edit Control-->
+                        <div if:false={suppressEdit} class="slds-page-header__control">
+                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="Edit List">
+                                <svg class="slds-button__icon" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.edit}></use>
+                                </svg>
+                                <span class="slds-assistive-text">Edit List</span>
+                            </button>
+                        </div>
+                        <!--End Edit Control-->
+
+                        <!--Refresh Control-->
+                        <div class="slds-page-header__control">
+                            <button 
+                                class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                title="Refresh List View"
+                                onclick={callRefresh}
+                            >
+                                <svg class="slds-button__icon" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.refresh}></use>
+                                </svg>
+                                <span class="slds-assistive-text">Refresh List</span>
+                            </button>
+                        </div>
+                        <!--End Refresh Control-->
+
+                        <!--Sorting Control-->
+                        <div if:false={suppressSort} class="slds-page-header__control">
+                            <template lwc:if={listViewEditable}>
+                                <button 
+                                    class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                    title="Column Sort"
+                                    onclick={callSort}
+                                >
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.sort}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Column Sort</span>
+                                </button>
+                            </template>
+                            <template lwc:else> 
+                                <button 
+                                    class="slds-button slds-button_icon slds-button_icon-border-filled slds-is-disabled" 
+                                    title="Column Sort"
+                                    onclick={callSort}
+                                    disabled=""
+                                >
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.sort}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Column Sort</span>
+                                </button>
+                            </template>
+                        </div>
+                        <!--End Sorting Control-->
+
+                        <!--Charts/Filter Controls-->
+                        <div class="slds-page-header__control">
+                            <template lwc:if={isIconButtonGroup}> 
+                                <ul class="slds-button-group-list">
+                                    <li if:false={suppressCharts}>
+                                        <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="Charts">
+                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                <use xlink:href={iconMap.utility.chart}></use>
+                                            </svg>
+                                            <span class="slds-assistive-text">Charts</span>
+                                        </button>
+                                    </li>
+                                    <li if:false={suppressFilter}>  
+                                        <template lwc:if={listViewEditable}> 
+                                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                                title="Filters"
+                                                onclick={dispatchFilter}
+                                                data-type="filter"
+                                            >
+                                                <svg class="slds-button__icon" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.filterList}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Filters</span>
+                                            </button>
+                                        </template>
+                                        <template lwc:else> 
+                                            <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-is-disabled" 
+                                                title="Filters"
+                                                data-type="filter"
+                                                disabled=""
+                                            >
+                                                <svg class="slds-button__icon" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.filterList}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Filters</span>
+                                            </button>
+                                        </template>
+                                    </li>
+                                </ul>
+                            </template>
+                            <template lwc:else> 
+                                <button if:false={suppressCharts} 
+                                    class="slds-button slds-button_icon slds-button_icon-border-filled" title="Charts">
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.chart}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Charts</span>
+                                </button>
+                                <template if:false={suppressFilter}> 
+                                    <template lwc:if={listViewEditable}> 
+                                        <button class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                            title="Filters"
+                                            onclick={dispatchFilter}
+                                            data-type="filter"
+                                        >
+                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                <use xlink:href={iconMap.utility.filterList}></use>
+                                            </svg>
+                                            <span class="slds-assistive-text">Filters</span>
+                                        </button>
+                                    </template>
+                                    <template lwc:else> 
+                                        <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-is-disabled" 
+                                            title="Filters"
+                                            data-type="filter"
+                                            disabled=""
+                                        >
+                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                <use xlink:href={iconMap.utility.filterList}></use>
+                                            </svg>
+                                            <span class="slds-assistive-text">Filters</span>
+                                        </button>
+                                    </template>
+                                </template>
+                            </template>
+                        </div>
+                        <!--End Charts/Filter Controls-->
+
+                    </div>
+                </div>
+                <!--End Bottom List View Control Actions-->
+
+            </div>
+            <!--End Bottom List Description/Actions-->
+
+            <!--Additonal Description Row-->
+            <template lwc:if={additionalInfo}>
+                <div class="slds-page-header__row">
+                    <!--Additonal Data-->
+                    <div class="slds-page-header__col-meta">
+                        <div class="slds-media slds-media_center"> 
+                            <div class="slds-media__figure"> 
+                                <span class="slds-icon_container">
+                                    <svg class="slds-icon slds-icon_small formula-icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.formula}></use>
+                                    </svg>
+                                </span>
+                            </div>
+                        
+                            <div class="slds-media__body">
+                                <p class="slds-page-header__meta-text">
+                                    <template iterator:it={additionalInfo.details}> 
+                                        <span key={it.value.label}>
+                                            <template lwc:if={it.last}> 
+                                                <span style="font-weight: bold">{it.value.label}:</span> {it.value.value}
+                                            </template>
+                                            <template lwc:else> 
+                                                <span style="font-weight: bold">{it.value.label}:</span> {it.value.value}&nbsp;•&nbsp;
+                                            </template>
+                                        </span>
+                                    </template>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Additonal Data-->
+                </div>
+            </template>
+            <!--End Additonal Description Row-->
+
+        </div>
+    </div>
+</template>

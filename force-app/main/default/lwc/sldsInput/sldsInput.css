@@ -1,0 +1,70 @@
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --input-height: 1.875rem;
+    --input-radius: var(--slds-c-input-radius-border, 0.25rem);   
+    --font-size: var(--dxp-c-input-text-font-size, var(--dxp-s-form-element-text-font-size, var(--slds-g-font-scale-1, 1.0rem)));
+}
+
+.slds-input:disabled {
+    opacity: 0.6;
+}
+
+.rich-text-container {
+    padding: 0.5rem;
+}
+
+.slds-input_counter {
+    padding: 0 10px;
+}
+
+/* Force long tokens to break instead of widening the popover */
+.slds-rich-text-editor__textarea .ql-editor {
+  overflow-wrap: anywhere;   /* THIS is the missing piece */
+  word-break: break-word;    /* keep for legacy */
+  max-width: 100%;
+}
+.slds-rich-text-editor__textarea {
+    word-wrap: break-word !important;
+}
+
+/* If links are the main offender */
+.slds-rich-text-editor__textarea .ql-editor a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+
+
+
+
+.slds-input {
+    --slds-c-input-radius-border: var(--input-radius, 0.25rem);
+    min-height: calc(var(--input-height, 1.875rem) + (1px * 2));
+    line-height: var(--input-height, 1.875rem);
+    border-radius: var(--input-radius);
+    font-size: var(--font-size, 1.0rem);
+}
+.slds-form-element {
+    margin-bottom: 0px;
+}
+
+.error-icon {
+    --slds-c-icon-color-foreground: var(--slds-g-color-error-base-40, #ea001e);
+	--slds-c-icon-color-foreground-default: var(--slds-g-color-error-base-40, #ea001e);
+    fill: var(--slds-g-color-error-base-40, #ea001e);
+}
+
+.date-footer {
+    border: none;
+    background-color: var(--slds-g-color-neutral-base-100);
+}
+
+.date-padding {
+    padding-left: 5px;;
+}
+
+.slds-textarea {
+    color: var(--slds-g-color-neutral-base-10, #181818);
+    background-color: var(--slds-g-color-neutral-base-100, #ffffff);
+}

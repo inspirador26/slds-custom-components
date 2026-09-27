@@ -1,0 +1,47 @@
+<template>
+  <template lwc:if={toastObj}>
+    <div class="slds-align_absolute-center">
+      <c-toast-lwc
+        variant={toastObj.variant}
+        mode={toastObj.mode}
+        object-api-name={toastObj.objectApiName}
+        header={toastObj.header}
+        message={toastObj.message}
+      ></c-toast-lwc>
+    </div>
+  </template>
+  <div
+    class={_divCl}
+    aria-haspopup={_ariaHasPopup}
+    aria-expanded={isOpen}
+    onclick={toggle}
+    onkeydown={handleKeyDown}
+  >
+    <slot></slot>
+  </div>
+  <template lwc:if={isOpen}>
+    <span data-menu-portal-source>
+      <c-slds-menu-popover-menu
+        options={options}
+        value={value}
+        menu-size={menuSize}
+        is-left={isLeft}
+        is-check={isCheck}
+        menu-id={menuId}
+        is-save={isSave}
+        previous-tab-target={_previousTabTarget}
+        next-tab-target={_nextTabTarget}
+        selection-callback={menuSelectionCallback}
+        request-close-callback={menuCloseCallback}
+        menu-tab-callback={menuTabCallback}
+        menu-tab-out-callback={menuTabOutCallback}
+        onselection={handleMenuSelection}
+        onrequestclose={handleMenuClose}
+        checked-icon-fn={checkedIconFn}
+        
+        onmenupopovertab={handleMenuTab}
+        onmenupopovertabout={handleMenuTabOut}
+      ></c-slds-menu-popover-menu>
+    </span>
+  </template>
+</template>

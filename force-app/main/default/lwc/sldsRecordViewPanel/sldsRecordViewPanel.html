@@ -1,0 +1,551 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <section 
+        aria-labelledby="panel-heading-id" 
+        class={panelCl} 
+        role="dialog"
+        onkeydown={handlePanelKeydown}
+    >
+         <template lwc:if={isLoading}> 
+            <lightning-spinner class="slds-align_absolute-center" size="medium"></lightning-spinner>
+        </template>
+
+        <div class="popover-wrapper" data-id="scroller">
+            <!--Close Button-->
+            <div class="popover-top-bar">
+                <button 
+                    class="slds-button slds-button_icon slds-button_icon-small slds-popover__close close-sticky"
+                    title="Close dialog"
+                    tabindex="0"
+                    onclick={handleClose}
+                >
+                    <svg class="slds-button__icon" aria-hidden="true">
+                        <use xlink:href={iconMap.utility.close}></use>
+                    </svg>
+                    <span class="slds-assistive-text">Close dialog</span>
+                </button>
+            </div>
+            <!--End Close Button-->
+
+            <template lwc:if={_isMasterDetail}> 
+                <template for:each={_sectionByMapKey} for:item="section">
+                    <template for:each={section.masterRecord.records} for:item="parent">
+                        <div class="slds-popover__header parent-header" key={parent.keyId}>
+
+                            <template for:each={parent.fields} for:item="field">
+                                <template lwc:if={field.isNameField}>
+                                    <header class="slds-media slds-media_center slds-m-bottom_small" key={field.keyId}>
+                                        <span class={section.masterRecord.icon.container}>
+                                            <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                <use xlink:href={section.masterRecord.icon.icon}></use>
+                                            </svg>
+                                        </span>
+                                        <div class="slds-media__body">
+                                            <h2 class="slds-text-heading_medium slds-hyphenate">
+                                                <template lwc:if={field.url}> 
+                                                    <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                </template>
+                                                <template lwc:else> 
+                                                    {field.displayVal}
+                                                </template>
+                                            </h2>
+                                        </div>
+                                    </header>
+                                </template>
+                            </template>
+
+                            <footer class="slds-grid slds-wrap slds-grid_pull-padded">
+                                <template for:each={parent.fields} for:item="field">
+                                    <template lwc:if={field.isNameField}></template>
+                                    <template lwc:else>
+                                        <div class="slds-p-horizontal_small slds-size_1-of-2 slds-p-bottom_x-small" key={field.keyId}>
+                                            <dl>
+                                                <dt><p class="slds-popover_panel__label slds-truncate" title={field.fieldLabel}>{field.fieldLabel}</p></dt>
+                                                <dd><p class="slds-truncate" title={field.displayVal}>{field.displayVal}</p></dd>
+                                            </dl>
+                                        </div>
+                                    </template>
+                                </template>
+                            </footer>
+
+                        </div>
+                    </template>
+
+                    <div class="slds-popover__body" key={section.keyId}>
+                        <template for:each={section.children} for:item="child">
+                            <!-- one child object -->
+                            <div class="slds-border_top" key={child.objectLabel}>
+                                <dl class="slds-popover__body-list" style="border-top: none;">
+                                    <!-- Object meta (icon/label/count) -->
+                                    <dt class="child-header">
+                                        <div class="slds-media slds-media_center">
+                                            <div class="slds-media__figure">
+                                                <span class={child.icon.container}>
+                                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                    <use xlink:href={child.icon.icon}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">{child.objectLabel}</span>
+                                                </span>
+                                            </div>
+                                            <div class="slds-media__body">
+                                                <p class="slds-text-heading_small slds-hyphenate">
+                                                {child.objectLabel} ({child.records.length})
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </dt>
+                                    <!-- Records -->
+                                    <template lwc:if={child.records.length}>
+                                        <template iterator:record={child.records}>
+                                            <div class="slds-box slds-m-bottom_small slds-p-top_xx-small" key={record.value.keyId}>
+                                                <dd>
+                                                    <!-- Record name (only when not parent) -->
+                                                    <template for:each={record.value.fields} for:item="field">
+                                                        <template lwc:if={field.isNameField}>
+                                                            <template lwc:if={isLarge}>
+                                                                <div class="slds-border_bottom slds-p-bottom_xx-small" key={field.keyId}>
+                                                                    <p class="slds-truncate slds-text-title_bold" title={field.displayVal}>
+                                                                        <template lwc:if={field.url}> 
+                                                                            <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                                        </template>
+                                                                        <template lwc:else> 
+                                                                            {field.displayVal}
+                                                                        </template>
+                                                                    </p>
+                                                                </div>
+                                                            </template>
+                                                            <template lwc:else>
+                                                                <p class="slds-truncate" title={field.displayVal} key={field.keyId}>
+                                                                    <template lwc:if={field.url}> 
+                                                                        <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                                    </template>
+                                                                    <template lwc:else> 
+                                                                        {field.displayVal}
+                                                                    </template>
+                                                                </p>
+                                                            </template>
+                                                        </template>
+                                                    </template>
+
+                                                    <!-- Large popover variant -->
+                                                    <template lwc:if={isLarge}>
+                                                        <div class="slds-grid slds-grid_vertical slds-m-top_xx-small">
+                                                            <template for:each={record.value.fields} for:item="field">
+                                                                <template if:false={field.isNameField}>
+                                                                    <div class="slds-grid large-body" key={field.keyId}>
+                                                                        <div class="slds-col slds-size_1-of-4 slds-truncate slds-m-right_small" title={field.fieldLabel}>• {field.fieldLabel}:</div>
+                                                                        <div class="slds-col slds-grow">
+                                                                            <template lwc:if={field.displayVal}>
+                                                                                <template lwc:if={field.istextarea}>
+                                                                                    <lightning-formatted-rich-text
+                                                                                        title={field.displayVal}
+                                                                                        class="slds-line-clamp_small"
+                                                                                        value={field.displayVal}>
+                                                                                    </lightning-formatted-rich-text>
+                                                                                </template>
+                                                                                <template lwc:else>
+                                                                                    <lightning-formatted-text
+                                                                                        title={field.displayVal}
+                                                                                        class="slds-line-clamp_small"
+                                                                                        value={field.displayVal}>
+                                                                                    </lightning-formatted-text>
+                                                                                </template>
+                                                                            </template>
+                                                                            <template lwc:else>
+                                                                                <span class="slds-text-color_weak">N/A</span>
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Small popover variant -->
+                                                    <template lwc:else>
+                                                        <dl class="slds-list_horizontal slds-wrap slds-m-top_xx-small">
+                                                            <template for:each={record.value.fields} for:item="field">
+                                                                <template if:false={field.isNameField}>
+                                                                    <dt 
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate" 
+                                                                        title={field.fieldLabel} 
+                                                                        key={field.keyId}>
+                                                                        {field.fieldLabel}
+                                                                    </dt>
+                                                                    <dd 
+                                                                        class="slds-item_detail slds-text-color_weak slds-truncate" 
+                                                                        title={field.displayVal} 
+                                                                        key={field.keyId}
+                                                                    >
+                                                                        <!--Valid Display Val-->
+                                                                        <template lwc:if={field.displayVal}>
+                                                                            <template lwc:if={field.istextarea}>
+                                                                                <lightning-formatted-rich-text value={field.displayVal}></lightning-formatted-rich-text>
+                                                                            </template> 
+                                                                            <template lwc:else>{field.displayVal}</template>
+                                                                        </template>
+                                                                        <!--End Valid Display Val-->
+                                                                        <!--Invalid Display Val-->
+                                                                        <template lwc:else>
+                                                                            N/A
+                                                                        </template>
+                                                                        <!--End Invalid Display Val-->
+                                                                    </dd>
+                                                                </template>
+                                                            </template>
+                                                        </dl>
+                                                    </template>
+
+                                                </dd>
+                                            </div>
+                                        </template>
+                                    </template>
+                                </dl>
+                            </div>
+                            <!-- More details link -->
+                            <template lwc:if={child.records.length}>
+                                <dd class="slds-text-align_right slds-p-around_x-small" key={child.objectLabel}>
+                                    <a href="#" title="More Details">More Details</a>
+                                </dd>
+                            </template>
+                        </template>
+                    </div>
+
+                </template>
+
+            </template>
+
+            <template lwc:else>
+                <!--Popover Header-->
+                <template for:each={_sectionByMapKey} for:item="section"> 
+                    <template lwc:if={section.isHeader}> 
+                        <!--Main Object Record-->
+                        <template for:each={section.records} for:item="record"> 
+                            <div class="slds-popover__header parent-header" key={section.keyId}>
+                                <template for:each={record.fields} for:item="field"> 
+                                    <template lwc:if={field.isNameField}> 
+                                        <header class="slds-media slds-media_center slds-m-bottom_small" key={field.keyId}>
+                                            <span class={section.icon.container}>
+                                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                    <use xlink:href={section.icon.icon}></use>
+                                                </svg>
+                                            </span>
+                                            <div class="slds-media__body">
+                                                <h2 class="slds-text-heading_medium slds-hyphenate">
+                                                    <template lwc:if={field.url}> 
+                                                        <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        {field.displayVal}
+                                                    </template>
+                                                </h2>
+                                            </div>
+                                        </header>
+                                    </template>
+                                </template>
+                            
+
+                                <footer class="slds-grid slds-wrap slds-grid_pull-padded">
+                                    <template for:each={record.fields} for:item="field"> 
+                                        <template if:false={field.isNameField}>
+                                            <div class="slds-p-horizontal_small slds-size_1-of-2 slds-p-bottom_x-small" key={field.keyId}>
+                                                <dl>
+                                                    <dt title={field.fieldLabel}>
+                                                        <p 
+                                                            class="slds-popover_panel__label slds-truncate" 
+                                                        >{field.fieldLabel}</p>
+                                                    </dt>
+                                                    <dd title={field.displayVal}>
+                                                        <p class="slds-truncate">{field.displayVal}</p>
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                        </template>
+                                    </template>
+                                </footer>
+                            </div>
+                        </template>
+                        <!--End Main Object Record-->
+                    </template>
+                </template>
+                <!--End Popover Header-->
+                
+                <!--Panel Body-->
+                <div class="slds-popover__body">
+
+                    <template for:each={_sectionByMapKey} for:item="section"> 
+                        
+                        <template if:false={section.isHeader}> 
+                            <!--Object Wrapper-->
+                            <div class={scrollCl} key={section.keyId}>
+                                
+                                <dl class="slds-popover__body-list" style="border-top: none;">
+                                    
+                                    <!--Object Icon/Label-->
+                                    <dt class="child-header">
+                                        <div class="slds-media slds-media_center">
+                                            <div class="slds-media__figure">
+                                                <span class={section.icon.container}>
+                                                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                        <use xlink:href={section.icon.icon}></use>
+                                                    </svg>
+                                                    <span class="slds-assistive-text">{section.objectLabel}</span>
+                                                </span>
+                                            </div>
+                                            <div class="slds-media__body">
+                                                <template lwc:if={section.isParent}> 
+                                                    <template lwc:if={section.records.length}>
+                                                        <template for:each={section.records} for:item="record"> 
+                                                            <template for:each={record.fields} for:item="field"> 
+                                                                <template lwc:if={field.isNameField}> 
+                                                                    <h2 key={field.keyId} class="slds-text-heading_small slds-hyphenate">
+                                                                        <template lwc:if={field.url}> 
+                                                                            <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                                        </template>
+                                                                        <template lwc:else> 
+                                                                            {field.displayVal}
+                                                                        </template>
+                                                                    </h2>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        <p class="slds-text-heading_small slds-hyphenate">{section.objectLabel} ({section.records.length})</p>
+                                                    </template>
+                                                </template>
+                                                <template lwc:else> 
+                                                    <p class="slds-text-heading_small slds-hyphenate">{section.objectLabel} ({section.records.length})</p>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </dt>
+                                    <!--End Object Icon/Label-->
+
+                                    <!--Records-->
+                                    <template lwc:if={section.records.length}>
+
+                                        <template for:each={section.records} for:item="record">
+                                            <template if:false={section.isParent}> 
+                                                <template lwc:if={isLarge}> 
+                                                    <div class="slds-box slds-m-bottom_small" key={record.keyId}> 
+                                                        <dd>
+                                                            <!--Record Name (Not Parent)-->
+                                                            <template for:each={record.fields} for:item="field">
+                                                                <template if:false={section.isParent}>
+                                                                    <template lwc:if={field.isNameField}> 
+                                                                        <div class="slds-border_bottom slds-p-bottom_xx-small" key={field.keyId}>
+                                                                            <p class="slds-truncate slds-text-title_bold" title={field.displayVal}>
+                                                                                <template lwc:if={field.url}> 
+                                                                                    <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                                                </template>
+                                                                                <template lwc:else> 
+                                                                                    {field.displayVal}
+                                                                                </template>
+                                                                            </p>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                            <!--End Record Name (Not Parent)-->
+
+                                                            <!--Large Popover Variant--> 
+                                                            <div class="slds-grid slds-grid_vertical slds-m-top_xx-small"> 
+                                                                <template for:each={record.fields} for:item="field">
+                                                                    <template if:false={field.isNameField}>
+                                                                        <div class="slds-grid large-body" key={field.keyId}>
+                                                                            <div class="slds-col slds-size_1-of-4 slds-truncate slds-m-right_small" title={field.fieldLabel}>
+                                                                                • {field.fieldLabel}:
+                                                                            </div>
+                                                                            <div class="slds-col slds-grow">
+                                                                                <template lwc:if={field.displayVal}>
+                                                                                    <template lwc:if={field.istextarea}> 
+                                                                                        <lightning-formatted-rich-text
+                                                                                            title={field.displayVal}
+                                                                                            class="slds-line-clamp_small"
+                                                                                            value={field.displayVal}
+                                                                                        ></lightning-formatted-rich-text>
+                                                                                    </template>
+                                                                                    <template lwc:else>
+                                                                                        <lightning-formatted-text
+                                                                                            title={field.displayVal}
+                                                                                            class="slds-line-clamp_small"
+                                                                                            value={field.displayVal}>
+                                                                                        </lightning-formatted-text>
+                                                                                    </template>
+                                                                                </template>
+                                                                                <template lwc:else> 
+                                                                                    <span class="slds-text-color_weak">N/A</span>
+                                                                                </template>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                            </div>
+                                                            <!--End Large Popover Variant-->
+                                                        </dd>
+                                                    </div>
+                                                </template>
+
+                                                <template lwc:else>
+                                                    <div class="slds-box slds-m-bottom_x-small" key={record.keyId}>  
+                                                        <dd>
+                                                            <!--Record Name (Not Parent)-->
+                                                            <template for:each={record.fields} for:item="field">
+                                                                <template if:false={section.isParent}>
+                                                                    <template lwc:if={field.isNameField}> 
+                                                                        <p class="slds-truncate slds-p-bottom_xx-small" title={field.displayVal} key={field.keyId}>
+                                                                            <template lwc:if={field.url}> 
+                                                                                <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                                            </template>
+                                                                            <template lwc:else> 
+                                                                                {field.displayVal}
+                                                                            </template>
+                                                                        </p>
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                            <!--End Record Name (Not Parent)-->
+
+                                                            <!--Small Popover Variant-->
+                                                            <dl class="slds-list_horizontal slds-wrap">
+                                                                <template for:each={record.fields} for:item="field">
+                                                                    <template if:false={field.isNameField}> 
+                                                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title={field.fieldLabel} key={field.keyId}>{field.fieldLabel}</dt>
+                                                                        <dd class="slds-item_detail slds-text-color_weak slds-truncate" title={field.displayVal} key={field.keyId}>
+                                                                            <template lwc:if={field.displayVal}>
+                                                                                <template lwc:if={field.istextarea}>
+                                                                                    <lightning-formatted-rich-text
+                                                                                        class="slds-truncate"
+                                                                                        value={field.displayVal}
+                                                                                        title={field.displayVal}
+                                                                                    ></lightning-formatted-rich-text>
+                                                                                </template>
+                                                                                <template lwc:else> 
+                                                                                    {field.displayVal}
+                                                                                </template>
+                                                                            </template>
+                                                                            <template lwc:else>N/A</template>
+                                                                        </dd>
+                                                                    </template>
+                                                                </template>
+                                                            </dl>
+                                                            <!--End Small Popover Variant-->
+                                                        </dd>
+                                                    </div>
+                                                </template>
+                                            </template>
+                                            <template if:true={section.isParent}>
+                                                <dd class="slds-m-bottom_small" key={record.keyId}>
+                                                    <!--Record Name (Not Parent)-->
+                                                    <template for:each={record.fields} for:item="field">
+                                                        <template if:false={section.isParent}>
+                                                            <template lwc:if={field.isNameField}> 
+                                                                <template lwc:if={isLarge}>
+                                                                    <p class="slds-truncate slds-text-heading_small slds-p-bottom_xx-small" title={field.displayVal} key={field.keyId}>
+                                                                        <template lwc:if={field.url}> 
+                                                                            <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                                        </template>
+                                                                        <template lwc:else> 
+                                                                            {field.displayVal}
+                                                                        </template>
+                                                                    </p>
+                                                                </template>
+                                                                <template lwc:else> 
+                                                                    <p class="slds-truncate slds-text-heading_small slds-p-bottom_xx-small" title={field.displayVal} key={field.keyId}>
+                                                                        <template lwc:if={field.url}> 
+                                                                            <a href={field.url} tabindex="0">{field.displayVal}</a>
+                                                                        </template>
+                                                                        <template lwc:else> 
+                                                                            {field.displayVal}
+                                                                        </template>
+                                                                    </p>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+                                                    </template>
+                                                    <!--End Record Name (Not Parent)-->
+
+                                                    <!--Large Popover Variant-->
+                                                    <template lwc:if={isLarge}> 
+                                                        <div class="slds-grid slds-grid_vertical slds-m-top_xx-small"> 
+                                                            <template for:each={record.fields} for:item="field">
+                                                                <template if:false={field.isNameField}>
+                                                                    <div class="slds-grid large-body" key={field.keyId}>
+                                                                        <div class="slds-col slds-size_1-of-4 slds-truncate slds-m-right_small">
+                                                                            • {field.fieldLabel}
+                                                                        </div>
+                                                                        <div class="slds-col slds-grow">
+                                                                            <template lwc:if={field.displayVal}>
+                                                                                <template lwc:if={field.istextarea}> 
+                                                                                    <lightning-formatted-rich-text
+                                                                                        class="slds-line-clamp_small"
+                                                                                        value={field.displayVal}
+                                                                                    ></lightning-formatted-rich-text>
+                                                                                </template>
+                                                                                <template lwc:else>
+                                                                                    <lightning-formatted-text
+                                                                                        class="slds-line-clamp_small"
+                                                                                        value={field.displayVal}>
+                                                                                    </lightning-formatted-text>
+                                                                                </template>
+                                                                            </template>
+                                                                            <template lwc:else> 
+                                                                                <span class="slds-text-color_weak">N/A</span>
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                    <!--End Large Popover Variant-->
+
+                                                    <!--Small Popover Variant-->
+                                                    <template lwc:else> 
+                                                        <dl class="slds-list_horizontal slds-wrap slds-m-top_xx-small">
+                                                            <template for:each={record.fields} for:item="field">
+                                                                <template if:false={field.isNameField}> 
+                                                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title={field.fieldLabel} key={field.keyId}>{field.fieldLabel}</dt>
+                                                                    <dd class="slds-item_detail slds-text-color_weak slds-truncate" title={field.displayVal} key={field.keyId}>{field.displayVal}</dd>
+                                                                </template>
+                                                            </template>
+                                                        </dl>
+                                                    </template>
+                                                    <!--End Small Popover Variant-->
+
+                                                </dd>
+                                            </template>
+                                        </template>
+
+                                    </template>
+                                    <!--End Records-->
+
+                                </dl>
+                            
+                            </div>
+                            <dd if:true={section.records.length} class="slds-text-align_right slds-p-around_x-small" key={section.objectLabel}>
+                                <a href="#" title="More Details">More Details</a>
+                            </dd>
+                            <!--End Object Wrapper-->
+                        </template>
+
+                    </template>
+                </div>
+                <!--End Panel Body-->
+            </template>
+        </div>
+
+    </section>
+</template>

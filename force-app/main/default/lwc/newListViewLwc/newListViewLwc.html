@@ -1,0 +1,455 @@
+<template>
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    
+
+    <div class="slds-p-around_small spinner-backdrop__component-root" style="min-height: 100px;">
+        <template lwc:if={_isLoading}> 
+            <div class="spinner-backdrop__component">
+                <div class="slds-spinner slds-spinner_medium" role="status">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </template>
+
+        <template lwc:if={isDeleteListView}>
+            <div class="slds-align_absolute-center">
+                <p>Are you sure you want to delete "{_listLabel}"?</p>
+            </div>
+        </template>
+
+        <template lwc:else>
+            <div if:false={_isObjectDisabled} class="slds-p-vertical_small">
+                <c-slds-combobox
+                    options={objectOptions}
+                    label="Object"
+                    onselected={handleObject}
+                    current-value={newListView.objectApiName}
+                    has-meta="true"
+                    data-focus-target="true"
+                ></c-slds-combobox>
+            </div>
+
+            <template lwc:if={isUpdateDisplayColumns}> 
+                <div>
+                    <h5 class="slds-text-title_bold slds-p-bottom_small">
+                        Select Fields to Display
+                    </h5>
+                    <div class="slds-p-bottom_small" style="padding-right: 40px;">
+                        <c-slds-input-filter-search 
+                            place-holder="Search Available Fields..."
+                            onsearchfilter={filterDisplayColumns}
+                            oncurrentsearchfilter={filterDisplayColumns}
+                            is-icon-right="true"
+                            suppress-button="true"
+                            icon="search"
+                            data-focus-target="true"
+                        ></c-slds-input-filter-search>
+                    </div>
+                    <lightning-dual-listbox 
+                        name="displayColumns"
+                        source-label="Available"
+                        selected-label="Selected"
+                        options={_templateDisplayColumns}
+                        onchange={updateDisplayColumns}
+                        value={newListView.displayColumns}
+                        data-id="displayColumns"
+                        size="10"
+                        data-focus-target="true"
+                    ></lightning-dual-listbox>
+                </div>
+
+
+                <!--⚠️ Removed for the time being-->
+                <!--div class="slds-p-top_medium">
+                    <template lwc:if={_childRelationshipColumns.length}>
+                        <template for:each={_childRelationshipColumns} for:item="childR">
+                            <div class="slds-box" key={childR.keyId}>
+                                <div class="slds-grid slds-grid_vertical-align-center slds-grid_pull-padded-small"> 
+                                    <div class="slds-col slds-p-horizontal_small" style="min-width: 200px;">
+                                        <c-slds-combobox
+                                            options={childRelationShipOptions}
+                                            label="Related Object Name"
+                                            is-required="true"
+                                            add-none="true"
+                                            dropdown-length="7"
+                                            suppress-error-text="true"
+                                            onselected={handleChildDisplayColumn}
+                                            data-key-id={childR.keyId}
+                                        ></c-slds-combobox>
+                                    </div>
+                                    <div class="slds-col slds-p-horizontal_small">
+                                        <c-slds-input
+                                            dtype="text"
+                                            is-required="true"
+                                            current-value={childR.columnLabel}
+                                            label="Column Label"
+                                            suppress-error-text="true"
+                                            onnewinput={handleColumnLabel}
+                                            data-key-id={childR.keyId}
+                                        ></c-slds-input>
+                                    </div>
+                                    <div class="slds-col slds-p-horizontal_small"> 
+                                        <c-slds-input 
+                                            label="Name Field"
+                                            current-value="Name"
+                                            onnewinput={handleNameField} 
+                                            is-required="true"
+                                            suppress-error-text="true"
+                                            data-key-id={childR.keyId}
+                                        ></c-slds-input>
+                                    </div>
+                                    <div class="slds-no-flex slds-grow-none slds-p-horizontal_small slds-col_bump-left">
+                                        <button class="slds-button slds-button_icon slds-button_icon slds-button_icon-small" 
+                                            title="Remove Child Relationship Column"
+                                            data-key-id={childR.keyId}
+                                            style="margin-top: 18px;"
+                                            data-element="remove-child-column"
+                                            onclick={removeChildColumn}
+                                        >
+                                            <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                <use xlink:href={iconMap.utility.delete}></use>
+                                            </svg>
+                                            <span class="slds-assistive-text">Remove Column</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="slds-p-top_small">  
+                                    <c-slds-input 
+                                        dtype="textarea"
+                                        label="Condition"
+                                        place-holder={childR.relationPlaceHolder}
+                                        onnewinput={handleDisplayColumnCondition} 
+                                        data-key-id={childR.keyId}
+                                    ></c-slds-input>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                </div>
+                <div class="slds-p-vertical_small"> 
+                    <button class="slds-button" onclick={addChildRelationship}>
+                        <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.add}></use>
+                        </svg>
+                        Add a child relationship column
+                    </button>
+                </div-->
+                
+            </template>
+            <template lwc:elseif={isUpdateSort}> 
+                <template lwc:if={newListView.orderedBy}>
+                    <template lwc:if={newListView.orderedBy.length}>
+                        <template iterator:it={newListView.orderedBy}>
+                            <template lwc:if={it.first}> 
+                                <span class="box-label__first" key={it.value.keyId}>
+                                    <abbr if:true={isSortRequired} class="slds-required" title="required" aria-hidden="true">*</abbr>
+                                    Sort by
+                                </span>
+                                <div class="slds-box" key={it.value.keyId}>
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-grid_vertical-stretch slds-p-horizontal_small"> 
+
+                                        <div class="slds-p-right_small slds-align-middle"> 
+                                            <ul class="slds-button-group-list">
+                                                <li> 
+                                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-is-disabled" 
+                                                        title="Move sort column up"
+                                                        disabled=""
+                                                    >
+                                                        <svg class="slds-button__icon" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.arrowup}></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Move sort column up</span>
+                                                    </button>
+                                                </li>
+                                                <li> 
+                                                    <template lwc:if={isSortRequired}> 
+                                                        <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-is-disabled" 
+                                                            disabled=""
+                                                            title="Move sort column down"
+                                                        >
+                                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.arrowdown}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Move sort column down</span>
+                                                        </button>
+                                                    </template>
+                                                    <template lwc:else>
+                                                        <button class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                                            title="Move sort column down"
+                                                            onclick={moveSortColDown}
+                                                            data-key-id={it.value.keyId}
+                                                        >
+                                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.arrowdown}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Move sort column down</span>
+                                                        </button>
+                                                    </template>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="slds-p-right_small slds-align-middle" style="min-width: 300px;">
+                                            <c-slds-combobox 
+                                                options={sortFieldOptions}
+                                                current-value={it.value.fieldApiName}
+                                                place-holder="Select a column"
+                                                onselected={handleSortColFieldSelection}
+                                                data-key-id={it.value.keyId}
+                                                dropdown-length="7"
+                                                data-focus-target="true"
+                                                suppress-margin="true"
+                                            ></c-slds-combobox>
+                                        </div>
+
+                                        <div class="slds-p-right_small slds-align-middle"> 
+                                            <c-slds-radio-button-group
+                                                font-size="0.85rem"
+                                                options={sortDirectionOptions}
+                                                current-value={it.value.isAscending}
+                                                onchange={handleAscendingChange}
+                                                data-key-id={it.value.keyId}
+                                            ></c-slds-radio-button-group>
+                                        </div>
+
+                                        <div class="slds-col_bump-left slds-align-middle">
+                                            <!--Remove Sort Button-->
+                                            <button class="slds-button slds-button_icon slds-button_icon slds-button_icon-small" 
+                                                title="Remove New Filter"
+                                                data-key-id={it.value.keyId}
+                                                data-element="remove-filter"
+                                                onclick={removeSortCol}
+                                            >
+                                                <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.delete}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove Column</span>
+                                            </button>
+                                            <!--End Remove Sort Button-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template lwc:elseif={it.last}> 
+                                <span class="box-label" key={it.value.keyId}>Then by</span>
+                                <div class="slds-box" key={it.value.keyId}>
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-grid_vertical-stretch slds-p-horizontal_small"> 
+
+                                        <div class="slds-p-right_small slds-align-middle"> 
+                                            <ul class="slds-button-group-list">
+                                                <li> 
+                                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                                        title="Move sort column up"
+                                                        onclick={moveSortColUp}
+                                                        data-key-id={it.value.keyId}
+                                                    >
+                                                        <svg class="slds-button__icon" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.arrowup}></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Move sort column up</span>
+                                                    </button>
+                                                </li>
+                                                <li> 
+                                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-is-disabled" 
+                                                        title="Move sort column down"
+                                                        disabled=""
+                                                    >
+                                                        <svg class="slds-button__icon" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.arrowdown}></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Move sort column down</span>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="slds-p-right_small slds-align-middle" style="min-width: 300px;">
+                                            <c-slds-combobox 
+                                                options={sortFieldOptions}
+                                                current-value={it.value.fieldApiName}
+                                                place-holder="Select a column"
+                                                onselected={handleSortColFieldSelection}
+                                                data-key-id={it.value.keyId}
+                                                suppress-margin="true"
+                                                dropdown-length="7"
+                                            ></c-slds-combobox>
+                                        </div>
+
+                                        <div class="slds-p-right_small slds-align-middle"> 
+                                            <c-slds-radio-button-group
+                                                font-size="0.85rem"
+                                                options={sortDirectionOptions}
+                                                current-value={it.value.isAscending}
+                                                onchange={handleAscendingChange}
+                                                data-key-id={it.value.keyId}
+                                            ></c-slds-radio-button-group>
+                                        </div>
+
+                                        <div class="slds-col_bump-left slds-align-middle">
+                                            <!--Remove Sort Button-->
+                                            <button class="slds-button slds-button_icon slds-button_icon slds-button_icon-small" 
+                                                title="Remove New Filter"
+                                                data-key-id={it.value.keyId}
+                                                data-element="remove-filter"
+                                                onclick={removeSortCol}
+                                            >
+                                                <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.delete}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove Column</span>
+                                            </button>
+                                            <!--End Remove Sort Button-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template lwc:else> 
+                                <span class="box-label" key={it.value.keyId}>Then by</span>
+                                <div class="slds-box" key={it.value.keyId}>
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-grid_vertical-stretch slds-p-horizontal_small"> 
+
+                                        <div class="slds-p-right_small slds-align-middle"> 
+                                            <ul class="slds-button-group-list">
+                                                <li> 
+                                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                                        title="Move sort column up"
+                                                        onclick={moveSortColUp}
+                                                        data-key-id={it.value.keyId}
+                                                    >
+                                                        <svg class="slds-button__icon" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.arrowup}></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Move sort column up</span>
+                                                    </button>
+                                                </li>
+                                                <li> 
+                                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                                        title="Move sort column down"
+                                                        onclick={moveSortColDown}
+                                                        data-key-id={it.value.keyId}
+                                                    >
+                                                        <svg class="slds-button__icon" aria-hidden="true">
+                                                            <use xlink:href={iconMap.utility.arrowdown}></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Move sort column down</span>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="slds-p-right_small slds-align-middle" style="min-width: 300px;">
+                                            <c-slds-combobox 
+                                                options={sortFieldOptions}
+                                                current-value={it.value.fieldApiName}
+                                                place-holder="Select a column"
+                                                onselected={handleSortColFieldSelection}
+                                                data-key-id={it.value.keyId}
+                                                suppress-margin="true"
+                                                dropdown-length="7"
+                                            ></c-slds-combobox>
+                                        </div>
+
+                                        <div class="slds-p-right_small slds-align-middle"> 
+                                            <c-slds-radio-button-group
+                                                font-size="0.85rem"
+                                                options={sortDirectionOptions}
+                                                current-value={it.value.isAscending}
+                                                onchange={handleAscendingChange}
+                                                data-key-id={it.value.keyId}
+                                            ></c-slds-radio-button-group>
+                                        </div>
+
+                                        <div class="slds-col_bump-left slds-align-middle">
+                                            <!--Remove Sort Button-->
+                                            <button class="slds-button slds-button_icon slds-button_icon slds-button_icon-small" 
+                                                title="Remove New Filter"
+                                                data-key-id={it.value.keyId}
+                                                data-element="remove-filter"
+                                                onclick={removeSortCol}
+                                            >
+                                                <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.delete}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove Column</span>
+                                            </button>
+                                            <!--End Remove Sort Button-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                    
+                        <div class="slds-p-vertical_small slds-grid slds-grid_align-spread">
+                            <div>
+                                <button class="slds-button" disabled={isAddSortColDisabled} onclick={addSortCol}>
+                                    <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.add}></use>
+                                    </svg>
+                                    Add a sort column
+                                </button>
+                            </div> 
+                            <div> 
+                                5 column limit
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </template>
+
+            <template lwc:else>
+                <div class="slds-p-vertical_small"> 
+                    <c-slds-input
+                        dtype="text"
+                        label="List View Label"
+                        onnewinput={handleLabel}
+                        current-value={newListView.label}
+                        is-required="true"
+                        data-element="listview-form"
+                        data-id="list-label"
+                        data-focus-target="true"
+                    ></c-slds-input>
+                </div>
+            </template>
+
+            <template lwc:if={isNewListView}>
+                <div class="slds-p-vertical_small"> 
+                    <c-slds-input
+                        dtype="text"
+                        label="List API Name"
+                        current-value={newListView.listViewApiName}
+                        is-required="true"
+                        data-element="listview-form"
+                        onnewinput={handleApiName}
+                        data-id="api-name"
+                        is-disabled={isUpdateLabel}
+                        data-focus-target="true"
+                    ></c-slds-input>
+                </div>
+                <div class="slds-p-vertical-small slds-p-top_medium"> 
+                    <lightning-radio-group 
+                        name="scope"
+                        label="Scope"
+                        options={scopeOptions}
+                        value={newListView.scope.apiName}
+                        type="radio"
+                        onchange={handleScopeChange}
+                    ></lightning-radio-group>
+                </div>    
+            </template>
+        </template>
+
+    </div>
+</template>

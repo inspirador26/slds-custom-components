@@ -1,0 +1,382 @@
+<!-- newRecordLayoutModal.html -->
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <div class="modal-shell spinner-backdrop__component-root" style="min-height: 100px;">
+        <!--Modal Header w/ Icon-->
+        <template lwc:if={icon}>
+            <lightning-modal-header label="">
+                <div class="slds-grid slds-grid_align-center"> 
+                    <div class="slds-media slds-media_center"> 
+                        <div class="slds-media__figure"> 
+                            <lightning-icon icon-name={icon.iconName} class={icon.iconClass}></lightning-icon>
+                        </div>
+                        <div class="slds-media__body slds-text-heading_medium"> 
+                            {headerLabel}
+                        </div>
+                    </div>
+                </div>
+            </lightning-modal-header>
+        </template>
+        <!--End Modal Header w/ Icon-->
+        <!--Modal Header No Icon-->
+        <template lwc:else>
+            <lightning-modal-header label={headerLabel}></lightning-modal-header>
+        </template>
+        <!--End Modal Header No Icon-->
+
+
+        <!--Modal Body-->
+        <lightning-modal-body>
+            <template if:false={ready}> 
+                <div class="spinner-backdrop__component">
+                    <div class="slds-spinner slds-spinner_medium" role="status">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={errorMsg}>
+                <div class="slds-text-color_error slds-p-around_small">{errorMsg}</div>
+            </template>
+
+            <!--Edit Record-->
+            <template lwc:if={recordId}> 
+                
+                <template lwc:if={sections.length}>
+                    <lightning-record-edit-form
+                        object-api-name={objectApiName}
+                        record-id={recordId}
+                        onsubmit={handleSubmit}
+                        onsuccess={handleSuccess}
+                        onerror={handleError}
+                    >
+                        <lightning-messages> </lightning-messages>
+
+                        
+                        <template for:each={sections} for:item="section">
+                            
+                            <div class="slds-section slds-is-open" key={section.key}>
+                                <!-- optional heading -->
+                                <h3 class="slds-section__title">
+                                    <button aria-controls="section-1" 
+                                        aria-expanded="true" 
+                                        onclick={toggleSections}
+                                        class="slds-button slds-section__title-action"
+                                    >
+                                        <svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left section-chevron" aria-hidden="true">
+                                            <use xlink:href={iconMap.utility.switch}></use>
+                                        </svg>
+                                        <span class="slds-truncate section-label" title={section.heading}>{section.heading}</span>
+                                    </button>
+                                </h3>
+
+                                <div class="slds-section__content">
+                                    <template for:each={section.rows} for:item="row">
+                                        <div key={row.key} class="slds-grid slds-wrap slds-gutters slds-m-bottom_small">
+                                            <template for:each={row.items} for:item="it">
+                                                <div key={it.key} class={it.sizeClass}>
+                                                    <template lwc:if={it.isRecordTypeId}> 
+                                                        <lightning-input-field field-name={it.apiName} variant="label-stacked" disabled=""></lightning-input-field>    
+                                                    </template>
+                                                    <template lwc:else>
+                                                        <template lwc:if={it.isHidden}> 
+                                                            <lightning-input-field field-name={it.apiName} variant="label-stacked" value={it.value} class="hidden-field slds-hide"></lightning-input-field>
+                                                        </template>
+                                                        <template lwc:elseif={it.isDisabled}> 
+                                                            <lightning-input-field field-name={it.apiName} variant="label-stacked" value={it.value} disabled={it.isDisabled}></lightning-input-field>
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            <lightning-input-field field-name={it.apiName} variant="label-stacked"></lightning-input-field>
+                                                        </template>
+                                                        <!--template lwc:if={it.value}> 
+                                                            <template lwc:if={it.isHidden}> 
+                                                                <lightning-input-field field-name={it.apiName} variant="label-stacked" value={it.value} class="hidden-field slds-hide"></lightning-input-field>
+                                                            </template>
+                                                            <template lwc:else> 
+                                                                <lightning-input-field field-name={it.apiName} variant="label-stacked" value={it.value} disabled={it.isDisabled}></lightning-input-field>
+                                                            </template>
+                                                        </template-->
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    
+                        <div class="slds-hide">
+                            <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                            <lightning-button data-id="submitButton" variant="brand" type="submit" label="Save" class="slds-m-left_small"></lightning-button>
+                        </div>
+
+                    </lightning-record-edit-form>
+                </template>
+                
+                <template lwc:else> 
+                    <div class="spinner-backdrop__component">
+                        <div class="slds-spinner slds-spinner_medium" role="status">
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </template>
+
+            </template>
+            <!--End Edit Record-->
+            
+            <!--New Record-->
+            <template lwc:else>
+                <template if:true={ready}>
+                    <!--Record Edit Form-->
+                    <template lwc:if={recordTypeId}>
+                        <template lwc:if={sections.length}>
+                            <lightning-record-edit-form
+                                object-api-name={objectApiName}
+                                record-type-id={recordTypeId}
+                                onsubmit={handleSubmit}
+                                onsuccess={handleSuccess}
+                                onerror={handleError}
+                            >
+                                
+                                <template for:each={sections} for:item="section">
+                                    
+                                    <div class="slds-section slds-is-open" key={section.key}>
+                                        <!-- optional heading -->
+                                        <h3 class="slds-section__title">
+                                            <button aria-controls="section-1" 
+                                                aria-expanded="true" 
+                                                onclick={toggleSections}
+                                                class="slds-button slds-section__title-action"
+                                            >
+                                                <svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left section-chevron" aria-hidden="true">
+                                                    <use xlink:href={iconMap.utility.switch}></use>
+                                                </svg>
+                                                <span class="slds-truncate section-label" title={section.heading}>{section.heading}</span>
+                                            </button>
+                                        </h3>
+
+                                        <div class="slds-section__content">
+                                            <template for:each={section.rows} for:item="row">
+                                                <div key={row.key} class="slds-grid slds-wrap slds-gutters slds-m-bottom_small">
+                                                    <template for:each={row.items} for:item="it">
+                                                        <div key={it.key} class={it.sizeClass}>
+                                                            <template lwc:if={it.isRecordTypeId}> 
+                                                                <lightning-input-field field-name={it.apiName} variant="label-stacked" disabled=""></lightning-input-field>    
+                                                            </template>
+                                                            <template lwc:else>
+                                                                
+                                                                <template lwc:if={it.isHidden}> 
+                                                                    <lightning-input-field field-name={it.apiName} variant="label-stacked" value={it.value} class="hidden-field slds-hide"></lightning-input-field>
+                                                                </template>
+                                                                <template lwc:elseif={it.isDisabled}> 
+                                                                    <lightning-input-field field-name={it.apiName} variant="label-stacked" value={it.value} disabled={it.isDisabled}></lightning-input-field>
+                                                                </template>
+                                                                <template lwc:elseif={it.value}> 
+                                                                    <lightning-input-field field-name={it.apiName} value={it.value} variant="label-stacked"></lightning-input-field>
+                                                                </template>
+                                                                <template lwc:else> 
+                                                                    <lightning-input-field field-name={it.apiName} variant="label-stacked"></lightning-input-field>
+                                                                </template>
+
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            
+                                <div class="slds-hide">
+                                    <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                                    <lightning-button data-id="submitButton" variant="brand" type="submit" label="Save" class="slds-m-left_small"></lightning-button>
+                                </div>
+
+                            </lightning-record-edit-form>
+                        </template>
+
+                        <template lwc:else> 
+                            <div class="spinner-backdrop__component">
+                                <div class="slds-spinner slds-spinner_medium" role="status">
+                                    <span class="slds-assistive-text">Loading</span>
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <!--End Record Edit Form-->
+
+                    <!--Record Type Radio-->
+                    <template lwc:else> 
+
+                        <div class="slds-align_absolute-center" style="margin-bottom: 10px;">
+                            <div style="transform: translateX(-120%);">
+                                <p>Select a Record Type</p>
+                            </div>
+                        </div>
+                        <div class="slds-align_absolute-center">
+                            <lightning-radio-group
+                                name="radioGroup"
+                                label=""
+                                options={recordTypes}
+                                value={tempRecType}
+                                onchange={handleRecTypeChange}
+                                type="radio"
+                            ></lightning-radio-group>
+                        </div>
+                    </template>
+                    <!--End Record Type Radio-->
+                </template>
+            </template>
+            <!--End New Record-->
+        </lightning-modal-body>
+        <!--End Modal Body-->
+
+
+        <!--Modal Footer-->
+        <lightning-modal-footer> 
+            <template lwc:if={recordTypeId}>
+                <div class="slds-grid slds-gutters_xx-small slds-grid_align-center">
+                    <template lwc:if={otherRecordFields.length}> 
+                        <template lwc:if={_otherRecordIds.length}>
+                            <div class="slds-col slds-col_bump-right"> 
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-checkbox">
+                                        <input type="checkbox" name="options" id="checkbox-unique-id-82" value="checkbox-unique-id-82" onchange={handleApplyToAll} />
+                                        <label class="slds-checkbox__label" for="checkbox-unique-id-82">
+                                            <span class="slds-checkbox_faux"></span>
+                                            <span class="slds-form-element__label">
+                                                Apply Edits to All ({applyToAllNumber})
+                                                <div class="slds-form-element__icon">
+                                                    <c-tooltip-button nubbin="bottom-left" variant="headerIcon" header-label={_massEditHelpText}>
+                                                        <button slot="tipTrigger" class="slds-button slds-button_icon slds-button__icon_large" aria-describedby="help">
+                                                            <svg class="slds-button__icon" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.info}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Help</span>
+                                                        </button>
+                                                    <svg slot="icon" class="slds-icon slds-icon_small utility-icon_inverse" aria-hidden="true"> 
+                                                            <use xlink:href={iconMap.utility.info}></use>
+                                                        </svg>
+                                                        <div slot="headerBody" style="font-size: 14px;" class="slds-text-align_left"> 
+                                                            <p>Mass edits are restricted to fields:</p>
+                                                            <ul class="slds-list_dotted">
+                                                                <template lwc:if={_otherFieldLabels.length}>
+                                                                    <template for:each={_otherFieldLabels} for:item="label">
+                                                                        <li key={label}>
+                                                                            <p>{label}</p>
+                                                                        </li>
+                                                                    </template>
+                                                                </template>
+                                                            </ul>
+                                                            <p class="slds-p-top_small" style="font-size: 12px;">
+                                                                Only changes to these fields will be applied to the other {_otherRecordIds.length} records.
+                                                            </p>
+                                                        </div>
+                                                    </c-tooltip-button>
+                                                </div>
+                                            </span>
+                                        </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <div if:true={recordTypes.length} class="slds-col">
+                        <lightning-button label="Back" variant="neutral" onclick={handleBack}></lightning-button>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button variant="brand" type="submit" label="Save" onclick={handleFauxSubmit}></lightning-button>
+                    </div>
+                    <template lwc:if={otherRecordFields.length}> 
+                        <template lwc:if={_otherRecordIds.length}>
+                            <div class="sld-col slds-p-right_large"></div>
+                        </template>
+                    </template>
+                </div>
+            </template>
+            <template lwc:else> 
+                <div class="slds-grid slds-gutters_xx-small slds-grid_align-center">
+                    <template lwc:if={otherRecordFields.length}> 
+                        <template lwc:if={_otherRecordIds.length}>
+                            <div class="slds-col slds-col_bump-right"> 
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-checkbox">
+                                            <input type="checkbox" name="options" id="checkbox-unique-id-81" value="checkbox-unique-id-81" onchange={handleApplyToAll} />
+                                            <label class="slds-checkbox__label" for="checkbox-unique-id-81">
+                                                <span class="slds-checkbox_faux"></span>
+                                                <span class="slds-form-element__label">
+                                                    Apply Edits to All ({applyToAllNumber})
+                                                    <div class="slds-form-element__icon">
+                                                        <c-tooltip-button nubbin="bottom-left" header-label={_massEditHelpText}>
+                                                            <button slot="tipTrigger" class="slds-button slds-button_icon slds-button__icon_large" aria-describedby="help">
+                                                                <svg class="slds-button__icon" aria-hidden="true">
+                                                                    <use xlink:href={iconMap.utility.info}></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Help</span>
+                                                            </button>
+                                                            <div slot="headerBody" style="font-size: 14px;" class="slds-text-align_left"> 
+                                                                <p> Mass edits are restricted to fields:</p>
+                                                                <ul class="slds-list_dotted slds-text-body_regular">
+                                                                    <template lwc:if={_otherFieldLabels.length}>
+                                                                        <template for:each={_otherFieldLabels} for:item="label">
+                                                                            <li key={label}>
+                                                                                <p>{label}</p>
+                                                                            </li>
+                                                                        </template>
+                                                                    </template>
+                                                                </ul>
+                                                                <p class="slds-p-top_small" style="font-size: 12px;">
+                                                                    Only changes to these fields will be applied to the other {_otherRecordIds.length} records.
+                                                                </p>
+                                                            </div>
+                                                        </c-tooltip-button>
+                                                    </div>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <div class="slds-col">
+                        <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button variant="brand" label="Next" onclick={submitRecordTypeId}></lightning-button>
+                    </div>
+                    <template lwc:if={otherRecordFields.length}> 
+                        <template lwc:if={_otherRecordIds.length}>
+                            <div class="sld-col slds-p-right_large"></div>
+                        </template>
+                    </template>
+                </div>
+            </template>
+        </lightning-modal-footer>
+        <!--End Modal Footer-->
+    </div>
+
+</template>

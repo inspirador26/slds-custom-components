@@ -1,0 +1,284 @@
+<template>
+    <c-object-infos-lwc
+        object-api-name={objectName}
+    ></c-object-infos-lwc>
+
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <template lwc:if={modalConfig}>
+        <c-slds-modal
+            modal-title={modalConfig.modalTitle}
+            columns={modalConfig.columns}
+            fields={modalConfig.fields}
+            modal-message={modalConfig.modalMessage}
+            cancel-button-label={modalConfig.cancelButtonLabel}
+            okay-button-label={modalConfig.okayButtonLabel}
+            onmodalclick={handleDeleteAction}
+            data-id="deleteRecordsModal"
+        ></c-slds-modal>
+    </template>
+
+    <template lwc:if={tilePerRowModal}>
+        <c-slds-modal
+            modal-title="Select Tiles per Row"
+            modal-message={tilePerRowModal.modalMessage}
+            columns={tilePerRowModal.columns}
+            fields={tilePerRowModal.fields}
+            cancel-button-label={tilePerRowModal.cancelButtonLabel}
+            okay-button-label={tilePerRowModal.okayButtonLabel}
+            onmodalclick={handleTilesPerRows}
+            data-id="tilesPerRowsModal"
+        ></c-slds-modal>
+    </template>
+
+    <div class={_containerCl}>
+        <article class="slds-card">
+            <lightning-spinner if:true={isLoading} variant="brand"></lightning-spinner>
+
+            <template lwc:if={isDataLoaded}>
+
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate slds-p-bottom_small">
+                        <div class="slds-media__figure">
+                            <span class={iconConfig.container} title={objectLabel}>
+                                <svg class={iconConfig.svgSmall} aria-hidden="true">
+                                    <use xlink:href={iconConfig.icon}></use>
+                                </svg>
+                                <span class="slds-assistive-text">{objectLabel}</span>
+                            </span>
+                        </div>
+                        <div class="slds-media__body"> 
+                            <h2 class="slds-card__header-title">
+                                <template lwc:if={suppressHeaderLink}> 
+                                    <span class="slds-truncate slds-card__header-link">{pluralLabel} ({_cards.length})</span>
+                                </template>
+                                <template lwc:else>
+                                    <a href="#" class="slds-card__header-link slds-truncate" title={pluralLabel}>
+                                        <span>{pluralLabel} ({_cards.length})</span>
+                                    </a>
+                                </template>
+                            </h2>
+                        </div>
+                        
+                        <div class="slds-no-flex slds-m-right_small"> 
+                            <button class="slds-button slds-button_neutral" onclick={handleNewRecord} title={newButtonLabel}>New</button>
+                        </div>
+                        <div if:false={suppressSettings} class="slds-m-right_xx-small slds-page-header__control">
+                            <c-slds-menu-popover-button  
+                                options={settingsOptions} 
+                                is-left="false"
+                                is-check="false"
+                                onselection={handleSettingSelection} 
+                            >
+                                <button class="slds-button slds-button_icon slds-button_icon-more" aria-haspopup="true" title="Card Controls">
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.settings}></use>
+                                    </svg>
+                                    <svg class="slds-button__icon slds-button__icon_x-small" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.down}></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">List View Controls</span>
+                                </button>
+                            </c-slds-menu-popover-button>
+                            <!--End x-slds-menu-popover-button-->
+                        </div>
+
+                        <div class="slds-no-flex">
+                            <button 
+                                class="slds-button slds-button_icon slds-button_icon-border-filled" 
+                                title="Refresh"
+                                onclick={handleRefresh}
+                            >
+                                <svg class="slds-button__icon" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.refresh}></use>
+                                </svg><span class="slds-assistive-text">Refresh</span>
+                            </button>
+                        </div>
+                    </header>
+                </div>
+
+                
+                <div class="slds-card__body slds-card__body_inner">
+                    
+                    <template lwc:if={localRows.length}>
+                        <ul class="slds-grid slds-wrap slds-grid_pull-padded">
+                            <template for:each={localRows} for:item="card">
+                                <li class={_tilesSizeCl} key={card.keyId}>
+                                    <article class="slds-tile slds-media slds-card__tile slds-hint-parent slds-p-around_small">
+                                        <div class="slds-media__figure">
+                                            <span class={iconConfig.container} title={objectLabel}>
+                                                <svg class={iconConfig.svg} aria-hidden="true">
+                                                    <use xlink:href={iconConfig.icon}></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">{objectLabel}</span>
+                                            </span>
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                <h3 class="slds-tile__title slds-truncate" title={card.Name}>
+                                                    <template lwc:if={card.url}> 
+                                                        <a href={card.url}>{card.Name}</a>
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        <span class="slds-tile__title-no-link">{card.Name}</span>
+                                                    </template>
+                                                </h3>
+                                                <div class="slds-shrink-none">
+                                                    <c-slds-menu-popover-button 
+                                                        options={recordActions}
+                                                        is-left="false"
+                                                        is-check="false"
+                                                        menu-id={card.Id}
+                                                        data-record-id={card.Id}
+                                                        onselection={handleRecordAction}
+                                                    >
+                                                        <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" title="More options">
+                                                            <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.down}></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">More options</span>
+                                                        </button>
+                                                    </c-slds-menu-popover-button>
+                                                </div>
+                                            </div>
+                                            <div class="slds-tile__detail">
+                                                <dl class="slds-list_horizontal slds-wrap">
+                                                    <template iterator:field={card.fields}> 
+
+                                                        <div 
+                                                            class="pair" 
+                                                            key={field.value.keyId} 
+                                                            onmouseenter={showTooltip} 
+                                                            onmouseleave={hideTooltip} 
+                                                            data-label={field.value.fieldLabel} 
+                                                            data-value={field.value.displayVal}
+                                                        >
+                                                            
+                                                            <dt class="slds-item_label slds-text-color_weak slds-truncate" >
+                                                                {field.value.fieldLabel}:
+                                                            </dt>
+                                                            
+                                                            <dd class="slds-item_detail slds-truncate">
+                                                                <!--Reference Field-->
+                                                                <template lwc:if={field.value.isClickable}> 
+                                                                    <a href="#" onclick={navigateToRecord} data-value={field.value.value}>
+                                                                        {field.value.displayVal}
+                                                                    </a>
+                                                                </template>
+                                                                <!--End Reference Field-->
+
+                                                                <!--Rich Text Tagged Text Area / Rich Text-->
+                                                                <template lwc:elseif={field.value.isHtml}> 
+                                                                    <lightning-formatted-rich-text value={field.value.displayVal}></lightning-formatted-rich-text>
+                                                                </template>
+                                                                <!--End Rich Text Tagged Text Area / Rich Text-->
+
+                                                                <!--Boolean Field-->
+                                                                <template lwc:elseif={field.value.isboolean}> 
+                                                                    <!--Value is "true"-->
+                                                                    <template lwc:if={field.value.value}>
+                                                                        <span class="slds-icon_container slds-icon-utility-check slds-current-color">
+                                                                            <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                                                <use xlink:href={iconMap.utility.check}></use>
+                                                                            </svg>
+                                                                            <span class="slds-assistive-text">True</span>
+                                                                        </span>
+                                                                    </template>
+                                                                    <!--End Value is "true"-->
+                                                                    <!--Value is "false"-->
+                                                                    <template lwc:else> 
+                                                                        <span class="slds-icon_container slds-icon-utility-steps slds-current-color">
+                                                                            <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                                                <use xlink:href={iconMap.utility.steps}></use>
+                                                                            </svg>
+                                                                            <span class="slds-assistive-text">False</span>
+                                                                        </span>
+                                                                    </template>
+                                                                    <!--End Value is "false"-->
+                                                                </template>
+                                                                
+                                                                <!--All Other-->
+                                                                <template lwc:else>
+                                                                    {field.value.displayVal}
+                                                                </template>
+                                                                <!--End All Other-->
+                                                            </dd>
+
+                                                        </div>
+                                                    </template>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+
+                    <template lwc:else> 
+                        <div class="slds-p-around_large">
+                            <c-slds-illustration
+                                is-button="false"
+                                help-text={_noDataHelpText}
+                                is-no-data="true"
+                                is-open-road={_isOpenRoad}
+                            ></c-slds-illustration>
+                        </div>
+                    </template>
+
+                </div>
+
+                <!--Table Footer-->
+                <footer if:true={_isInitLimit} class="slds-card__footer slds-p-vertical_medium">
+                    <template lwc:if={_isRowsLimit}> 
+                        <a class="slds-card__footer-action" href="#" onclick={loadAll}>View All
+                            <span class="slds-assistive-text">{pluralLabel}</span>
+                        </a>
+                    </template>
+
+                    <template lwc:else> 
+                        <a class="slds-card__footer-action" href="#" onclick={limitRows}>Show Less
+                            <span class="slds-assistive-text">{pluralLabel}</span>
+                        </a>
+                    </template>
+                </footer>
+                <!--Table Footer-->
+
+            </template>
+
+            <template lwc:else> 
+                <lightning-spinner variant="brand"></lightning-spinner>
+            </template>
+
+            <template if:false={_hideTooltip}>
+                <div class="slds-popover slds-popover_tooltip slds-nubbin_left slds-hide"
+                    role="tooltip"
+                    data-el="tooltip"
+                >
+                    <div class="slds-popover__body">
+                        <p if:true={_tooltipText}>
+                            <span class="tooltip-field-label">{_tooltipText.label}:</span>
+                            &nbsp; 
+                            <template lwc:if={_tooltipText.isHtml}> 
+                                <lightning-formatted-rich-text value={_tooltipText.value}></lightning-formatted-rich-text>
+                            </template>
+                            <template lwc:else>{_tooltipText.value}</template>
+                        </p>
+                    </div>
+                </div>
+            </template>
+
+        </article>
+    </div>
+</template>

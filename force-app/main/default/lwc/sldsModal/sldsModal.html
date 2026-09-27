@@ -1,0 +1,105 @@
+<template>
+
+    <template lwc:if={displayModal}>
+        <section role="dialog" 
+            tabindex="-1" 
+            class="slds-modal slds-fade-in-open" 
+            aria-labelledby="modal-heading-01" 
+            aria-modal="true" 
+            aria-describedby="modal-content-id-1"
+        >
+
+            <div class="slds-modal__container">
+                <div class="slds-grid slds-grid_vertical">
+                    <div class="slds-col modal-wrapper slds-size_1-of-1">
+
+                        <!--HEADER-->
+                        <header class="slds-modal__header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCancel}>
+                                <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                    <use xlink:href={iconMap.utility.close}></use>
+                                </svg>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{modalTitle}</h2>
+                        </header>
+                        <!--END HEADER-->
+
+                        <!--BODY-->
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+                            <!--Body Content-->
+                            <div class="slds-p-around_medium slds-align_absolute-center">
+                                <p>{modalMessage}</p>
+                            </div>
+                            
+                            <template lwc:if={fields}> 
+                                <div class="slds-grid slds-wrap slds-grid_vertical-align-center"> 
+                                    <template iterator:it={fields}>
+                                        <!-- ONE and only one keyed root per item -->
+                                        <div key={it.value.fieldName} class={colGridSizeClass}>
+
+                                            <!--Picklist-->
+                                            <template lwc:if={it.value.ispicklist}>
+                                                <c-dropdown-plain
+                                                    place-holder={it.value.placeHolder}
+                                                    options={it.value.options}
+                                                    label={it.value.label}
+                                                    onselection={handleNewInput}
+                                                    current-value={it.value.value}
+                                                    data-id={it.value.fieldName}
+                                                    data-is-first={it.first}
+                                                    is-required={it.value.isRequired}
+                                                    data-is-focusable="true"
+                                                ></c-dropdown-plain>
+                                            </template>
+                                            <!--End Picklist-->
+
+                                            <!--Slds Input-->
+                                            <template lwc:else>
+                                                <c-slds-input 
+                                                    dtype={it.value.dtype} 
+                                                    min={it.value.min}
+                                                    max={it.value.max}
+                                                    label={it.value.label} 
+                                                    onnewinput={handleNewInput}
+                                                    place-holder={it.value.placeHolder}
+                                                    current-value={it.value.value}
+                                                    data-id={it.value.fieldName}
+                                                    data-is-first={it.first}
+                                                    is-required={it.value.isRequired}
+                                                    data-is-focusable="true"
+                                                ></c-slds-input>
+                                            </template>
+                                            <!--End Slds Input-->
+                                            
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <!--End Body Content-->
+
+                        </div>
+                        <!--END BODY-->
+
+                        <!--FOOTER-->
+                        <footer class="slds-modal__footer">
+                            <template lwc:if={cancelButtonLabel}> 
+                                <button class="slds-button slds-button_neutral" data-is-focusable="true" onclick={handleCancel}>
+                                    {cancelButtonLabel}
+                                </button>
+                            </template>
+                            <template lwc:if={okayButtonLabel}> 
+                                <button class="slds-button slds-button_brand" data-is-focusable="true" onclick={handleOkay}>{okayButtonLabel}</button>   
+                            </template>
+                        </footer>
+                        <!--END FOOTER-->
+                        
+
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

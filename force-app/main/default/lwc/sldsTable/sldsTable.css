@@ -1,0 +1,98 @@
+@import 'c/sharedStylesGlobal';
+@import 'c/sharedStylesSldsTable';
+
+
+
+:host {
+    --vg-c-table-border-radius: var(--slds-c-modal-radius-border, 0.25rem);
+
+    --vg-resizer-max-height: calc(70vh);
+    --vg-max-height: calc(70vh);
+    --vg-loading-min-height: 0px;
+    --vg-table-height: none;
+
+    display: block;  /* make sure the host can size itself */
+    --vg-color-columns-bg-table: var(--slds-g-color-neutral-base-95);
+    --vg-color-rows-bg-table:   var(--slds-g-color-neutral-base-100);
+    --vg-color-striped-bg-table: var(--slds-g-color-neutral-base-95);
+
+    --vg-table-border: solid 1px var(--slds-g-color-border-base-1);
+    --vg-table-border_no-header: none;
+
+    --vg-filter-panel-w: 400px;
+    --c-font-size: 1.0rem;
+}
+
+.max-width-table-container {
+    max-width: calc(100% - var(--vg-filter-panel-w));
+    min-width: 0; /* critical for flex/table */
+    background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);
+}
+
+.filter-col {
+    flex: 0 0 var(--vg-filter-panel-w);
+    width: var(--vg-filter-panel-w);
+}
+
+
+.illustration-wrap {
+    border: solid 1px var(--slds-g-color-border-base-1);
+    border-radius: var(--slds-g-radius-border-1);
+}
+
+
+.custom-table-container  {
+    position: relative;
+    overflow-y: visible;          /* default; JS will toggle to auto */
+    height: auto;  /* Let the container's height be determined by its content */
+    scrollbar-gutter: auto;  /* reserve gutter even when no scrollbar */
+    scrollbar-width: thin;
+    max-height: var(--vg-max-height);
+    min-height: 0;
+    padding: 0px;
+    background-color: var(--slds-g-color-neutral-base-95);
+    font-size: var(--c-font-size, 1.0rem);
+}
+
+.slds-resizable__divider::after {
+    max-height: var(--vg-table-height);
+}
+
+.slds-card {
+    --slds-c-card-radius-border: 0px;
+    border: solid 1px var(--slds-s-table-resize-color, light-dark(#c9c9c9, #444));
+}
+
+
+.slds-table.no-actions-table.slds-table-resizable-cols:not(.slds-table_cell-buffer) .slds-resizable[data-is-last-col="true"] .slds-resizable__handle {
+    width: 1px;
+    right: 0px;
+}
+
+.slds-table.no-actions-table.slds-table-resizable-cols:not(.slds-table_cell-buffer) .slds-resizable[data-is-last-col="true"] .slds-resizable__divider::after {
+    right: 0px;
+}
+
+.slds-checkbox [type=checkbox]:indeterminate+.slds-checkbox_faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate+.slds-checkbox--faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate~.slds-checkbox_faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate~.slds-checkbox--faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate+.slds-checkbox__label .slds-checkbox_faux:after, 
+.slds-checkbox [type=checkbox]:indeterminate+.slds-checkbox__label .slds-checkbox--faux:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--lwc-squareIconXSmallContent, 0.5rem);
+    height: 2px;
+    border: 0;
+    transform: translate3d(-50%, -50%, 0);
+    background: var(--slds-c-checkbox-mark-color-foreground, 
+        var(--sds-c-checkbox-mark-color-foreground, 
+            var(--slds-s-mark-color-foreground-checked, 
+                var(--lwc-brandAccessible, rgba(118, 86, 30, 1))
+            )
+        )
+    );
+}

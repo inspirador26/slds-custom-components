@@ -1,0 +1,48 @@
+:host {
+    --vg-font-size: 1rem;
+}
+
+.slds-button {
+    font-size: var(--vg-font-size);
+}
+
+.slds-form-element {
+    margin-bottom: 0px;
+}
+
+.vertical-group.slds-checkbox_button-group {
+    display: flex;
+    flex-direction: column;   /* vertical */
+    align-items: stretch;
+    width: 100%;
+}
+.vertical-group .slds-button.slds-checkbox_button,
+.vertical-group .slds-checkbox_button {
+    display: block;
+    width: 100%;
+    flex: 1 1 100%;
+}
+
+.vertical-group .slds-checkbox_button__label {
+    display: flex;
+    justify-content: center;   /* horizontal center */
+    align-items: center;       /* vertical center */
+    width: 100%;
+    border-radius: 0;
+}
+
+.vertical-group .slds-checkbox_button:not(:last-child) {
+    border-bottom: 1px solid var(--slds-g-color-border-base-4, #e5e5e5);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+
+.vertical-group .slds-checkbox--button+.slds-checkbox--button, 
+.vertical-group .slds-checkbox--button+.slds-checkbox_button, 
+.vertical-group .slds-checkbox_button+.slds-checkbox--button, 
+.vertical-group .slds-checkbox_button+.slds-checkbox_button {
+    border-left: none;
+    border-radius: 0;
+    margin: 0;
+}

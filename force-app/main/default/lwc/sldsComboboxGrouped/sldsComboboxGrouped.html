@@ -1,0 +1,285 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <!--Has Object Switcher-->
+    <template lwc:if={isAddon}>
+        <div class="slds-combobox_container slds-combobox-addon_end">
+            <!--add class "slds-is-open" and set "aria-expanded" to "false" to open-->
+            <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" 
+                aria-expanded="false" 
+                data-id="combobox"
+                aria-haspopup="listbox" 
+                role="combobox"
+                onclick={handleDropdownClick}  
+                onkeydown={handleKeyDown}
+                style="cursor: pointer !important;"
+            >
+                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                    <input 
+                        type="text" 
+                        class="slds-input slds-combobox__input"
+                        id="combobox-id-120" 
+                        aria-controls="listbox-id-120" 
+                        autocomplete="off" 
+                        data-id="comboboxInput"
+                        role="textbox" 
+                        value={valueLabel}
+                        onblur={handleBlur}
+                        placeholder={placeHolder} 
+                        onkeydown={handleInputKeyDown}
+                        style="cursor: pointer !important;"
+                        readonly
+                    />
+                    <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right" style="cursor: pointer !important;">
+                        <svg class="slds-icon slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.down}></use>
+                        </svg>
+                    </span>
+                </div>
+
+                <!--List of Options-->
+                <div id="listbox-id-120" 
+                    class={dropdownLengthCl} 
+                    role="listbox" 
+                    onmousemove={handleMouseMove}
+                >
+            
+
+                    <template for:each={_groupedOptions} for:item="group"> 
+
+                        <ul class="slds-listbox slds-listbox_vertical" 
+                            role="group" 
+                            aria-label={group.label} 
+                            key={group.groupId}
+                        >
+                            <li role="presentation" class="slds-listbox__item">
+                                <div id={group.groupId} 
+                                    class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                    role="presentation"
+                                    data-element="groupHeader"
+                                    style="box-shadow: none;"
+                                >
+                                    <h3 class="slds-listbox__option-header" role="presentation">{group.label}</h3>
+                                </div>
+                            </li>
+                            <template for:each={group.options} for:item="option"> 
+                                <!--Selected Option-->
+                                <template lwc:if={option.isSelected}> 
+                                    <li role="presentation" class="slds-listbox__item" key={option.optionId}>
+                                        <div class="slds-media slds-media_center slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected slds-has-focus" 
+                                            role="option" 
+                                            data-id="comboboxOption"
+                                            data-value={option.value} 
+                                            data-group={option.group}
+                                            data-label={option.label}
+                                            title={option.label}
+                                            onclick={handleOptionClick}
+                                            onmouseover={focusHover}
+                                            onmouseout={unfocusHover}
+                                            onmousedown={deflectFocus}
+                                        >
+                                            <span class="slds-media__figure slds-listbox__option-icon">
+                                                <span class="slds-icon_container slds-icon-utility-check brand-icon-checl">
+                                                    <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                      <use xlink:href={iconMap.utility.check}></use>
+                                                    </svg>
+                                                  </span>
+                                            </span>
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </template>
+                                <!--End Selected Option-->
+                                
+                                <!--Unselected Option-->
+                                <template lwc:else> 
+                                    <li role="presentation" class="slds-listbox__item" key={option.optionId}>
+                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                            role="option" 
+                                            data-id="comboboxOption"
+                                            data-value={option.value} 
+                                            data-group={option.group}
+                                            data-label={option.label}
+                                            title={option.label}
+                                            onclick={handleOptionClick}
+                                            onmouseover={focusHover}
+                                            onmouseout={unfocusHover}
+                                            onmousedown={deflectFocus}
+                                        >
+                                            <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </template>
+                                <!--End Unselected Option-->
+                            </template>
+                        </ul>
+
+                    </template>
+                </div>
+                <!--End List of Options-->
+
+            </div>
+
+            <div if:true={_errorMessage} class="slds-form-element__help" id="error-message-unique-id-addon">{_errorMessage}</div> 
+        </div>
+    </template>
+
+    <template lwc:else>
+        <template lwc:if={_groupedOptions.length}> 
+            <div class="slds-form-element">
+                
+                <template lwc:if={label}>
+                    <label class="slds-form-element__label" for="combobox-id-1">
+                        <!--Required--><abbr if:true={isRequired} class="slds-required" title="required">* </abbr><!--End Required-->
+                        {label}
+                    </label>
+                </template>
+
+                <div class="slds-form-element__control">
+                    <div class="slds-combobox_container">
+                        <!--add class "slds-is-open" and set "aria-expanded" to "false" to open-->
+                        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" 
+                            aria-expanded="false" 
+                            data-id="combobox"
+                            aria-haspopup="listbox" 
+                            role="combobox"
+                            onclick={handleDropdownClick}  
+                            onkeydown={handleKeyDown}
+                            style="cursor: pointer !important;"
+                        >
+                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                <input 
+                                    type="text" 
+                                    class="slds-input slds-combobox__input"
+                                    id="combobox-id-1" 
+                                    aria-controls="listbox-id-1" 
+                                    autocomplete="off" 
+                                    data-id="comboboxInput"
+                                    role="textbox" 
+                                    value={valueLabel}
+                                    onblur={handleBlur}
+                                    placeholder={placeHolder} 
+                                    style="cursor: pointer !important;"
+                                    onkeydown={handleInputKeyDown}
+                                    readonly
+                                />
+                                <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right" style="cursor: pointer !important;">
+                                    <svg class="slds-icon slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                        <use xlink:href={iconMap.utility.down}></use>
+                                    </svg>
+                                </span>
+                            </div>
+        
+                            <!--List of Options-->
+                            <div id="listbox-id-1" 
+                                class={dropdownLengthCl} 
+                                role="listbox" 
+                                onmousemove={handleMouseMove}
+                            >
+                            
+                            <ul class="slds-listbox slds-listbox_vertical" role="group">
+                                <li role="presentation" class="slds-listbox__item" style="height: 1px;">
+                                    <div class=" slds-listbox__option_plain"></div>
+                                </li>
+                            </ul>
+
+                                <template for:each={_groupedOptions} for:item="group"> 
+
+                                    <ul class="slds-listbox slds-listbox_vertical" role="group" aria-label={group.label} key={group.groupId}>
+                                        <li role="presentation" class="slds-listbox__item">
+                                            <div id={group.groupId} 
+                                                class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                                role="presentation"
+                                                data-element="groupHeader"
+                                                style="box-shadow: none;"
+                                            >
+                                                <h3 class="slds-listbox__option-header" role="presentation">{group.label}</h3>
+                                            </div>
+                                        </li>
+                                        <template for:each={group.options} for:item="option"> 
+                                            
+                                            <!--Selected Option-->
+                                            <template lwc:if={option.isSelected}> 
+                                                <li role="presentation" class="slds-listbox__item slds-is-selected slds-has-focus" key={option.optionId}>
+                                                    <div class="slds-media slds-media_center slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected slds-has-focus" 
+                                                        role="option" 
+                                                        data-id="comboboxOption"
+                                                        data-value={option.value} 
+                                                        data-group={group.label}
+                                                        data-label={option.label}
+                                                        title={option.label}
+                                                        onclick={handleOptionClick}
+                                                        onmouseover={focusHover}
+                                                        onmouseout={unfocusHover}
+                                                        onkeydown={handleInputKeyDown}
+                                                        onmousedown={deflectFocus}
+                                                    >
+                                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                                            <span class="slds-icon_container slds-icon-utility-check brand-icon-check">
+                                                                <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                                                <use xlink:href={iconMap.utility.check}></use>
+                                                                </svg>
+                                                            </span>
+                                                        </span>
+                                                        <span class="slds-media__body">
+                                                            <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            </template>
+                                            <!--End Selected Option-->
+                                            
+                                            <!--Unselected Option-->
+                                            <template lwc:else> 
+                                                <li role="presentation" class="slds-listbox__item" key={option.optionId}>
+                                                    <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                                        role="option" 
+                                                        data-id="comboboxOption"
+                                                        data-value={option.value}
+                                                        data-group={group.label} 
+                                                        data-label={option.label}
+                                                        title={option.label}
+                                                        onclick={handleOptionClick}
+                                                        onmouseover={focusHover}
+                                                        onmouseout={unfocusHover}
+                                                        onmousedown={deflectFocus}
+                                                    >
+                                                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                                        <span class="slds-media__body">
+                                                            <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            </template>
+                                            <!--End Unselected Option-->
+                                        </template>
+                                    </ul>
+
+                                </template>
+                            </div>
+                            <!--End List of Options-->
+        
+                        </div>
+                    </div>
+                </div>
+                <div if:true={hasError} class="slds-form-element__help" id="error-message-unique-id">This field is required</div>  
+            </div>
+        </template>
+    </template>
+</template>

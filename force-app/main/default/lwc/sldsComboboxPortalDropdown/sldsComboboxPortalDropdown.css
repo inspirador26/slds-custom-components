@@ -1,0 +1,18 @@
+@import "c/sharedStylesSldsCombobox";
+
+:host {
+  display: block;
+  --slds-c-dropdown-font-size: inherit;
+}
+
+
+.slds-dropdown {
+    position: fixed;
+    z-index: 100000;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    margin: 0.125rem 0 0 0;
+    right: auto;
+    transform: none;
+}

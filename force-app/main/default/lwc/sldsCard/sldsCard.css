@@ -1,0 +1,59 @@
+:host {
+    --slds-c-card-color-background: var(--slds-g-color-netural-base-100);
+    --card-border: solid 1px var(--slds-g-color-border-base-1, #c9c9c9);
+    --c-card-bg: var(--slds-g-color-neutral-base-100, #fff);
+    --c-card-header-bg: var(--slds-g-color-neutral-base-100, #fff); /* var(--slds-g-color-neutral-base-95 in materialListView.js */
+    --c-card-header-border-style: none; /* solid 1px var(--slds-g-color-border-base-1) */
+    --min-height: auto;
+
+}
+
+.card-shadow {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.10);
+}
+
+.slds-card {
+    border: var(--card-border);
+    border-radius: 0.25rem;
+}
+
+.slds-card__header {
+    background-color: var(--c-card-header-bg);
+    border-bottom: var(--c-card-header-border-style, none);
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+}
+
+
+.header-text_xx-large {
+    font-size: var(--slds-g-font-scale-8);     /* xx-large (2.625rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_x-large {
+    font-size: var(--slds-g-font-scale-7);     /* x-large (2.0rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_large {
+    font-size: var(--slds-g-font-scale-6);     /* large (1.75rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_medium {
+    font-size: var(--slds-g-font-scale-5);     /* medium (1.5rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_small {
+    font-size: var(--slds-g-font-scale-4);     /* small (1.25rem) */
+    font-weight: 500; /* Adjust to liking */   
+}
+.header-text_x-small {
+    font-size: var(--slds-g-font-scale-3);     /* x-small (1.125rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_xx-small {
+    font-size: var(--slds-g-font-scale-2);     /* xx-small (1.0rem) */
+    font-weight: 500; /* Adjust to liking */
+}
+.header-text_xxx-small {
+    font-size: var(--slds-g-font-scale-1);     /* xxx-small (0.875rem) */
+    font-weight: 500; /* Adjust to liking */
+}

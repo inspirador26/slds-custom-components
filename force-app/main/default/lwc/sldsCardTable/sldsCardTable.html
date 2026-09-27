@@ -1,0 +1,221 @@
+<template>
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+
+    <template lwc:if={modalConfig}>
+        <template lwc:if={modalConfig.recordId}>
+            <c-slds-modal
+                modal-title={modalConfig.modalTitle}
+                columns={modalConfig.columns}
+                fields={modalConfig.fields}
+                modal-message={modalConfig.modalMessage}
+                cancel-button-label={modalConfig.cancelButtonLabel}
+                okay-button-label={modalConfig.okayButtonLabel}
+                onmodalclick={applyRowAction}
+                data-id="deleteRecordsModal"
+            ></c-slds-modal>
+        </template>
+    </template>
+
+    <template lwc:if={_isInited}>
+        <table class={_tableCl} role="grid" aria-label="Table Component">
+            <template lwc:if={_isLoading}>
+                <lightning-spinner variant="brand"></lightning-spinner>
+            </template>
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <template lwc:if={customRowButton}> 
+                        <!--Select All Checkbox-->
+                        <th class="slds-cell_action-mode" 
+                            scope="col" 
+                            style="width:3.25rem"
+                        >
+                            <div class="slds-truncate slds-assistive-text" title={customRowButton.label}>{customRowButton.label}</div>
+                        </th>
+                        <!--End Select All Checkbox-->
+                    </template>
+                    <template lwc:if={_columns.length}>
+                        <template for:each={_columns} for:item="col"> 
+                            <th class="" scope="col" key={col.keyId} width={col.width}>
+                                <div class="slds-truncate" title={col.label}>{col.label}</div>
+                            </th>
+                        </template>
+                    </template>
+                    <!--Actions Button Column-->
+                    <template if:false={suppressRowActions}>
+                        <th class="slds-cell-fixed" scope="col" style="width:2.5rem" data-id="action-column">
+                            <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                        </th>
+                    </template>
+                    <!--End Actions Column-->
+                </tr>
+            </thead>
+            <tbody>
+                <template lwc:if={_records.length}>
+                    <template for:each={_records} for:item="record">
+                        <tr class="slds-hint-parent" key={record.keyId}>
+                            <template lwc:if={record.fields.length}>
+                            
+                                <template lwc:if={customRowButton}>
+                                    <td class="slds-cell-edit" role="gridcell">
+                                        <div class="slds-align-middle">
+                                            <c-tooltip-button nubbin="bottom-left"
+                                                adjust-vertical="0.25rem"
+                                                adjust-horizontal="-10px"
+                                                steal-focus="true"
+                                            >
+                                                <button class="slds-button slds-button_icon" 
+                                                    onclick={dispatchRowButton}
+                                                    data-record-id={record.Id}
+                                                    slot="tipTrigger"
+                                                    style="margin-bottom: 0.25rem;"
+                                                >
+                                                    <svg class="slds-button__icon" aria-hidden="true">
+                                                        <use xlink:href={customRowButton.icon}></use>
+                                                    </svg>
+                                                    <span class="slds-assistive-text">{customRowButton.label}</span>
+                                                </button>
+                                                <div slot="simpleBody" class="slds-text-align_left"> 
+                                                    <template lwc:if={record.tooltipLabel}>
+                                                        {record.tooltipLabel}
+                                                    </template>
+                                                    <template lwc:else>
+                                                        {customRowButton.label}
+                                                    </template>
+                                                </div>
+                                            </c-tooltip-button>
+                                        </div>
+                                    </td>
+                                </template>
+                                
+                                <template iterator:it={record.fields}>
+
+                                    <!--First Field th ele--> 
+                                    <template lwc:if={it.first}> 
+                                        <th scope="row" key={it.value.keyId}>
+                                            <div class="slds-truncate" title={it.value.displayValue}>
+                                                <template lwc:if={it.value.url}> 
+                                                    <!--Lookup Field-->
+                                                    <template lwc:if={it.value.hasReference}> 
+                                                        <a href={it.value.url} 
+                                                            tabindex="-1"
+                                                        >{it.value.displayValue}</a>
+                                                    </template>
+                                                    <!--End Lookup Field-->
+
+                                                    <!--External Link Field-->
+                                                    <template lwc:else> 
+                                                        <a href="#" 
+                                                            data-value={it.value.value} 
+                                                            tabindex="-1" 
+                                                            onclick={handleExternalLink}
+                                                        >{it.value.displayValue}</a>
+                                                    </template>
+                                                    <!--End External Link Field-->
+                                                </template>
+                                                <template lwc:else> 
+                                                    {it.value.displayValue}
+                                                </template>
+                                            </div>
+                                        </th>
+                                    </template>
+                                    <!--End First Field th ele-->
+
+                                    <!--All other fields-->
+                                    <template lwc:else> 
+                                        <td role="gridcell" key={it.value.keyId}>
+                                            <template lwc:if={it.value.badgeLabel}> 
+                                                <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate"> 
+                                                    <div class="slds-m-right_x-small"> 
+                                                        <span class="slds-badge small-badge circle"> 
+                                                            {it.value.badgeLabel}
+                                                        </span>
+                                                    </div>
+                                                    <div class={it.value.textCl} title={it.value.displayValue}>
+                                                        <template lwc:if={it.value.url}> 
+                                                            <!--Lookup Field-->
+                                                            <template lwc:if={it.value.hasReference}> 
+                                                                <a href={it.value.url} tabindex="-1">{it.value.displayValue}</a>
+                                                            </template>
+                                                            <!--End Lookup Field-->
+
+                                                            <!--External Link Field-->
+                                                            <template lwc:else> 
+                                                                <a href="#" data-value={it.value.value} tabindex="-1" onclick={handleExternalLink}>{it.value.displayValue}</a>
+                                                            </template>
+                                                            <!--End External Link Field-->
+                                                        </template>
+                                                        <template lwc:else> 
+                                                            {it.value.displayValue}
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <template lwc:else>
+                                                <div class={it.value.textCl} title={it.value.displayValue}>
+                                                    <template lwc:if={it.value.url}> 
+                                                        <!--Lookup Field-->
+                                                        <template lwc:if={it.value.hasReference}> 
+                                                            <a href={it.value.url} tabindex="-1">{it.value.displayValue}</a>
+                                                        </template>
+                                                        <!--End Lookup Field-->
+
+                                                        <!--External Link Field-->
+                                                        <template lwc:else> 
+                                                            <a href="#" data-value={it.value.value} tabindex="-1" onclick={handleExternalLink}>{it.value.displayValue}</a>
+                                                        </template>
+                                                        <!--End External Link Field-->
+                                                    </template>
+                                                    <template lwc:else> 
+                                                        {it.value.displayValue}
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </td>
+                                    </template>
+                                    <!--End All other fields-->
+
+                                </template>
+                                <!--Actions Cell-->
+                                <td if:false={suppressRowActions} class="row-action-cell" role="gridcell">
+                                    <c-slds-menu-popover-button 
+                                        options={_rowActions} 
+                                        is-left="false"
+                                        menu-id={record.Id}
+                                        onselection={handleRowAction}
+                                    >
+                                        <button class={_rowActionCl.button} 
+                                            aria-haspopup="true" 
+                                            tabindex="0" 
+                                            aria-selected="false"
+                                            title="More actions"
+                                            data-menu-id={record.Id}
+                                        >
+                                            <svg class={_rowActionCl.icon} aria-hidden="true" >
+                                                <use xlink:href={_rowActionCl.iconHref}></use>
+                                            </svg>
+                                            <span class="slds-assistive-text">More actions</span>
+                                        </button>
+                                    </c-slds-menu-popover-button>
+                                </td>
+                                <!--End Actions Cell-->
+                            </template>
+                        </tr>
+                    </template>
+                </template>
+                
+                
+            </tbody>
+        </table>
+    </template>
+</template>

@@ -1,0 +1,135 @@
+<template>
+    <div class="slds-combobox_container">
+        <!--add class "slds-is-open" and set "aria-expanded" to "false" to open-->
+        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" 
+            aria-expanded="false" 
+            data-id="combobox"
+            aria-haspopup="listbox" 
+            role="combobox"
+            onclick={toggleCombobox}  
+            onkeydown={toggleCombobox}
+            style="cursor: pointer !important;"
+        >
+            <template lwc:if={isDataLoaded}> 
+                <!--Dropdown Trigger-->
+                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                    <input 
+                        type="text" 
+                        class="slds-input slds-combobox__input"
+                        id="combobox-id-1" 
+                        aria-controls="listbox-id-1" 
+                        aria-autocomplete="off" 
+                        autocomplete="off" 
+                        role="textbox" 
+                        value={currentValue}
+                        placeholder="Select an Option" 
+                        style="cursor: pointer !important;"
+                        data-id="popoverInput"
+                        aria-activedescendant={highlightedOptionId} 
+                        readonly
+                    />
+                    <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right" style="cursor: pointer !important;">
+                        <lightning-icon icon-name="utility:down" size="x-small" style="cursor: pointer !important;"></lightning-icon>
+                    </span>
+                </div>
+                <!--End Dropdown Trigger-->
+
+                <!--List of Options-->
+                <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox">
+
+                    <ul class="slds-listbox slds-listbox_vertical" role="presentation" data-id="comboboxListOptions">
+                        <template lwc:if={localOptions}> 
+                            <template for:each={localOptions} for:item="option"> 
+                                <!--Picklist Option-->
+                                <li role="presentation" key={option.value} class="slds-listbox__item">
+
+                                    <!--To focus/Select: aria-selected="true" aria-checked="true" class="slds-is-selected slds-has-focus"-->
+
+                                    <!--Selected Option-->
+                                    <template lwc:if={option.isSelected}>
+                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected slds-has-focus" 
+                                            aria-selected="true" aria-checked="true"
+                                            role="option" 
+                                            data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                            onclick={handleOptionClick}
+                                        >
+                                            <!--Icon (optional)-->
+                                            <span class="slds-media__figure slds-listbox__option-icon">
+                                                <template lwc:if={option.isSelected}>  
+                                                    <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                </template>
+                                            </span>
+                                            <!--End Icon (optional)-->
+
+                                            <!--Option Label-->
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                            </span>
+                                            <!--End Option Label-->
+                                        </div>
+                                    </template>
+                                    <!--End Selected Option-->
+
+                                    <!--Conversion Option-->
+                                    <template lwc:elseif={option.isConvert}> 
+                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-disabled" 
+                                            aria-selected="true" aria-checked="true" aria-disabled="true"
+                                            role="option" 
+                                            data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                            onclick={handleConversionSelect} 
+                                            onkeydown={handleConversionSelect}
+                                        >
+                                            <!--Icon (optional)-->
+                                            <span class="slds-media__figure slds-listbox__option-icon">
+                                                <template lwc:if={option.isSelected}>  
+                                                    <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                </template>
+                                            </span>
+                                            <!--End Icon (optional)-->
+
+                                            <!--Option Label-->
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                            </span>
+                                            <!--End Option Label-->
+                                        </div>
+                                    </template>
+                                    <!--End Conversion Option-->
+
+                                    <!--Unselected Options-->
+                                    <template lwc:else> 
+                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" 
+                                            role="option" 
+                                            data-id="comboboxOption" data-value={option.value} data-label={option.label}
+                                            onclick={handleOptionClick}
+                                        >
+                                            <!--Icon (optional)-->
+                                            <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                            <!--End Icon (optional)-->
+
+                                            <!--Option Label-->
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title={option.label}>{option.label}</span>
+                                            </span>
+                                            <!--End Option Label-->
+
+                                        </div>
+                                    </template>
+                                    <!--End Unselected Options-->
+
+                                </li>
+                                <!--End Picklist Option-->
+                            </template>
+                        </template>
+                    </ul>
+                </div>
+                <!--End List of Options-->
+            </template>
+
+            <template lwc:else> 
+                <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+            </template>
+
+        </div>
+    </div>
+</template>

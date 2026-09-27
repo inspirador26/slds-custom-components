@@ -1,0 +1,39 @@
+:host {
+	--toast-top-offset: 90px;
+}
+
+
+
+/* toastLwc.css */
+.toast-anchor {
+	position: fixed;
+	/* add header height dynamically via --toast-top-offset */
+	top: calc(var(--toast-top-offset, 90px) + env(safe-area-inset-top, 0px));
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 11000;                 /* above fixed headers */
+	width: min(480px, calc(100vw - 1.5rem
+							- env(safe-area-inset-left, 0px)
+							- env(safe-area-inset-right, 0px)));
+	pointer-events: none;
+}
+.toast-anchor .slds-notify_container { pointer-events: auto; }
+
+
+/* Optional: if your theme makes the toast look too wide on phones, keep it tidy */
+@media (max-width: 30rem) {
+.toast-anchor {
+	width: min(90vw, 28rem);
+}
+}
+
+.close-icon {
+	fill: currentColor;
+	color: currentColor;
+	--slds-c-icon-color-foreground: currentColor;
+	--slds-c-icon-color-foreground-default: currentColor;
+}
+
+.slds-notify {
+	border-radius: var(--slds-g-radius-border-4, 1.25rem);
+}

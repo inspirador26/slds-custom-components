@@ -1,0 +1,204 @@
+<template>
+
+    <template lwc:if={toastObj}>
+        <div class="slds-align_absolute-center">
+            <c-toast-lwc
+                variant={toastObj.variant}
+                mode={toastObj.mode}
+                object-api-name={toastObj.objectApiName}
+                header={toastObj.header}
+                message={toastObj.message}
+            ></c-toast-lwc>
+        </div>
+    </template>
+
+    <footer class="slds-utility-bar_container" aria-label="Utility Bar">
+        <h2 class="slds-assistive-text">Utility Bar</h2>
+
+
+        <ul class="slds-utility-bar slds-scrollable_y slds-p-top_xx-small">
+
+            <template lwc:if={_utility1}>
+                <li class={_utility1Cl}>
+                    <button 
+                        class="slds-button slds-utility-bar__action current-color-button" 
+                        aria-pressed="false"
+                        onclick={handleOptionClick} 
+                        data-value="utility1"
+                        lwc:ref="utility1Button"
+                    >
+                        <abbr if:true={_utility1.notification} class="slds-indicator_unread" title={notification} aria-label="Notification">
+                            <span class="slds-assistive-text">●</span>
+                        </abbr>
+                        <template lwc:if={_utility1.notification}> 
+                            <svg class="slds-button__icon slds-m-top_x-small slds-button__icon_left" aria-hidden="true">
+                                <use xlink:href={_utility1.icon}></use>
+                            </svg>
+                        </template>
+                        <template lwc:else> 
+                            <svg class="slds-button__icon larger slds-button__icon_left" aria-hidden="true">
+                                <use xlink:href={_utility1.icon}></use>
+                            </svg>
+                        </template>
+                        <span class="slds-utility-bar__text slds-m-left_xxx-small">
+                            <template lwc:if={_utility1.subText}> 
+                                <span class="slds-m-bottom_xxx-small sub-text">{_utility1.subText}</span>
+                                <span>{_utility1.label}</span>
+                            </template>
+                            <template lwc:else> 
+                                <span>{_utility1.label}</span>
+                            </template>
+                        </span>
+                    </button>
+                </li>
+            </template>
+
+            <template lwc:if={_utility2}>
+                <li class={_utility2Cl}>
+                    <button 
+                        class="slds-button slds-utility-bar__action current-color-button" 
+                        aria-pressed="false" 
+                        onclick={handleOptionClick} 
+                        data-value="utility2"
+                        lwc:ref="utility2Button"
+                    >
+                        <abbr if:true={_utility2.notification} class="slds-indicator_unread" title={notification} aria-label="Notification">
+                            <span class="slds-assistive-text">●</span>
+                        </abbr>
+                        <svg class="slds-button__icon larger slds-button__icon_left" aria-hidden="true">
+                            <use xlink:href={_utility2.icon}></use>
+                        </svg>
+                        <span class="slds-utility-bar__text slds-m-left_xxx-small">
+                            <template lwc:if={_utility2.subText}> 
+                                <span class="slds-m-bottom_xxx-small sub-text">{_utility2.subText}</span>
+                                <span>{_utility2.label}</span>
+                            </template>
+                            <template lwc:else> 
+                                <span>{_utility2.label}</span>
+                            </template>
+                        </span>
+                    </button>
+                </li>
+            </template>
+
+
+            <template lwc:if={_utility3}>
+                <li class={_utility3Cl}>
+                    <button 
+                        class="slds-button slds-utility-bar__action current-color-button"
+                        aria-pressed="false"
+                        onclick={handleOptionClick}
+                        data-value="utility3"
+                        lwc:ref="utility3Button"
+                    >
+                        <abbr if:true={_utility3.notification} class="slds-indicator_unread" title={notification} aria-label="Notification">
+                            <span class="slds-assistive-text">●</span>
+                        </abbr>
+                        <svg class="slds-button__icon larger slds-button__icon_left" aria-hidden="true">
+                            <use xlink:href={_utility3.icon}></use>
+                        </svg>
+                        <span class="slds-utility-bar__text slds-m-left_xxx-small">
+                            <template lwc:if={_utility3.subText}> 
+                                <span class="slds-m-bottom_xxx-small sub-text">{_utility3.subText}</span>
+                                <span>{_utility3.label}</span>
+                            </template>
+                            <template lwc:else> 
+                                <span>{_utility3.label}</span>
+                            </template>
+                        </span>
+                    </button>
+                </li>
+            </template>
+
+
+            <template lwc:if={_utility4}>
+                <li class={_utility4Cl}>
+                    <button 
+                        class="slds-button slds-utility-bar__action current-color-button"
+                        aria-pressed="false"
+                        onclick={handleOptionClick}
+                        data-value="utility4"
+                        lwc:ref="utility4Button"
+                    >
+                        <abbr if:true={_utility4.notification} class="slds-indicator_unread" title={notification} aria-label="Notification">
+                            <span class="slds-assistive-text">●</span>
+                        </abbr>
+                        <svg class="slds-button__icon larger slds-button__icon_left" aria-hidden="true">
+                            <use xlink:href={_utility3.icon}></use>
+                        </svg>
+                        <span class="slds-utility-bar__text slds-m-left_xxx-small">
+                            <template lwc:if={_utility4.subText}> 
+                                <span class="slds-m-bottom_xxx-small sub-text">{_utility4.subText}</span>
+                                <span>{_utility4.label}</span>
+                            </template>
+                            <template lwc:else> 
+                                <span>{_utility4.label}</span>
+                            </template>
+                        </span>
+                    </button>
+                </li>
+            </template>
+
+
+        </ul>
+
+
+        <!--Current Panel-->     <!--Add slds-is-open here-->
+        <div 
+            class="slds-utility-panel slds-grid slds-grid_vertical"
+            role="dialog"
+            aria-labelledby="panel-heading-01"
+            onpanelclose={closePanel}
+        >
+            <div class="slds-utility-panel__header slds-grid slds-shrink-none">
+               
+                <div class="slds-media slds-media_center">
+                    <div class="slds-media__figure slds-m-right_x-small">
+                        <span class="slds-icon_container">
+                            <svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                <use xlink:href={selectedItemInfo.icon}></use>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 id="panel-heading-01">{selectedItemInfo.heading}</h2>
+                    </div>
+                </div>
+
+
+                <div class="slds-col_bump-left slds-shrink-none">
+                    <button 
+                        class="slds-button slds-button_icon slds-button_icon" 
+                        title="Close Panel" 
+                        onclick={closePanel}
+                    >
+                        <svg class="slds-button__icon" aria-hidden="true">
+                            <use xlink:href={iconMap.utility.minimize_window}></use>
+                        </svg>
+                        <span class="slds-assistive-text">Close Panel</span>
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="slds-utility-panel__body" data-id="panelBody">
+                <template lwc:if={activeUtilityBool.utility1}> 
+                    <slot name="utility1"></slot>
+                </template>
+                <template lwc:elseif={activeUtilityBool.utility2}> 
+                    <slot name="utility2"></slot>
+                </template>
+                <template lwc:elseif={activeUtilityBool.utility3}> 
+                    <slot name="utility3"></slot>
+                </template>
+                <template lwc:elseif={activeUtilityBool.utility4}> 
+                    <slot name="utility4"></slot>
+                </template>
+            </div>
+        </div>
+        <!--End Current Panel-->
+
+
+    </footer>
+
+</template>

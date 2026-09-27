@@ -1,0 +1,444 @@
+<template>
+  <template lwc:if={toastObj}>
+    <div class="slds-align_absolute-center">
+      <c-toast-lwc
+        variant={toastObj.variant}
+        mode={toastObj.mode}
+        object-api-name={toastObj.objectApiName}
+        header={toastObj.header}
+        message={toastObj.message}
+      ></c-toast-lwc>
+    </div>
+  </template>
+
+  <div
+    class="slds-popover slds-popover_tooltip slds-nubbin_right slds-hide"
+    role="tooltip"
+    data-el="tooltip"
+    style="padding: 0px"
+  >
+    <div class="slds-popover__body disabled-body">
+      <div class="slds-media">
+        <div class="slds-media__figure slds-align-middle">
+          <span class="disabled-icon-wrapper">
+            <span
+              class="slds-icon_container slds-icon-utility-error slds-current-color"
+            >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href={iconMap.utility.error}></use>
+              </svg>
+              <span class="slds-assistive-text"></span>
+            </span>
+          </span>
+        </div>
+        <div class="slds-media__body slds-align-middle">Disabled</div>
+      </div>
+      <div class="tooltip-text">
+        <p if:true={_tooltipText}>{_tooltipText}</p>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class={dropdownClass}
+    role="menu"
+    tabindex="-1"
+    data-element="dropdown"
+    onkeydown={handleKeyDown}
+    style="z-index: 9999"
+  >
+    <ul class="slds-dropdown__list" aria-label="Dropdown Menu List">
+      <template for:each={localOptions} for:item="option">
+        <template lwc:if={option.isGroup}>
+          <li
+            class="slds-dropdown__header"
+            title={option.groupLabel}
+            role="presentation"
+            id={option.groupId}
+            key={option.optionKey}
+          >
+            <span>{option.groupLabel}</span>
+          </li>
+        </template>
+
+        <template lwc:else>
+          <template lwc:if={option.disabled}>
+            <template lwc:if={option.isSelected}>
+              <li
+                class="slds-dropdown__item slds-is-disabled"
+                role="presentation"
+                key={option.value}
+                data-value={option.value}
+              >
+                <template lwc:if={option.tipMessage}>
+                  <a
+                    href="#"
+                    class="slds-is-disabled"
+                    disabled=""
+                    role="presentation"
+                    data-element="menuItemA"
+                    data-is-main-menu="true"
+                    data-component="sldsMenuPopoverMenu"
+                    onmouseover={handleDisabledHover}
+                    onmousemove={handleDisabledHover}
+                    onmouseenter={showTooltip}
+                    onmouseleave={hideTooltip}
+                    data-tip-message={option.tipMessage}
+                    onclick={handleDisabledMouseDown}
+                    onmousedown={handleDisabledMouseDown}
+                    tabindex="-1"
+                  >
+                    <span
+                      class="slds-truncate slds-media slds-media_small slds-media_center"
+                    >   
+                      <span class="slds-media__figure">
+                        <svg
+                          class={_checkedIcon.iconClass}
+                          aria-hidden="true"
+                        >
+                          <use xlink:href={_checkedIcon.icon}></use>
+                        </svg>
+                      </span>
+                      <span class="slds-media__body disabled-text">
+                        {option.label}
+                      </span>
+                    </span>
+                  </a>
+                </template>
+                <template lwc:else>
+                  <a
+                    href="#"
+                    class="slds-is-disabled"
+                    disabled=""
+                    role="presentation"
+                    data-element="menuItemA"
+                    data-is-main-menu="true"
+                    data-component="sldsMenuPopoverMenu"
+                    onmouseover={handleDisabledHover}
+                    onmousemove={handleDisabledHover}
+                    onclick={handleDisabledMouseDown}
+                    onmousedown={handleDisabledMouseDown}
+                    tabindex="-1"
+                  >
+                    <span
+                      class="slds-truncate slds-media slds-media_small slds-media_center"
+                    >
+                      <span class="slds-media__figure">
+                        <svg
+                          class={_checkedIcon.iconClass}
+                          aria-hidden="true"
+                        >
+                          <use xlink:href={_checkedIcon.icon}></use>
+                        </svg>
+                      </span>
+                      <span class="slds-media__body disabled-text">
+                        {option.label}
+                      </span>
+                    </span>
+                  </a>
+                </template>
+              </li>
+            </template>
+
+            <template lwc:else>
+              <li
+                class="slds-dropdown__item slds-is-disabled"
+                role="presentation"
+                key={option.value}
+              >
+                <template lwc:if={option.tipMessage}>
+                  <a
+                    href="#"
+                    class="slds-is-disabled"
+                    disabled=""
+                    role="presentation"
+                    tabindex="-1"
+                    data-is-main-menu="true"
+                    onmouseover={handleDisabledHover}
+                    onmousemove={handleDisabledHover}
+                    onmouseenter={showTooltip}
+                    onmouseleave={hideTooltip}
+                    data-tip-message={option.tipMessage}
+                    data-component="sldsMenuPopoverMenu"
+                    onclick={handleDisabledMouseDown}
+                    onmousedown={handleDisabledMouseDown}
+                    data-value={option.value}
+                  >
+                    <span
+                      class="slds-truncate disabled-text"
+                      title={option.label}
+                      >{option.label}</span
+                    >
+                  </a>
+                </template>
+                <template lwc:else>
+                  <a
+                    href="#"
+                    class="slds-is-disabled"
+                    disabled=""
+                    role="presentation"
+                    tabindex="-1"
+                    data-is-main-menu="true"
+                    data-component="sldsMenuPopoverMenu"
+                    onmouseover={handleDisabledHover}
+                    onmousemove={handleDisabledHover}
+                    onclick={handleDisabledMouseDown}
+                    onmousedown={handleDisabledMouseDown}
+                    data-value={option.value}
+                  >
+                    <span
+                      class="slds-truncate disabled-text"
+                      title={option.label}
+                      >{option.label}</span
+                    >
+                  </a>
+                </template>
+              </li>
+            </template>
+          </template>
+
+          <template lwc:else>
+            <template lwc:if={option.options}>
+              <li
+                class="slds-dropdown__item slds-has-submenu slds-is-relative"
+                role="presentation"
+                key={option.value}
+                data-value={option.value}
+                data-element="menuItem"
+              >
+                <a
+                  href="#"
+                  role="menuitem"
+                  tabindex="-1"
+                  data-nav-item="true"
+                  data-component="sldsMenuPopoverMenu"
+                  onmouseover={handleHover}
+                  onmousemove={enableHover}
+                  onclick={handleSelection}
+                  onblur={handleBlur}
+                  data-value={option.value}
+                  aria-haspopup="true"
+                  data-is-main-menu="true"
+                >
+                  <span class="slds-truncate" title={option.label}
+                    >{option.label}</span
+                  >
+                  <svg
+                    class="slds-icon slds-icon_x-small slds-m-left_small slds-shrink-none"
+                    aria-hidden="true"
+                  >
+                    <use xlink:href={iconMap.utility.right}></use>
+                  </svg>
+                </a>
+                <div class={_subMenuCl}>
+                  <ul
+                    class="slds-dropdown__list"
+                    role="menu"
+                    aria-label="Name of Item that Opened this Menu"
+                  >
+                    <template for:each={option.options} for:item="subopt">
+                      <template lwc:if={subopt.isGroup}>
+                        <li
+                          class="slds-dropdown__header"
+                          title={subopt.groupLabel}
+                          role="presentation"
+                          id={subopt.groupId}
+                          key={subopt.optionKey}
+                        >
+                          <span>{subopt.groupLabel}</span>
+                        </li>
+                      </template>
+
+                      <template lwc:else>
+                        <template lwc:if={subopt.isSelected}>
+                          <li
+                            class="slds-dropdown__item"
+                            role="presentation"
+                            key={subopt.value}
+                            data-value={subopt.value}
+                            data-element="menuItem"
+                          >
+                            <a
+                              href="#"
+                              role="menuitem"
+                              data-element="menuItemA"
+                              tabindex="0"
+                              data-nav-item="true"
+                              data-component="sldsMenuPopoverMenu"
+                              onmouseover={handleHover}
+                              onmousemove={enableHover}
+                              onblur={handleBlur}
+                              data-value={subopt.value}
+                              data-parent-value={option.value}
+                              data-nested="true"
+                              onclick={handleSelection}
+                            >
+                              <span
+                                class="slds-truncate slds-media slds-media_small slds-media_center"
+                              >
+                                <span class="slds-media__figure">
+                                  <svg
+                                    class={_checkedIcon.iconClass}
+                                    aria-hidden="true"
+                                  >
+                                    <use
+                                      xlink:href={_checkedIcon.icon}
+                                    ></use>
+                                  </svg>
+                                </span>
+                                <span class="slds-media__body">
+                                  {subopt.label}
+                                </span>
+                                <template lwc:if={option.icon}> 
+                                    <svg class={option.iconClass} aria-hidden="true">
+                                        <use xlink:href={option.icon}></use>
+                                    </svg>
+                                </template>
+                              </span>
+                            </a>
+                          </li>
+                        </template>
+
+                        <template lwc:else>
+                          <li
+                            class="slds-dropdown__item"
+                            role="presentation"
+                            key={subopt.value}
+                            data-value={subopt.value}
+                            data-element="menuItem"
+                          >
+                            <a
+                              href="#"
+                              role="menuitem"
+                              tabindex="-1"
+                              data-nav-item="true"
+                              data-value={subopt.value}
+                              data-parent-value={option.value}
+                              data-component="sldsMenuPopoverMenu"
+                              onmouseover={handleHover}
+                              onmousemove={enableHover}
+                              onblur={handleBlur}
+                              data-nested="true"
+                              onclick={handleSelection}
+                            >
+                              <span class="slds-truncate" title={subopt.label}
+                                >{subopt.label}</span
+                              >
+                              
+                                <svg lwc:if={option.icon} class={option.iconClass} aria-hidden="true">
+                                    <use xlink:href={option.icon}></use>
+                                </svg>
+                            
+                            </a>
+                          </li>
+                        </template>
+                      </template>
+                    </template>
+                  </ul>
+                </div>
+              </li>
+            </template>
+            <template lwc:else>
+              <template lwc:if={option.isSelected}>
+                <li
+                  class="slds-dropdown__item"
+                  role="presentation"
+                  key={option.value}
+                  data-value={option.value}
+                  data-element="menuItem"
+                >
+                  <a
+                    href="#"
+                    role="menuitem"
+                    data-element="menuItemA"
+                    tabindex="0"
+                    data-nav-item="true"
+                    data-component="sldsMenuPopoverMenu"
+                    onmouseover={handleHover}
+                    onmousemove={enableHover}
+                    onblur={handleBlur}
+                    data-value={option.value}
+                    data-is-main-menu="true"
+                    data-is-selected="true"
+                    onclick={handleSelection}
+                  >
+                    <span
+                      class="slds-truncate slds-media slds-media_small slds-media_center"
+                    >
+                      <span class="slds-media__figure">
+                        <svg
+                          class={_checkedIcon.iconClass}
+                          aria-hidden="true"
+                        >
+                          <use xlink:href={_checkedIcon.icon}></use>
+                        </svg>
+                      </span>
+                      <span class="slds-media__body"> {option.label} </span>
+
+                        <svg lwc:if={option.icon} class={option.iconClass} aria-hidden="true">
+                            <use xlink:href={option.icon}></use>
+                        </svg>
+                    </span>
+                  </a>
+                </li>
+              </template>
+
+              <template lwc:else>
+                <li
+                  class="slds-dropdown__item"
+                  role="presentation"
+                  key={option.value}
+                  data-value={option.value}
+                  data-element="menuItem"
+                >
+                  <a
+                    href="#"
+                    role="menuitem"
+                    tabindex="-1"
+                    data-nav-item="true"
+                    data-is-main-menu="true"
+                    data-value={option.value}
+                    data-component="sldsMenuPopoverMenu"
+                    onblur={handleBlur}
+                    onmouseover={handleHover}
+                    onmousemove={enableHover}
+                    onclick={handleSelection}
+                  >
+                    <span class="slds-truncate" title={option.label}
+                      >{option.label}</span
+                    >
+                    <svg lwc:if={option.icon} class={option.iconClass} aria-hidden="true">
+                        <use xlink:href={option.icon}></use>
+                    </svg>
+                  </a>
+                </li>
+              </template>
+            </template>
+          </template>
+        </template>
+      </template>
+    </ul>
+    <template lwc:if={isSave}>
+      <footer class="menu-save-footer slds-grid slds-grid_align-end">
+        <div>
+          <button
+            class="slds-button slds-button_neutral menu-button"
+            onclick={handleSaveCancel}
+            onfocus={handleButtonFocus}
+          >
+            Cancel
+          </button>
+        </div>
+        <div>
+          <button
+            class="slds-button slds-button_brand menu-button"
+            onclick={handleSave}
+            onfocus={handleButtonFocus}
+          >
+            Save
+          </button>
+        </div>
+      </footer>
+    </template>
+  </div>
+</template>

@@ -1,0 +1,48 @@
+.empty {
+    color: var(--slds-g-color-brand-base-10, #181818);
+}
+
+
+.header-icon-btn {
+    margin-bottom: 0.25rem;
+}
+.slds-docked-composer__header {
+    border-bottom: 2px solid var(--slds-g-color-brand-base-60, #1b96ff);
+}
+
+.slds-docked-composer.slds-has-focus,
+.slds-docked-composer-modal .slds-modal__content {
+    /*box-shadow: var(--slds-g-shadow-outset-focus-1,0 0 3px #0176d3);*/
+    -webkit-box-shadow: var(--vg-dockedComposer-shadow,
+        0 6px 18px var(--vg-color-brand-tint-2, rgb(2, 80, 217)),
+        0 2px 6px var(--vg-color-brand-tint-2, rgb(2, 80, 217))
+    );
+    box-shadow: var(--vg-dockedComposer-shadow,
+        0 6px 18px var(--vg-color-brand-tint-2, rgb(2, 80, 217)),
+        0 2px 6px var(--vg-color-brand-tint-2, rgb(2, 80, 217))
+    );
+}
+.slds-button.no-shadow:focus,
+.slds-button.no-shadow:active {
+    box-shadow: none;
+    outline: 3px solid var(--lwc-colorBorderBrand, #0176d3);
+    outline-offset: 2px;
+    border-radius: var(--slds-g-radius-border-2);
+}
+
+
+.slds-button.no-shadow:hover svg,
+.slds-button.no-shadow:active svg,
+.slds-button.no-shadow:focus svg {
+    fill: var(--slds-g-color-neutral-base-30);
+}
+.slds-button.no-shadow:hover
+.slds-button.no-shadow:active
+.slds-button.no-shadow:focus {
+    color: var(--slds-g-color-neutral-base-30);
+}
+
+.slds-docked-composer__header:focus {
+    box-shadow: none;
+}
+

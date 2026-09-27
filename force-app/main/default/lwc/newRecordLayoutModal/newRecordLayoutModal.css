@@ -1,0 +1,15 @@
+@import 'c/sharedStylesGlobal';
+
+:host {
+    --slds-c-modal-radius-border: var(--slds-g-radius-border-4, 1.25rem);
+}
+
+.slds-radio__label {
+    transform: scale(-50%);
+}    
+
+.hidden-field {
+    height: 0.1px;
+    margin: 0px;
+    padding: 0px;
+}
